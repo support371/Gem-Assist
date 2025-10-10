@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@dataconnect/generated": "file:src/dataconnect-generated",
     "axios": "^1.12.2",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
