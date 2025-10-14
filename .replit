@@ -2,7 +2,7 @@ modules = ["nodejs-20", "python-3.11"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["openssl", "postgresql", "unzip", "google-cloud-sdk-gce"]
+packages = ["google-cloud-sdk-gce", "openssl", "postgresql", "unzip", "wget", "driversi686Linux.mesa-demos", "systemdUkify", "see-cat"]
 
 [deployment]
 deploymentTarget = "autoscale"
