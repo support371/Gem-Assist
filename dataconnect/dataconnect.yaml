@@ -1,6 +1,6 @@
 specVersion: "v1"
 serviceId: "workspace"
-location: "us-east4"
+location: "southamerica-east1"
 schema:
   source: "./schema"
   datasource:
