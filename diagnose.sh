@@ -29,7 +29,7 @@ npm test
 echo "✅ All local tests passed."
 echo ""
 
-echo "🚀 (4/4) Checking Live Deployment Logs (Vercel)..."
+echo "🚀 (4.1/4) Checking Live Deployment Logs (Vercel)..."
 echo "Fetching the last 50 lines of logs from your Vercel deployment."
 echo "Look for any 'ERROR' or '500' status codes below."
 echo "---"
