@@ -162,7 +162,7 @@ except ImportError as e:
 
 # Create the Flask app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET")
+app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 
 # Register media blueprint if available
 if MEDIA_SERVER_AVAILABLE and media_bp:
