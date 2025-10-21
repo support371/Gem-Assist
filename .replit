@@ -2,7 +2,7 @@ modules = ["nodejs-20", "python-3.11"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["google-cloud-sdk-gce", "openssl", "postgresql", "unzip", "wget", "driversi686Linux.mesa-demos", "systemdUkify", "see-cat"]
+packages = ["driversi686Linux.mesa-demos", "google-cloud-sdk-gce", "openssl", "postgresql", "see-cat", "systemdUkify", "unzip", "wget"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -25,9 +25,8 @@ name = "Start application"
 author = "agent"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
-waitForPort = 5000
+task = "workflow.run"
+args = "Start application"
 
 [[ports]]
 localPort = 5000
