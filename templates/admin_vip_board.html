@@ -1,0 +1,497 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - VIP Board Members - Gem Assist Enterprise{% endblock %}
+
+{% block content %}
+<section class="admin-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-user-cog me-3"></i>VIP Board Member Management
+                </h1>
+                <p class="lead">Upload professional headshots and manage executive profiles</p>
+                <div class="admin-nav mt-4">
+                    <a href="{{ url_for('admin_panel') }}" class="btn btn-outline-light me-2">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Admin
+                    </a>
+                    <a href="{{ url_for('vip_board') }}" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-eye me-2"></i>View Public Page
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="admin-content py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Instructions:</strong> Upload professional headshots for each executive position. Images should be high-quality, professional photos in JPG or PNG format. Recommended size: 800x800px minimum.
+                </div>
+            </div>
+        </div>
+        
+        <!-- CEO Form -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="executive-form-card">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="mb-0"><i class="fas fa-crown me-2"></i>Chief Executive Officer (CEO)</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="position" value="CEO">
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="current-headshot mb-3">
+                                        {% if executives.CEO and executives.CEO.headshot_url %}
+                                        <img src="{{ executives.CEO.headshot_url }}" alt="CEO Headshot" class="img-fluid rounded">
+                                        <p class="text-center mt-2">Current Headshot</p>
+                                        {% else %}
+                                        <div class="placeholder-headshot">
+                                            <i class="fas fa-user-tie"></i>
+                                            <p>No headshot uploaded</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="ceo_headshot" class="form-label">Upload New Headshot</label>
+                                        <input type="file" class="form-control" id="ceo_headshot" name="headshot" accept="image/*">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="ceo_name" class="form-label">Full Name*</label>
+                                            <input type="text" class="form-control" id="ceo_name" name="name" 
+                                                   value="{{ executives.CEO.name if executives.CEO else '' }}" required>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="ceo_title" class="form-label">Professional Title</label>
+                                            <input type="text" class="form-control" id="ceo_title" name="title" 
+                                                   value="{{ executives.CEO.title if executives.CEO else 'Chief Executive Officer' }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="ceo_email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="ceo_email" name="email" 
+                                                   value="{{ executives.CEO.email if executives.CEO else '' }}">
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="ceo_alignable" class="form-label">Alignable URL</label>
+                                            <input type="url" class="form-control" id="ceo_alignable" name="alignable_url" 
+                                                   value="{{ executives.CEO.alignable_url if executives.CEO else '' }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="ceo_years" class="form-label">Years of Experience</label>
+                                        <input type="number" class="form-control" id="ceo_years" name="years_experience" 
+                                               value="{{ executives.CEO.years_experience if executives.CEO else '' }}">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="ceo_bio" class="form-label">Professional Bio</label>
+                                        <textarea class="form-control" id="ceo_bio" name="bio" rows="4">{{ executives.CEO.bio if executives.CEO else '' }}</textarea>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="ceo_specialties" class="form-label">Specialties (comma-separated)</label>
+                                        <input type="text" class="form-control" id="ceo_specialties" name="specialties" 
+                                               value="{{ executives.CEO.specialties if executives.CEO else '' }}"
+                                               placeholder="Strategic Leadership, Cybersecurity, Business Development">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="ceo_achievements" class="form-label">Key Achievements</label>
+                                        <textarea class="form-control" id="ceo_achievements" name="achievements" rows="3">{{ executives.CEO.achievements if executives.CEO else '' }}</textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-warning btn-lg">
+                                        <i class="fas fa-save me-2"></i>Update CEO Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CFO Form -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="executive-form-card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0"><i class="fas fa-chart-line me-2"></i>Chief Financial Officer (CFO)</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="position" value="CFO">
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="current-headshot mb-3">
+                                        {% if executives.CFO and executives.CFO.headshot_url %}
+                                        <img src="{{ executives.CFO.headshot_url }}" alt="CFO Headshot" class="img-fluid rounded">
+                                        <p class="text-center mt-2">Current Headshot</p>
+                                        {% else %}
+                                        <div class="placeholder-headshot">
+                                            <i class="fas fa-user-tie"></i>
+                                            <p>No headshot uploaded</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="cfo_headshot" class="form-label">Upload New Headshot</label>
+                                        <input type="file" class="form-control" id="cfo_headshot" name="headshot" accept="image/*">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cfo_name" class="form-label">Full Name*</label>
+                                            <input type="text" class="form-control" id="cfo_name" name="name" 
+                                                   value="{{ executives.CFO.name if executives.CFO else '' }}" required>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cfo_title" class="form-label">Professional Title</label>
+                                            <input type="text" class="form-control" id="cfo_title" name="title" 
+                                                   value="{{ executives.CFO.title if executives.CFO else 'Chief Financial Officer' }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cfo_email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="cfo_email" name="email" 
+                                                   value="{{ executives.CFO.email if executives.CFO else '' }}">
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cfo_alignable" class="form-label">Alignable URL</label>
+                                            <input type="url" class="form-control" id="cfo_alignable" name="alignable_url" 
+                                                   value="{{ executives.CFO.alignable_url if executives.CFO else '' }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="cfo_years" class="form-label">Years of Experience</label>
+                                        <input type="number" class="form-control" id="cfo_years" name="years_experience" 
+                                               value="{{ executives.CFO.years_experience if executives.CFO else '' }}">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="cfo_bio" class="form-label">Professional Bio</label>
+                                        <textarea class="form-control" id="cfo_bio" name="bio" rows="4">{{ executives.CFO.bio if executives.CFO else '' }}</textarea>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="cfo_specialties" class="form-label">Specialties (comma-separated)</label>
+                                        <input type="text" class="form-control" id="cfo_specialties" name="specialties" 
+                                               value="{{ executives.CFO.specialties if executives.CFO else '' }}"
+                                               placeholder="Financial Strategy, Investment Management, Risk Assessment">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="cfo_achievements" class="form-label">Key Achievements</label>
+                                        <textarea class="form-control" id="cfo_achievements" name="achievements" rows="3">{{ executives.CFO.achievements if executives.CFO else '' }}</textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-save me-2"></i>Update CFO Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- COO Form -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="executive-form-card">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0"><i class="fas fa-cogs me-2"></i>Chief Operations Officer (COO)</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="position" value="COO">
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="current-headshot mb-3">
+                                        {% if executives.COO and executives.COO.headshot_url %}
+                                        <img src="{{ executives.COO.headshot_url }}" alt="COO Headshot" class="img-fluid rounded">
+                                        <p class="text-center mt-2">Current Headshot</p>
+                                        {% else %}
+                                        <div class="placeholder-headshot">
+                                            <i class="fas fa-user-tie"></i>
+                                            <p>No headshot uploaded</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="coo_headshot" class="form-label">Upload New Headshot</label>
+                                        <input type="file" class="form-control" id="coo_headshot" name="headshot" accept="image/*">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="coo_name" class="form-label">Full Name*</label>
+                                            <input type="text" class="form-control" id="coo_name" name="name" 
+                                                   value="{{ executives.COO.name if executives.COO else '' }}" required>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="coo_title" class="form-label">Professional Title</label>
+                                            <input type="text" class="form-control" id="coo_title" name="title" 
+                                                   value="{{ executives.COO.title if executives.COO else 'Chief Operations Officer' }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="coo_email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="coo_email" name="email" 
+                                                   value="{{ executives.COO.email if executives.COO else '' }}">
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="coo_alignable" class="form-label">Alignable URL</label>
+                                            <input type="url" class="form-control" id="coo_alignable" name="alignable_url" 
+                                                   value="{{ executives.COO.alignable_url if executives.COO else '' }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="coo_years" class="form-label">Years of Experience</label>
+                                        <input type="number" class="form-control" id="coo_years" name="years_experience" 
+                                               value="{{ executives.COO.years_experience if executives.COO else '' }}">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="coo_bio" class="form-label">Professional Bio</label>
+                                        <textarea class="form-control" id="coo_bio" name="bio" rows="4">{{ executives.COO.bio if executives.COO else '' }}</textarea>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="coo_specialties" class="form-label">Specialties (comma-separated)</label>
+                                        <input type="text" class="form-control" id="coo_specialties" name="specialties" 
+                                               value="{{ executives.COO.specialties if executives.COO else '' }}"
+                                               placeholder="Operations Management, Process Optimization, Team Leadership">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="coo_achievements" class="form-label">Key Achievements</label>
+                                        <textarea class="form-control" id="coo_achievements" name="achievements" rows="3">{{ executives.COO.achievements if executives.COO else '' }}</textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fas fa-save me-2"></i>Update COO Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Legal Compliance Officer Form -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="executive-form-card">
+                    <div class="card-header bg-danger text-white">
+                        <h3 class="mb-0"><i class="fas fa-gavel me-2"></i>Chief Legal & Compliance Officer</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="position" value="LEGAL">
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="current-headshot mb-3">
+                                        {% if executives.LEGAL and executives.LEGAL.headshot_url %}
+                                        <img src="{{ executives.LEGAL.headshot_url }}" alt="Legal Officer Headshot" class="img-fluid rounded">
+                                        <p class="text-center mt-2">Current Headshot</p>
+                                        {% else %}
+                                        <div class="placeholder-headshot">
+                                            <i class="fas fa-user-tie"></i>
+                                            <p>No headshot uploaded</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="legal_headshot" class="form-label">Upload New Headshot</label>
+                                        <input type="file" class="form-control" id="legal_headshot" name="headshot" accept="image/*">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="legal_name" class="form-label">Full Name*</label>
+                                            <input type="text" class="form-control" id="legal_name" name="name" 
+                                                   value="{{ executives.LEGAL.name if executives.LEGAL else '' }}" required>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="legal_title" class="form-label">Professional Title</label>
+                                            <input type="text" class="form-control" id="legal_title" name="title" 
+                                                   value="{{ executives.LEGAL.title if executives.LEGAL else 'Chief Legal & Compliance Officer' }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="legal_email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="legal_email" name="email" 
+                                                   value="{{ executives.LEGAL.email if executives.LEGAL else '' }}">
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="legal_alignable" class="form-label">Alignable URL</label>
+                                            <input type="url" class="form-control" id="legal_alignable" name="alignable_url" 
+                                                   value="{{ executives.LEGAL.alignable_url if executives.LEGAL else '' }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="legal_years" class="form-label">Years of Experience</label>
+                                        <input type="number" class="form-control" id="legal_years" name="years_experience" 
+                                               value="{{ executives.LEGAL.years_experience if executives.LEGAL else '' }}">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="legal_bio" class="form-label">Professional Bio</label>
+                                        <textarea class="form-control" id="legal_bio" name="bio" rows="4">{{ executives.LEGAL.bio if executives.LEGAL else '' }}</textarea>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="legal_specialties" class="form-label">Specialties (comma-separated)</label>
+                                        <input type="text" class="form-control" id="legal_specialties" name="specialties" 
+                                               value="{{ executives.LEGAL.specialties if executives.LEGAL else '' }}"
+                                               placeholder="Legal Compliance, Regulatory Affairs, Contract Law">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="legal_achievements" class="form-label">Key Achievements</label>
+                                        <textarea class="form-control" id="legal_achievements" name="achievements" rows="3">{{ executives.LEGAL.achievements if executives.LEGAL else '' }}</textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-danger btn-lg">
+                                        <i class="fas fa-save me-2"></i>Update Legal Officer Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.admin-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+    padding: 4rem 0 3rem;
+    margin-bottom: 2rem;
+}
+
+.admin-nav {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.executive-form-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.executive-form-card .card-header {
+    padding: 1.5rem;
+    border: none;
+}
+
+.executive-form-card .card-body {
+    padding: 2rem;
+}
+
+.current-headshot img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.placeholder-headshot {
+    width: 100%;
+    max-width: 300px;
+    height: 300px;
+    background: linear-gradient(135deg, #2a2a4a, #1a1a3a);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.placeholder-headshot i {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    background: var(--bg-darker);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--bg-darker);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+}
+
+@media (max-width: 768px) {
+    .current-headshot img,
+    .placeholder-headshot {
+        max-width: 100%;
+    }
+}
+</style>
+{% endblock %}
