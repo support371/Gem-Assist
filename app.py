@@ -661,6 +661,77 @@ def news():
 
     return render_template('news.html', notion_news=notion_news)
 
+@app.route('/subscribe-newsletter', methods=['POST'])
+def subscribe_newsletter():
+    """Handle newsletter subscription"""
+    if not USE_DATABASE:
+        flash('Newsletter subscription is temporarily unavailable.', 'error')
+        return redirect(url_for('news'))
+
+    try:
+        email = request.form.get('email')
+        name = request.form.get('name', '')
+        interests = request.form.get('interests', 'all')
+
+        # Check if email already exists
+        existing = NewsletterSubscriber.query.filter_by(email=email).first()
+        
+        if existing:
+            if existing.is_active:
+                flash('You are already subscribed to our newsletter!', 'info')
+            else:
+                # Reactivate subscription
+                existing.is_active = True
+                existing.unsubscribed_at = None
+                db.session.commit()
+                flash('Welcome back! Your subscription has been reactivated.', 'success')
+        else:
+            # Create new subscription
+            subscriber = NewsletterSubscriber(
+                email=email,
+                name=name,
+                is_active=True
+            )
+            db.session.add(subscriber)
+            db.session.commit()
+            flash('Thank you for subscribing to our newsletter!', 'success')
+
+        return redirect(url_for('news'))
+
+    except Exception as e:
+        logging.error(f"Error subscribing to newsletter: {e}")
+        flash('An error occurred. Please try again.', 'error')
+        return redirect(url_for('news'))
+
+@app.route('/unsubscribe-newsletter', methods=['GET', 'POST'])
+def unsubscribe_newsletter():
+    """Handle newsletter unsubscription"""
+    if not USE_DATABASE:
+        flash('Newsletter management is temporarily unavailable.', 'error')
+        return redirect(url_for('news'))
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        
+        try:
+            subscriber = NewsletterSubscriber.query.filter_by(email=email).first()
+            
+            if subscriber and subscriber.is_active:
+                subscriber.is_active = False
+                subscriber.unsubscribed_at = datetime.utcnow()
+                db.session.commit()
+                flash('You have been unsubscribed from our newsletter.', 'info')
+            else:
+                flash('Email not found in our subscription list.', 'warning')
+                
+        except Exception as e:
+            logging.error(f"Error unsubscribing: {e}")
+            flash('An error occurred. Please try again.', 'error')
+            
+        return redirect(url_for('news'))
+    
+    return render_template('news.html')
+
 @app.route('/teams')
 def teams():
     """Team members and structure"""
