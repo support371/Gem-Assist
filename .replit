@@ -6,7 +6,7 @@ packages = ["driversi686Linux.mesa-demos", "google-cloud-sdk-gce", "openssl", "p
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+run = ["sh", "-c", "gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 main:app"]
 
 [workflows]
 runButton = "Start Flask App"
