@@ -1,0 +1,909 @@
+{% extends "base.html" %}
+
+{% block title %}Telegram Bot Automation Services - GEM Enterprise{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1><i class="fab fa-telegram me-3"></i>GEM Telegram Workflow System</h1>
+                <p class="lead">5 Specialized Bots Delivering Enterprise Automation Services</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Overview Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card bg-dark border-primary">
+                    <div class="card-body">
+                        <h3 class="mb-4"><i class="fas fa-robot me-2"></i>GEM Multi-Bot Workflow System</h3>
+                        <p class="lead">5 specialized Telegram bots working in harmony to deliver comprehensive automation services across Cybersecurity, Real Estate, Asset Recovery, and Client Services. Each bot has unique capabilities and integrates with Make.com, Notion, and Trello for complete workflow automation.</p>
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <div class="stat-box text-center">
+                                    <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                                    <h4>24/7 Security</h4>
+                                    <p>Continuous threat monitoring</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-box text-center">
+                                    <i class="fas fa-building fa-3x text-success mb-3"></i>
+                                    <h4>500+ Properties</h4>
+                                    <p>Automated management</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-box text-center">
+                                    <i class="fas fa-coins fa-3x text-warning mb-3"></i>
+                                    <h4>$10M+ Recovered</h4>
+                                    <p>Digital asset recovery</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GEM Bot System Overview -->
+<section class="py-5 bg-gradient-primary">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-network-wired text-warning me-3"></i>
+                    GEM Multi-Bot Architecture
+                </h2>
+                <p class="lead">5 Specialized Bots Working in Perfect Harmony</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <!-- GEMAssist Bot -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-primary">
+                    <div class="card-header bg-primary bg-opacity-10">
+                        <h4><i class="fas fa-robot me-2"></i>@GEMAssist_bot</h4>
+                        <small class="text-muted">Central Operations Hub</small>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Main operational bot for case management and client onboarding</p>
+                        <div class="command-list">
+                            <code>/start</code> - Welcome & orientation<br>
+                            <code>/services</code> - View all services<br>
+                            <code>/submitcase</code> - Submit recovery case<br>
+                            <code>/book</code> - Schedule consultation<br>
+                            <code>/toolkit</code> - Recovery toolkit<br>
+                            <code>/kyc</code> - Complete KYC process<br>
+                            <code>/dashboard</code> - Access client portal<br>
+                            <code>/refer</code> - Referral program<br>
+                            <code>/contact</code> - Contact support<br>
+                            <code>/terms</code> - Terms of service
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CyberGEMSecure Bot -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-danger">
+                    <div class="card-header bg-danger bg-opacity-10">
+                        <h4><i class="fas fa-shield-alt me-2"></i>@CyberGEMSecure_bot</h4>
+                        <small class="text-muted">Cybersecurity Education & Compliance</small>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Security awareness, compliance guidance, and threat intelligence</p>
+                        <div class="command-list">
+                            <code>/dailygem</code> - Daily security tip<br>
+                            <code>/news</code> - Latest security news<br>
+                            <code>/privacy</code> - Privacy protection guide<br>
+                            <code>/gdpr</code> - GDPR compliance<br>
+                            <code>/monitor</code> - Security monitoring<br>
+                            <code>/riskcheck</code> - Risk assessment<br>
+                            <code>/consult</code> - Book consultation<br>
+                            <code>/tools</code> - Security tools<br>
+                            <code>/library</code> - Knowledge base<br>
+                            <code>/train</code> - Training programs
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- GemCyberAssist Bot -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-success">
+                    <div class="card-header bg-success bg-opacity-10">
+                        <h4><i class="fas fa-hands-helping me-2"></i>@GemCyberAssist_bot</h4>
+                        <small class="text-muted">Client Service Assistant</small>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Dedicated client support for recovery cases and personal assistance</p>
+                        <div class="command-list">
+                            <code>/start</code> - Client welcome<br>
+                            <code>/help</code> - Available commands<br>
+                            <code>/submitcase</code> - Recovery case intake<br>
+                            <code>/dashboard</code> - Personal dashboard<br>
+                            <code>/kyc</code> - Verification process<br>
+                            <code>/book</code> - Personal consultation<br>
+                            <code>/contact</code> - Direct support
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Real Estate Bot -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-warning">
+                    <div class="card-header bg-warning bg-opacity-10">
+                        <h4><i class="fas fa-building me-2"></i>@realestatechannel_bot</h4>
+                        <small class="text-muted">Real Estate Services & Content</small>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Property management, market updates, and investment opportunities</p>
+                        <div class="command-list">
+                            <code>/updates</code> - Market updates<br>
+                            <code>/services</code> - Real estate services<br>
+                            <code>/book</code> - Schedule viewing<br>
+                            <code>/submitcase</code> - Property inquiry<br>
+                            <code>/dashboard</code> - Property portal<br>
+                            <code>/refer</code> - Referral rewards<br>
+                            <code>/contact</code> - Contact realty team
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Integration Status -->
+        <div class="row mt-5">
+            <div class="col-lg-10 mx-auto">
+                <div class="card bg-dark border-info">
+                    <div class="card-body">
+                        <h4 class="mb-3"><i class="fas fa-plug me-2"></i>Platform Integrations</h4>
+                        <div class="row">
+                            <div class="col-md-3 text-center">
+                                <i class="fas fa-link fa-2x text-primary mb-2"></i>
+                                <h6>Make.com</h6>
+                                <small>Workflow automation</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <i class="fas fa-database fa-2x text-success mb-2"></i>
+                                <h6>Notion</h6>
+                                <small>Case management</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <i class="fas fa-tasks fa-2x text-warning mb-2"></i>
+                                <h6>Trello</h6>
+                                <small>Task tracking</small>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <i class="fas fa-wpforms fa-2x text-info mb-2"></i>
+                                <h6>Typeform</h6>
+                                <small>Data collection</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Cybersecurity Automation Section -->
+<section class="py-5 bg-gradient-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-shield-alt text-primary me-3"></i>
+                    Cybersecurity Automation
+                </h2>
+                <p class="lead">Real-time threat detection and response through intelligent bot automation</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Security Bot Features -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-danger">
+                    <div class="card-header bg-danger bg-opacity-10">
+                        <h4><i class="fas fa-exclamation-triangle me-2"></i>Threat Detection Bot</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="feature-list">
+                            <li><strong>Real-Time Alerts:</strong> Instant notifications for security breaches</li>
+                            <li><strong>Network Monitoring:</strong> 24/7 surveillance of network traffic</li>
+                            <li><strong>Malware Detection:</strong> AI-powered malware identification</li>
+                            <li><strong>Vulnerability Scanning:</strong> Automated security assessments</li>
+                            <li><strong>Incident Response:</strong> Automated containment procedures</li>
+                            <li><strong>Log Analysis:</strong> Pattern recognition in security logs</li>
+                        </ul>
+                        <div class="alert alert-danger mt-3">
+                            <small><i class="fas fa-info-circle me-2"></i>Average response time: &lt;30 seconds</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Commands -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-info">
+                    <div class="card-header bg-info bg-opacity-10">
+                        <h4><i class="fas fa-terminal me-2"></i>Security Bot Commands</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="command-list">
+                            <div class="command-item mb-3">
+                                <code>/scan_network</code>
+                                <p class="mb-1">Initiate comprehensive network security scan</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/threat_report</code>
+                                <p class="mb-1">Generate real-time threat assessment report</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/block_ip [address]</code>
+                                <p class="mb-1">Instantly block suspicious IP addresses</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/incident_log</code>
+                                <p class="mb-1">View recent security incidents</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/enable_firewall</code>
+                                <p class="mb-1">Activate enhanced firewall protection</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/backup_critical</code>
+                                <p class="mb-1">Initiate emergency data backup</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Automation Workflow -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-dark border-primary">
+                    <div class="card-body">
+                        <h4 class="mb-4"><i class="fas fa-project-diagram me-2"></i>Security Automation Workflow</h4>
+                        <div class="workflow-timeline">
+                            <div class="workflow-step">
+                                <div class="step-number">1</div>
+                                <h5>Detection</h5>
+                                <p>AI monitors network activity and identifies anomalies</p>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-number">2</div>
+                                <h5>Analysis</h5>
+                                <p>Threat assessment and risk evaluation</p>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-number">3</div>
+                                <h5>Alert</h5>
+                                <p>Instant Telegram notification to security team</p>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-number">4</div>
+                                <h5>Response</h5>
+                                <p>Automated containment and mitigation</p>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-number">5</div>
+                                <h5>Report</h5>
+                                <p>Detailed incident report and recommendations</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Real Estate Management Automation -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-building text-success me-3"></i>
+                    Real Estate Management Automation
+                </h2>
+                <p class="lead">Streamlined property management through intelligent automation</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Property Management Bot -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-success">
+                    <div class="card-header bg-success bg-opacity-10">
+                        <h4><i class="fas fa-home me-2"></i>Property Management Bot</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="feature-list">
+                            <li><strong>Listing Updates:</strong> Automatic property listing management</li>
+                            <li><strong>Tenant Communication:</strong> Automated tenant inquiries and responses</li>
+                            <li><strong>Maintenance Requests:</strong> Track and dispatch maintenance tasks</li>
+                            <li><strong>Payment Reminders:</strong> Automated rent collection notifications</li>
+                            <li><strong>Showing Scheduler:</strong> AI-powered appointment scheduling</li>
+                            <li><strong>Document Management:</strong> Digital lease and contract handling</li>
+                            <li><strong>Market Analysis:</strong> Real-time property valuation updates</li>
+                            <li><strong>Virtual Tours:</strong> Automated virtual property showcases</li>
+                        </ul>
+                        <div class="alert alert-success mt-3">
+                            <small><i class="fas fa-chart-line me-2"></i>95% tenant satisfaction rate</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real Estate Commands -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-warning">
+                    <div class="card-header bg-warning bg-opacity-10">
+                        <h4><i class="fas fa-key me-2"></i>Real Estate Bot Commands</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="command-list">
+                            <div class="command-item mb-3">
+                                <code>/property_list</code>
+                                <p class="mb-1">View all available properties</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/schedule_viewing [property_id]</code>
+                                <p class="mb-1">Book property viewing appointment</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/tenant_status [unit]</code>
+                                <p class="mb-1">Check tenant payment and lease status</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/maintenance_request</code>
+                                <p class="mb-1">Submit maintenance ticket</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/market_analysis [area]</code>
+                                <p class="mb-1">Get real-time market insights</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/generate_lease [tenant_id]</code>
+                                <p class="mb-1">Create digital lease agreement</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/revenue_report</code>
+                                <p class="mb-1">Monthly revenue analytics</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Property Automation Features -->
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card bg-dark border-primary h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                        <h5>Automated Scheduling</h5>
+                        <p>Smart scheduling for viewings, inspections, and maintenance</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card bg-dark border-info h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-contract fa-3x text-info mb-3"></i>
+                        <h5>Digital Documentation</h5>
+                        <p>Paperless lease agreements and automated contract management</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card bg-dark border-success h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
+                        <h5>Analytics Dashboard</h5>
+                        <p>Real-time occupancy rates and revenue tracking</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Asset Recovery Automation -->
+<section class="py-5 bg-gradient-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-coins text-warning me-3"></i>
+                    Digital Asset Recovery Automation
+                </h2>
+                <p class="lead">Advanced blockchain analysis and cryptocurrency recovery solutions</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Asset Recovery Bot -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-warning">
+                    <div class="card-header bg-warning bg-opacity-10">
+                        <h4><i class="fas fa-search-dollar me-2"></i>Asset Recovery Bot</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="feature-list">
+                            <li><strong>Blockchain Tracking:</strong> Multi-chain transaction analysis</li>
+                            <li><strong>Wallet Investigation:</strong> Deep wallet forensics and clustering</li>
+                            <li><strong>Exchange Monitoring:</strong> Track funds across 200+ exchanges</li>
+                            <li><strong>Smart Contract Analysis:</strong> DeFi protocol investigation</li>
+                            <li><strong>NFT Recovery:</strong> Track and recover stolen NFTs</li>
+                            <li><strong>Legal Documentation:</strong> Automated evidence compilation</li>
+                            <li><strong>Recovery Strategies:</strong> AI-powered recovery planning</li>
+                            <li><strong>Risk Assessment:</strong> Real-time recovery probability analysis</li>
+                        </ul>
+                        <div class="alert alert-warning mt-3">
+                            <small><i class="fas fa-trophy me-2"></i>85% successful recovery rate</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recovery Commands -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-danger">
+                    <div class="card-header bg-danger bg-opacity-10">
+                        <h4><i class="fas fa-terminal me-2"></i>Recovery Bot Commands</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="command-list">
+                            <div class="command-item mb-3">
+                                <code>/track_wallet [address]</code>
+                                <p class="mb-1">Monitor wallet activity and transactions</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/analyze_tx [hash]</code>
+                                <p class="mb-1">Deep dive transaction analysis</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/recovery_case [case_id]</code>
+                                <p class="mb-1">Check recovery case status</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/exchange_trace [address]</code>
+                                <p class="mb-1">Trace funds to exchange deposits</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/fraud_report</code>
+                                <p class="mb-1">File automated fraud report</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/recovery_probability</code>
+                                <p class="mb-1">Calculate recovery success rate</p>
+                            </div>
+                            <div class="command-item mb-3">
+                                <code>/legal_package</code>
+                                <p class="mb-1">Generate legal recovery documentation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recovery Process -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-dark border-warning">
+                    <div class="card-body">
+                        <h4 class="mb-4"><i class="fas fa-route me-2"></i>Asset Recovery Process</h4>
+                        <div class="recovery-process">
+                            <div class="row">
+                                <div class="col-md-3 text-center mb-4">
+                                    <div class="process-step">
+                                        <i class="fas fa-fingerprint fa-3x text-warning mb-3"></i>
+                                        <h5>Identification</h5>
+                                        <p>Blockchain forensics to identify stolen assets</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center mb-4">
+                                    <div class="process-step">
+                                        <i class="fas fa-map-marked-alt fa-3x text-warning mb-3"></i>
+                                        <h5>Tracking</h5>
+                                        <p>Real-time monitoring across multiple chains</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center mb-4">
+                                    <div class="process-step">
+                                        <i class="fas fa-balance-scale fa-3x text-warning mb-3"></i>
+                                        <h5>Legal Action</h5>
+                                        <p>Automated legal documentation and filing</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center mb-4">
+                                    <div class="process-step">
+                                        <i class="fas fa-hand-holding-usd fa-3x text-warning mb-3"></i>
+                                        <h5>Recovery</h5>
+                                        <p>Asset retrieval and secure transfer</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Integration Features -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-plug text-info me-3"></i>
+                    Advanced Integration Features
+                </h2>
+                <p class="lead">Seamless connectivity with enterprise systems</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- API Integration -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card bg-dark border-info h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-code fa-3x text-info mb-3"></i>
+                        <h5>API Integration</h5>
+                        <ul class="list-unstyled mt-3">
+                            <li>RESTful API</li>
+                            <li>WebSocket Support</li>
+                            <li>GraphQL Endpoints</li>
+                            <li>Webhook Automation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multi-Platform -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card bg-dark border-success h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-share-alt fa-3x text-success mb-3"></i>
+                        <h5>Multi-Platform</h5>
+                        <ul class="list-unstyled mt-3">
+                            <li>Telegram Groups</li>
+                            <li>Private Channels</li>
+                            <li>Web Dashboard</li>
+                            <li>Mobile Apps</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card bg-dark border-danger h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-lock fa-3x text-danger mb-3"></i>
+                        <h5>Security Features</h5>
+                        <ul class="list-unstyled mt-3">
+                            <li>End-to-End Encryption</li>
+                            <li>2FA Authentication</li>
+                            <li>Role-Based Access</li>
+                            <li>Audit Logging</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card bg-dark border-warning h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-pie fa-3x text-warning mb-3"></i>
+                        <h5>Analytics & Reports</h5>
+                        <ul class="list-unstyled mt-3">
+                            <li>Real-Time Metrics</li>
+                            <li>Custom Reports</li>
+                            <li>Predictive Analytics</li>
+                            <li>Data Export</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="py-5 bg-gradient-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-tags text-primary me-3"></i>
+                    Bot Automation Packages
+                </h2>
+                <p class="lead">Choose the perfect automation solution for your needs</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Security Package -->
+            <div class="col-lg-4 mb-4">
+                <div class="card bg-dark border-danger h-100">
+                    <div class="card-header bg-danger text-white text-center">
+                        <h4>Security Automation</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <h2 class="text-danger">$2,999<small>/month</small></h2>
+                        </div>
+                        <ul class="feature-list">
+                            <li>24/7 Threat Monitoring Bot</li>
+                            <li>Incident Response Automation</li>
+                            <li>Network Security Scanning</li>
+                            <li>Real-time Alerts</li>
+                            <li>Security Reports</li>
+                            <li>10 User Licenses</li>
+                        </ul>
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('contact') }}" class="btn btn-danger btn-lg w-100">
+                                Get Started
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real Estate Package -->
+            <div class="col-lg-4 mb-4">
+                <div class="card bg-dark border-success h-100">
+                    <div class="card-header bg-success text-white text-center">
+                        <h4>Real Estate Management</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <h2 class="text-success">$1,999<small>/month</small></h2>
+                        </div>
+                        <ul class="feature-list">
+                            <li>Property Management Bot</li>
+                            <li>Tenant Communication</li>
+                            <li>Automated Scheduling</li>
+                            <li>Payment Processing</li>
+                            <li>Market Analytics</li>
+                            <li>Unlimited Properties</li>
+                        </ul>
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('contact') }}" class="btn btn-success btn-lg w-100">
+                                Get Started
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recovery Package -->
+            <div class="col-lg-4 mb-4">
+                <div class="card bg-dark border-warning h-100">
+                    <div class="card-header bg-warning text-dark text-center">
+                        <h4>Asset Recovery</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <h2 class="text-warning">15%<small> success fee</small></h2>
+                        </div>
+                        <ul class="feature-list">
+                            <li>Blockchain Analysis Bot</li>
+                            <li>Multi-chain Tracking</li>
+                            <li>Exchange Investigation</li>
+                            <li>Legal Documentation</li>
+                            <li>Recovery Planning</li>
+                            <li>No Upfront Costs</li>
+                        </ul>
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('contact') }}" class="btn btn-warning btn-lg w-100">
+                                Get Started
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enterprise Package -->
+        <div class="row mt-5">
+            <div class="col-lg-10 mx-auto">
+                <div class="card bg-gradient-primary border-0">
+                    <div class="card-body p-5">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h3 class="text-white mb-3">
+                                    <i class="fas fa-crown me-2"></i>Enterprise All-In-One Solution
+                                </h3>
+                                <p class="text-white mb-0">
+                                    Complete automation suite including all three bot systems, priority support, 
+                                    custom integrations, and dedicated account management.
+                                </p>
+                            </div>
+                            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                                <a href="{{ url_for('contact') }}" class="btn btn-light btn-lg">
+                                    <i class="fas fa-phone me-2"></i>Contact Sales
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto text-center">
+                <h2 class="mb-4">Ready to Automate Your Operations?</h2>
+                <p class="lead mb-4">
+                    Join hundreds of businesses leveraging our Telegram bot automation to streamline 
+                    operations, enhance security, and recover lost assets.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Start Free Trial
+                    </a>
+                    <a href="https://t.me/GEMEnterpriseBot" target="_blank" class="btn btn-outline-info btn-lg">
+                        <i class="fab fa-telegram me-2"></i>Try Demo Bot
+                    </a>
+                    <a href="/telegram/bot-setup" class="btn btn-outline-warning btn-lg">
+                        <i class="fas fa-cog me-2"></i>Setup Guide
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Telegram Page Specific Styles */
+.workflow-timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding: 20px 0;
+}
+
+.workflow-timeline::before {
+    content: '';
+    position: absolute;
+    top: 35px;
+    left: 50px;
+    right: 50px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+}
+
+.workflow-step {
+    position: relative;
+    text-align: center;
+    flex: 1;
+    padding: 0 10px;
+}
+
+.workflow-step .step-number {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.command-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.command-item {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.command-item code {
+    color: var(--primary-color);
+    font-size: 16px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.stat-box {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+}
+
+.process-step {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    height: 100%;
+}
+
+.recovery-process {
+    background: rgba(255, 193, 7, 0.05);
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-list li:last-child {
+    border-bottom: none;
+}
+
+.bg-gradient-dark {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+/* Scrollbar styling for command list */
+.command-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.command-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.command-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.command-list::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+</style>
+{% endblock %}
