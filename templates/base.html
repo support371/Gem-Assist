@@ -31,6 +31,8 @@
     <link href="{{ url_for('static', filename='css/animations.css') }}" rel="stylesheet">
     <!-- Performance CSS -->
     <link href="{{ url_for('static', filename='css/performance.css') }}" rel="stylesheet">
+    <!-- News Modern CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news-modern.css') }}">
 </head>
 <body>
     <!-- Navigation -->
@@ -166,7 +168,7 @@
                     </h5>
                     <p class="text-muted small">Working with world-class organizations to deliver excellence</p>
                 </div>
-                
+
                 <div class="partners-slider-container">
                     <div class="partners-slider" id="partnersSlider">
                         <!-- Partners will be dynamically loaded here -->
@@ -353,7 +355,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Partners Slider Script -->
     <script>
     // Trusted Partners and Business Allies Data
@@ -435,7 +437,7 @@
     // Initialize Partners Slider
     document.addEventListener('DOMContentLoaded', function() {
         const sliderContainer = document.getElementById('partnersSlider');
-        
+
         if (sliderContainer) {
             // Create two sets for seamless infinite loop
             const createPartnerCards = () => {
@@ -453,38 +455,38 @@
                     </div>
                 `).join('');
             };
-            
+
             // Add two sets for seamless loop
             sliderContainer.innerHTML = createPartnerCards() + createPartnerCards();
-            
+
             // Start auto-sliding animation
             let scrollPosition = 0;
             const scrollSpeed = 0.5; // pixels per frame
-            
+
             function autoSlide() {
                 scrollPosition += scrollSpeed;
                 sliderContainer.style.transform = `translateX(-${scrollPosition}px)`;
-                
+
                 // Reset when first set is completely scrolled
                 const cardWidth = 320; // width + margin
                 const resetPoint = trustedPartners.length * cardWidth;
-                
+
                 if (scrollPosition >= resetPoint) {
                     scrollPosition = 0;
                 }
-                
+
                 requestAnimationFrame(autoSlide);
             }
-            
+
             // Pause on hover
             sliderContainer.addEventListener('mouseenter', function() {
                 sliderContainer.style.animationPlayState = 'paused';
             });
-            
+
             sliderContainer.addEventListener('mouseleave', function() {
                 sliderContainer.style.animationPlayState = 'running';
             });
-            
+
             // Start animation
             autoSlide();
         }
