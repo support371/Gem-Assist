@@ -6,6 +6,17 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 
+# Twilio imports
+try:
+    from twilio.rest import Client as TwilioClient
+    from twilio.twiml.voice_response import VoiceResponse
+    TWILIO_AVAILABLE = True
+except ImportError:
+    TWILIO_AVAILABLE = False
+    TwilioClient = None
+    VoiceResponse = None
+    logging.warning("Twilio library not available")
+
 # Try to import the original notion client for existing functionality
 try:
     from notion_client import Client as NotionClient
@@ -57,6 +68,20 @@ except ImportError:
 
 # Set up logging for debugging
 logging.basicConfig(level=logging.DEBUG)
+
+# Twilio Configuration
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
+TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER')
+TWILIO_VERIFY_SERVICE_SID = os.environ.get('TWILIO_VERIFY_SERVICE_SID')
+
+# Initialize Twilio client
+twilio_client = None
+if TWILIO_AVAILABLE and TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+    twilio_client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    logging.info("Twilio client initialized successfully")
+else:
+    logging.warning("Twilio client not configured")
 
 # Import GEM Telegram Workflow Bots
 try:
@@ -1120,6 +1145,191 @@ def api_cached_content():
         return jsonify(cached)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# Twilio Service Endpoints
+@app.route('/api/twilio/send-sms', methods=['POST'])
+def twilio_send_sms():
+    """Send SMS via Twilio"""
+    if not twilio_client:
+        return jsonify({'error': 'Twilio not configured'}), 503
+    
+    try:
+        data = request.get_json()
+        to_number = data.get('to')
+        message = data.get('message')
+        
+        if not to_number or not message:
+            return jsonify({'error': 'Phone number and message required'}), 400
+        
+        result = twilio_client.messages.create(
+            body=message,
+            from_=TWILIO_PHONE_NUMBER,
+            to=to_number
+        )
+        
+        return jsonify({
+            'status': 'SMS sent',
+            'sid': result.sid,
+            'to': to_number
+        })
+    except Exception as e:
+        logging.error(f"SMS send error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/twilio/send-whatsapp', methods=['POST'])
+def twilio_send_whatsapp():
+    """Send WhatsApp message via Twilio"""
+    if not twilio_client:
+        return jsonify({'error': 'Twilio not configured'}), 503
+    
+    try:
+        data = request.get_json()
+        to_number = data.get('to')
+        message = data.get('message')
+        
+        if not to_number or not message:
+            return jsonify({'error': 'Phone number and message required'}), 400
+        
+        result = twilio_client.messages.create(
+            body=message,
+            from_=f"whatsapp:{TWILIO_PHONE_NUMBER}",
+            to=f"whatsapp:{to_number}"
+        )
+        
+        return jsonify({
+            'status': 'WhatsApp sent',
+            'sid': result.sid,
+            'to': to_number
+        })
+    except Exception as e:
+        logging.error(f"WhatsApp send error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/twilio/make-call', methods=['POST'])
+def twilio_make_call():
+    """Initiate voice call via Twilio"""
+    if not twilio_client:
+        return jsonify({'error': 'Twilio not configured'}), 503
+    
+    try:
+        data = request.get_json()
+        to_number = data.get('to')
+        message = data.get('message', 'Hello from GEM Enterprise')
+        
+        if not to_number:
+            return jsonify({'error': 'Phone number required'}), 400
+        
+        # Create TwiML URL for the call
+        twiml_url = f"{request.url_root}api/twilio/voice-twiml?message={message}"
+        
+        call = twilio_client.calls.create(
+            url=twiml_url,
+            to=to_number,
+            from_=TWILIO_PHONE_NUMBER
+        )
+        
+        return jsonify({
+            'status': 'Call initiated',
+            'sid': call.sid,
+            'to': to_number
+        })
+    except Exception as e:
+        logging.error(f"Call initiation error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/twilio/voice-twiml')
+def twilio_voice_twiml():
+    """Generate TwiML for voice calls"""
+    message = request.args.get('message', 'Hello from GEM Enterprise')
+    
+    response = VoiceResponse()
+    response.say(message, voice='alice', language='en-US')
+    response.pause(length=1)
+    response.say('Thank you for using GEM Enterprise services. Goodbye.', voice='alice')
+    
+    return str(response), 200, {'Content-Type': 'text/xml'}
+
+@app.route('/api/twilio/verify-phone', methods=['POST'])
+def twilio_verify_phone():
+    """Send OTP verification code"""
+    if not twilio_client or not TWILIO_VERIFY_SERVICE_SID:
+        return jsonify({'error': 'Twilio Verify not configured'}), 503
+    
+    try:
+        data = request.get_json()
+        to_number = data.get('to')
+        
+        if not to_number:
+            return jsonify({'error': 'Phone number required'}), 400
+        
+        verification = twilio_client.verify.v2.services(
+            TWILIO_VERIFY_SERVICE_SID
+        ).verifications.create(to=to_number, channel='sms')
+        
+        return jsonify({
+            'status': verification.status,
+            'to': to_number
+        })
+    except Exception as e:
+        logging.error(f"Verification error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/twilio/verify-check', methods=['POST'])
+def twilio_verify_check():
+    """Check OTP verification code"""
+    if not twilio_client or not TWILIO_VERIFY_SERVICE_SID:
+        return jsonify({'error': 'Twilio Verify not configured'}), 503
+    
+    try:
+        data = request.get_json()
+        to_number = data.get('to')
+        code = data.get('code')
+        
+        if not to_number or not code:
+            return jsonify({'error': 'Phone number and code required'}), 400
+        
+        verification_check = twilio_client.verify.v2.services(
+            TWILIO_VERIFY_SERVICE_SID
+        ).verification_checks.create(to=to_number, code=code)
+        
+        return jsonify({
+            'status': verification_check.status,
+            'valid': verification_check.status == 'approved'
+        })
+    except Exception as e:
+        logging.error(f"Verification check error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/twilio/webhook', methods=['POST'])
+def twilio_webhook():
+    """Handle incoming Twilio webhooks for SMS/Calls"""
+    try:
+        logging.info(f"Twilio webhook received: {request.form.to_dict()}")
+        
+        from_number = request.form.get('From')
+        message_body = request.form.get('Body', '')
+        
+        # Auto-respond to incoming messages
+        response = VoiceResponse()
+        response.message('Thank you for contacting GEM Enterprise. We will respond shortly.')
+        
+        return str(response), 200, {'Content-Type': 'text/xml'}
+    except Exception as e:
+        logging.error(f"Webhook error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/twilio-services')
+def twilio_services():
+    """Twilio services dashboard"""
+    services_status = {
+        'twilio_configured': bool(twilio_client),
+        'phone_number': TWILIO_PHONE_NUMBER if TWILIO_PHONE_NUMBER else 'Not configured',
+        'verify_enabled': bool(TWILIO_VERIFY_SERVICE_SID),
+        'sms_enabled': bool(twilio_client),
+        'whatsapp_enabled': bool(twilio_client),
+        'voice_enabled': bool(twilio_client)
+    }
+    return render_template('twilio_services.html', services=services_status)
 
 @app.errorhandler(404)
 def not_found_error(error):
