@@ -1,0 +1,165 @@
+# === INSTALL REQUIRED DEPENDENCIES ===
+npm install twilio @sendgrid/mail axios body-parser express cors dotenv
+
+# === CREATE ENVIRONMENT VARIABLES (.env) ===
+cat << 'EOF' > .env
+# Twilio Core
+TWILIO_ACCOUNT_SID=ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX      # <-- replace with your Account SID
+TWILIO_AUTH_TOKEN=your_auth_token                          # <-- replace with your Auth Token
+TWILIO_API_KEY_SID=SK27b72ed9717c7a6618e9e5ea719146cd      # <-- your provided API Key SID
+TWILIO_API_KEY_SECRET=your_api_key_secret                  # <-- your provided API Key Secret
+TWILIO_PHONE_NUMBER=+1XXXXXXXXXX                            # <-- your Twilio number
+TWILIO_VERIFY_SERVICE_SID=VAXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   # <-- create Verify Service in Twilio
+
+# SendGrid Email
+SENDGRID_API_KEY=SG.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX        # <-- your SendGrid API Key
+
+# Segment Tracking
+SEGMENT_WRITE_KEY=YOUR_SEGMENT_WRITE_KEY                  # <-- your Segment Write Key
+
+# Optional Webhook URLs
+TWILIO_WEBHOOK_URL=https://yourwebsite.com/twilio-webhook
+EOF
+
+# === CREATE SERVER FILE (server.js) ===
+cat << 'EOF' > server.js
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import twilio from "twilio";
+import axios from "axios";
+import sgMail from "@sendgrid/mail";
+
+dotenv.config();
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+// === Twilio Client ===
+const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+// === SendGrid Setup ===
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// === 1. Send SMS ===
+app.post("/send-sms", async (req, res) => {
+  try {
+    const { to, message } = req.body;
+    const result = await client.messages.create({
+      body: message,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to
+    });
+    res.json({ status: "SMS sent", sid: result.sid });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// === 2. Send WhatsApp Message ===
+app.post("/send-whatsapp", async (req, res) => {
+  try {
+    const { to, message } = req.body;
+    const result = await client.messages.create({
+      body: message,
+      from: "whatsapp:" + process.env.TWILIO_PHONE_NUMBER,
+      to: "whatsapp:" + to
+    });
+    res.json({ status: "WhatsApp sent", sid: result.sid });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// === 3. Make Voice Call ===
+app.post("/make-call", async (req, res) => {
+  try {
+    const { to } = req.body;
+    const call = await client.calls.create({
+      url: process.env.TWILIO_WEBHOOK_URL || "http://demo.twilio.com/docs/voice.xml",
+      to,
+      from: process.env.TWILIO_PHONE_NUMBER
+    });
+    res.json({ status: "Call initiated", sid: call.sid });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// === 4. Send Email via SendGrid ===
+app.post("/send-email", async (req, res) => {
+  try {
+    const { to, subject, message } = req.body;
+    const email = {
+      to,
+      from: "no-reply@infiniteabundance.com",
+      subject,
+      text: message,
+      html: <p>${message}</p>
+    };
+    await sgMail.send(email);
+    res.json({ status: "Email sent" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// === 5. Verify Phone Number (OTP / 2FA) ===
+app.post("/verify", async (req, res) => {
+  try {
+    const { to } = req.body;
+    const verification = await client.verify.v2
+      .services(process.env.TWILIO_VERIFY_SERVICE_SID)
+      .verifications.create({ to, channel: "sms" });
+    res.json({ status: verification.status });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// === 6. Check OTP Verification ===
+app.post("/verify-check", async (req, res) => {
+  try {
+    const { to, code } = req.body;
+    const verificationCheck = await client.verify.v2
+      .services(process.env.TWILIO_VERIFY_SERVICE_SID)
+      .verificationChecks.create({ to, code });
+    res.json({ status: verificationCheck.status });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// === 7. Segment Tracking ===
+app.post("/track-user", async (req, res) => {
+  try {
+    const { userId, event, properties } = req.body;
+    await axios.post("https://api.segment.io/v1/track", {
+      userId,
+      event,
+      properties
+    }, {
+      auth: { username: process.env.SEGMENT_WRITE_KEY, password: "" }
+    });
+    res.json({ status: "Tracked" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// === 8. Twilio Webhook for Inbound SMS/Calls ===
+app.post("/twilio-webhook", (req, res) => {
+  console.log("Incoming Twilio Webhook:", req.body);
+  res.send("<Response><Message>Thanks for reaching out! We will contact you soon.</Message></Response>");
+});
+
+// === Server Listen ===
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(✅ Twilio full service running on port ${PORT}));
+EOF
+
+# === RUN THE SERVER ===
+node server.js
+
+# === END OF AUTOMATED TWILIO SETUP WITH YOUR PROVIDED KEYS ===
