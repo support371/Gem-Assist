@@ -1,3 +1,8 @@
+"""
+This module defines the SQLAlchemy database models for the GEM Enterprise
+application. These models represent the tables in the database and are used
+to interact with the data in an object-oriented way.
+"""
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean, Enum, Date
@@ -6,6 +11,9 @@ import enum
 db = SQLAlchemy()
 
 class ServiceType(enum.Enum):
+    """
+    An enumeration of the different types of services offered.
+    """
     CYBERSECURITY = "cybersecurity"
     REAL_ESTATE = "real_estate"
     TELEGRAM_BOT = "telegram_bot"
@@ -16,12 +24,18 @@ class ServiceType(enum.Enum):
     OTHER = "other"
 
 class TestimonialStatus(enum.Enum):
+    """
+    An enumeration of the possible statuses for a testimonial.
+    """
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"
     FEATURED = "featured"
 
 class Testimonial(db.Model):
+    """
+    A testimonial submitted by a client.
+    """
     __tablename__ = 'testimonials'
     
     id = Column(Integer, primary_key=True)
@@ -59,6 +73,12 @@ class Testimonial(db.Model):
     consent_to_contact = Column(Boolean, default=False)
     
     def to_dict(self):
+        """
+        Convert the testimonial to a dictionary.
+
+        Returns:
+            dict: A dictionary representation of the testimonial.
+        """
         return {
             'id': self.id,
             'client_name': self.client_name,
@@ -76,6 +96,9 @@ class Testimonial(db.Model):
         }
 
 class ContactSubmission(db.Model):
+    """
+    A contact form submission from a user.
+    """
     __tablename__ = 'contact_submissions'
     
     id = Column(Integer, primary_key=True)
@@ -90,6 +113,9 @@ class ContactSubmission(db.Model):
     responded_at = Column(DateTime)
     
 class NewsletterSubscriber(db.Model):
+    """
+    A user who has subscribed to the newsletter.
+    """
     __tablename__ = 'newsletter_subscribers'
     
     id = Column(Integer, primary_key=True)
@@ -100,6 +126,9 @@ class NewsletterSubscriber(db.Model):
     unsubscribed_at = Column(DateTime)
 
 class VIPBoardMember(db.Model):
+    """
+    A VIP board member of the company.
+    """
     __tablename__ = 'vip_board_members'
     
     id = Column(Integer, primary_key=True)
@@ -118,6 +147,9 @@ class VIPBoardMember(db.Model):
     is_active = Column(Boolean, default=True)
 
 class BoardMember(db.Model):
+    """
+    A general board member of the company.
+    """
     __tablename__ = 'board_members'
     
     id = Column(Integer, primary_key=True)
@@ -139,6 +171,9 @@ class BoardMember(db.Model):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class Membership(db.Model):
+    """
+    A user's membership information.
+    """
     __tablename__ = 'memberships'
     
     id = Column(Integer, primary_key=True)

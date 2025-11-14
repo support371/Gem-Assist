@@ -1,7 +1,9 @@
 
 """
-GEM Enterprise - AI-Powered Media Generation Server
-Enterprise-grade endpoints for image, video, TTS, chat, and call generation
+This module provides a Flask Blueprint for an AI-powered media generation
+server. It includes endpoints for generating images, videos, text-to-speech,
+and handling AI-powered chat and voice calls. It integrates with various
+third-party services like OpenAI, ElevenLabs, Replicate, Twilio, and AWS S3.
 """
 
 import os
@@ -59,7 +61,18 @@ GENERATED_ASSETS_DIR = 'static/generated-assets'
 os.makedirs(GENERATED_ASSETS_DIR, exist_ok=True)
 
 def upload_to_s3(file_data, filename, content_type='image/png'):
-    """Upload file to S3 if configured, otherwise save locally"""
+    """
+    Upload a file to AWS S3 if configured, otherwise save it locally.
+
+    Args:
+        file_data (bytes): The file data to upload.
+        filename (str): The name of the file.
+        content_type (str, optional): The content type of the file.
+                                      Defaults to 'image/png'.
+
+    Returns:
+        str: The URL of the uploaded file.
+    """
     try:
         if s3_client and AWS_BUCKET_NAME:
             # Upload to S3
@@ -90,7 +103,17 @@ def upload_to_s3(file_data, filename, content_type='image/png'):
         return f"/static/generated-assets/{filename}"
 
 def generate_html_snippet(asset_type, url, metadata):
-    """Generate HTML snippet for the created asset"""
+    """
+    Generate an HTML snippet for a created media asset.
+
+    Args:
+        asset_type (str): The type of the asset (e.g., 'image', 'video', 'audio').
+        url (str): The URL of the asset.
+        metadata (dict): A dictionary of metadata for the asset.
+
+    Returns:
+        str: The filename of the generated HTML snippet.
+    """
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     snippet_filename = f"{asset_type}_{timestamp}.html"
     snippet_path = os.path.join(GENERATED_ASSETS_DIR, snippet_filename)
@@ -150,7 +173,17 @@ def generate_html_snippet(asset_type, url, metadata):
 
 @media_bp.route('/image', methods=['POST'])
 def generate_image():
-    """Generate image using OpenAI DALL-E"""
+    """
+    Generate an image using OpenAI's DALL-E model.
+
+    This endpoint accepts a prompt and other parameters, generates an image,
+    uploads it to S3 or saves it locally, and returns the URL and other
+    metadata.
+
+    Returns:
+        Response: A JSON response containing the URL of the generated image
+                  and other metadata.
+    """
     try:
         if not OPENAI_API_KEY:
             return jsonify({'error': 'OpenAI API key not configured'}), 500
@@ -213,7 +246,15 @@ def generate_image():
 
 @media_bp.route('/video', methods=['POST'])
 def generate_video():
-    """Generate video using Replicate (Runway Gen-2)"""
+    """
+    Generate a video using the Replicate API (Runway Gen-2).
+
+    This endpoint starts a video generation job on Replicate and returns a
+    prediction ID that can be used to check the status of the job.
+
+    Returns:
+        Response: A JSON response containing the prediction ID and status.
+    """
     try:
         if not REPLICATE_API_TOKEN:
             return jsonify({'error': 'Replicate API token not configured'}), 500
@@ -271,7 +312,16 @@ def generate_video():
 
 @media_bp.route('/video/status/<prediction_id>')
 def check_video_status(prediction_id):
-    """Check video generation status"""
+    """
+    Check the status of a video generation job on Replicate.
+
+    Args:
+        prediction_id (str): The ID of the prediction to check.
+
+    Returns:
+        Response: A JSON response containing the status of the job and, if
+                  completed, the URL of the generated video.
+    """
     try:
         if not REPLICATE_API_TOKEN:
             return jsonify({'error': 'Replicate API token not configured'}), 500
@@ -327,7 +377,17 @@ def check_video_status(prediction_id):
 
 @media_bp.route('/tts', methods=['POST'])
 def text_to_speech():
-    """Generate speech using ElevenLabs or Amazon Polly"""
+    """
+    Generate speech from text using ElevenLabs or Amazon Polly.
+
+    This endpoint accepts text and a voice preference, generates an audio file,
+    uploads it to S3 or saves it locally, and returns the URL and other
+    metadata.
+
+    Returns:
+        Response: A JSON response containing the URL of the generated audio
+                  file and other metadata.
+    """
     try:
         data = request.get_json()
         text = data.get('text', '').strip()
@@ -372,7 +432,16 @@ def text_to_speech():
         return jsonify({'error': f'Failed to generate TTS: {str(e)}'}), 500
 
 def generate_elevenlabs_tts(text, voice):
-    """Generate TTS using ElevenLabs"""
+    """
+    Generate text-to-speech audio using the ElevenLabs API.
+
+    Args:
+        text (str): The text to convert to speech.
+        voice (str): The voice to use for the speech.
+
+    Returns:
+        bytes or None: The audio data as bytes, or None if an error occurred.
+    """
     try:
         voice_map = {
             'default': 'pNInz6obpgDQGcFmaJgB',  # Adam
@@ -413,7 +482,16 @@ def generate_elevenlabs_tts(text, voice):
         return None
 
 def generate_polly_tts(text, voice):
-    """Generate TTS using Amazon Polly (fallback)"""
+    """
+    Generate text-to-speech audio using Amazon Polly as a fallback.
+
+    Args:
+        text (str): The text to convert to speech.
+        voice (str): The voice to use for the speech.
+
+    Returns:
+        bytes or None: The audio data as bytes, or None if an error occurred.
+    """
     try:
         if not (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY):
             return None
@@ -448,7 +526,16 @@ def generate_polly_tts(text, voice):
 
 @media_bp.route('/chat', methods=['POST'])
 def ai_chat():
-    """Humanized AI chat with short-term memory"""
+    """
+    Handle AI-powered chat with short-term memory.
+
+    This endpoint accepts a message and a session ID, maintains a short-term
+    memory of the conversation, and returns a response from an AI model.
+
+    Returns:
+        Response: A JSON response containing the AI's response and the
+                  session ID.
+    """
     try:
         if not OPENAI_API_KEY:
             return jsonify({'error': 'OpenAI API key not configured'}), 500
@@ -517,7 +604,15 @@ def ai_chat():
 
 @media_bp.route('/call/place', methods=['POST'])
 def place_call():
-    """Place humanized call using Twilio with TTS"""
+    """
+    Place a humanized voice call using Twilio with text-to-speech.
+
+    This endpoint accepts a phone number and a message, and uses Twilio to
+    place a call that speaks the message.
+
+    Returns:
+        Response: A JSON response containing the call SID and status.
+    """
     try:
         if not (TWILIO_SID and TWILIO_TOKEN and TWILIO_PHONE):
             return jsonify({'error': 'Twilio credentials not configured'}), 500
@@ -565,7 +660,15 @@ def place_call():
 
 @media_bp.route('/call/twiml')
 def call_twiml():
-    """Generate TwiML for Twilio call"""
+    """
+    Generate TwiML for a Twilio call.
+
+    This endpoint is called by Twilio to get the TwiML instructions for a
+    call. It retrieves the message to be spoken from the application context.
+
+    Returns:
+        Response: An XML response containing the TwiML instructions.
+    """
     try:
         call_id = request.args.get('call_id')
         
@@ -591,7 +694,12 @@ def call_twiml():
 # Health check endpoint
 @media_bp.route('/health')
 def health_check():
-    """Health check for media services"""
+    """
+    Health check endpoint for the media services.
+
+    Returns:
+        Response: A JSON response containing the status of the media services.
+    """
     services_status = {
         'openai': bool(OPENAI_API_KEY),
         'elevenlabs': bool(ELEVENLABS_KEY),

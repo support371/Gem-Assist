@@ -1,3 +1,9 @@
+"""
+This module provides a client for interacting with a Notion database, specifically
+for fetching leadership data for the GEM Enterprise website. It includes a class
+`NotionLeadershipClient` that handles the connection to Notion and data retrieval,
+as well as a standalone function for easy access to the data.
+"""
 import os
 import logging
 try:
@@ -12,7 +18,22 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 class NotionLeadershipClient:
+    """
+    A client for fetching leadership data from a Notion database.
+
+    This class handles the connection to the Notion API, queries a specific
+    database, and extracts leadership information from the pages in that
+    database.
+    """
     def __init__(self):
+        """
+        Initializes the NotionLeadershipClient.
+
+        Raises:
+            ImportError: If the `notion-client` library is not installed.
+            ValueError: If the Notion integration secret or database ID are not
+                        found in the environment variables.
+        """
         if not NOTION_AVAILABLE:
             raise ImportError("Notion client not available")
             
@@ -26,7 +47,13 @@ class NotionLeadershipClient:
         logger.info(f"Notion client initialized with database ID: {self.database_id[:8]}...")
 
     def get_leadership_data(self):
-        """Fetch leadership data from Notion database"""
+        """
+        Fetch leadership data from the Notion database.
+
+        Returns:
+            list: A list of dictionaries, where each dictionary represents a
+                  leader's information.
+        """
         try:
             # Query the database
             response = self.client.databases.query(
@@ -54,7 +81,16 @@ class NotionLeadershipClient:
             return []
 
     def _extract_leader_info(self, page):
-        """Extract leader information from a Notion page"""
+        """
+        Extract leader information from a Notion page.
+
+        Args:
+            page (dict): The Notion page object.
+
+        Returns:
+            dict or None: A dictionary containing the leader's information, or
+                          None if the page has no name.
+        """
         try:
             properties = page['properties']
             
@@ -87,7 +123,16 @@ class NotionLeadershipClient:
             return None
 
     def _get_title_property(self, properties, possible_names):
-        """Get title property value"""
+        """
+        Get the value of a title property.
+
+        Args:
+            properties (dict): The properties of the Notion page.
+            possible_names (list): A list of possible names for the property.
+
+        Returns:
+            str: The value of the title property, or an empty string if not found.
+        """
         for name in possible_names:
             if name in properties:
                 prop = properties[name]
@@ -96,7 +141,16 @@ class NotionLeadershipClient:
         return ''
 
     def _get_text_property(self, properties, possible_names):
-        """Get rich text property value"""
+        """
+        Get the value of a rich text property.
+
+        Args:
+            properties (dict): The properties of the Notion page.
+            possible_names (list): A list of possible names for the property.
+
+        Returns:
+            str: The value of the rich text property, or an empty string if not found.
+        """
         for name in possible_names:
             if name in properties:
                 prop = properties[name]
@@ -105,7 +159,16 @@ class NotionLeadershipClient:
         return ''
 
     def _get_email_property(self, properties, possible_names):
-        """Get email property value"""
+        """
+        Get the value of an email property.
+
+        Args:
+            properties (dict): The properties of the Notion page.
+            possible_names (list): A list of possible names for the property.
+
+        Returns:
+            str: The value of the email property, or an empty string if not found.
+        """
         for name in possible_names:
             if name in properties:
                 prop = properties[name]
@@ -114,7 +177,16 @@ class NotionLeadershipClient:
         return ''
 
     def _get_url_property(self, properties, possible_names):
-        """Get URL property value"""
+        """
+        Get the value of a URL property.
+
+        Args:
+            properties (dict): The properties of the Notion page.
+            possible_names (list): A list of possible names for the property.
+
+        Returns:
+            str: The value of the URL property, or an empty string if not found.
+        """
         for name in possible_names:
             if name in properties:
                 prop = properties[name]
@@ -123,7 +195,16 @@ class NotionLeadershipClient:
         return ''
 
     def _get_number_property(self, properties, possible_names):
-        """Get number property value"""
+        """
+        Get the value of a number property.
+
+        Args:
+            properties (dict): The properties of the Notion page.
+            possible_names (list): A list of possible names for the property.
+
+        Returns:
+            int or float: The value of the number property, or 0 if not found.
+        """
         for name in possible_names:
             if name in properties:
                 prop = properties[name]
@@ -132,7 +213,16 @@ class NotionLeadershipClient:
         return 0
 
     def _get_select_property(self, properties, possible_names):
-        """Get select property value"""
+        """
+        Get the value of a select property.
+
+        Args:
+            properties (dict): The properties of the Notion page.
+            possible_names (list): A list of possible names for the property.
+
+        Returns:
+            str: The value of the select property, or an empty string if not found.
+        """
         for name in possible_names:
             if name in properties:
                 prop = properties[name]
@@ -141,7 +231,17 @@ class NotionLeadershipClient:
         return ''
 
     def _get_multi_select_property(self, properties, possible_names):
-        """Get multi-select property values"""
+        """
+        Get the values of a multi-select property.
+
+        Args:
+            properties (dict): The properties of the Notion page.
+            possible_names (list): A list of possible names for the property.
+
+        Returns:
+            list: A list of the values of the multi-select property, or an empty
+                  list if not found.
+        """
         for name in possible_names:
             if name in properties:
                 prop = properties[name]
@@ -150,7 +250,16 @@ class NotionLeadershipClient:
         return []
 
     def _get_checkbox_property(self, properties, possible_names):
-        """Get checkbox property value"""
+        """
+        Get the value of a checkbox property.
+
+        Args:
+            properties (dict): The properties of the Notion page.
+            possible_names (list): A list of possible names for the property.
+
+        Returns:
+            bool: The value of the checkbox property, or False if not found.
+        """
         for name in possible_names:
             if name in properties:
                 prop = properties[name]
@@ -159,7 +268,16 @@ class NotionLeadershipClient:
         return False
 
     def _get_file_property(self, properties, possible_names):
-        """Get file property URL"""
+        """
+        Get the URL of a file property.
+
+        Args:
+            properties (dict): The properties of the Notion page.
+            possible_names (list): A list of possible names for the property.
+
+        Returns:
+            str: The URL of the file, or an empty string if not found.
+        """
         for name in possible_names:
             if name in properties:
                 prop = properties[name]
@@ -169,7 +287,15 @@ class NotionLeadershipClient:
         return ''
 
     def _has_property(self, property_name):
-        """Check if database has a specific property"""
+        """
+        Check if the database has a specific property.
+
+        Args:
+            property_name (str): The name of the property to check for.
+
+        Returns:
+            bool: True if the property exists, False otherwise.
+        """
         try:
             db_info = self.client.databases.retrieve(database_id=self.database_id)
             return property_name in db_info['properties']
@@ -177,7 +303,13 @@ class NotionLeadershipClient:
             return False
 
     def get_database_schema(self):
-        """Get database schema for debugging"""
+        """
+        Get the schema of the database for debugging purposes.
+
+        Returns:
+            dict: A dictionary representing the database schema, where the keys
+                  are property names and the values are property types.
+        """
         try:
             db_info = self.client.databases.retrieve(database_id=self.database_id)
             schema = {}
@@ -190,6 +322,13 @@ class NotionLeadershipClient:
 
 # Initialize the client
 def get_notion_client():
+    """
+    Initializes and returns a NotionLeadershipClient instance.
+
+    Returns:
+        NotionLeadershipClient or None: An instance of the NotionLeadershipClient,
+                                       or None if the client cannot be initialized.
+    """
     try:
         if not NOTION_AVAILABLE:
             logger.warning("Notion client not available")
@@ -201,7 +340,16 @@ def get_notion_client():
 
 # Standalone function for getting leadership data
 def get_leadership_data_from_notion():
-    """Get leadership data from Notion database"""
+    """
+    Fetches leadership data from the Notion database.
+
+    This is a convenience function that initializes a NotionLeadershipClient
+    and calls its get_leadership_data method.
+
+    Returns:
+        list: A list of dictionaries, where each dictionary represents a
+              leader's information.
+    """
     client = get_notion_client()
     if client:
         return client.get_leadership_data()

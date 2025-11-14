@@ -1,8 +1,10 @@
-"""
-GEM Telegram Workflow Master - Complete Bot Implementation
-Implements 5 specialized bots for GEM Enterprise operations
-"""
 
+"""
+This module implements a master handler for GEM Enterprise's Telegram workflow
+bots. It includes the `GEMWorkflowBots` class, which manages multiple specialized
+bots for different business operations, and the `GEMAutomationWorkflows` class,
+which defines predefined automation workflows.
+"""
 import os
 import json
 import logging
@@ -15,9 +17,21 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class GEMWorkflowBots:
-    """Master handler for all GEM Telegram workflow bots"""
+    """
+    A master handler for all GEM Telegram workflow bots.
+
+    This class manages the configuration and operation of multiple specialized
+    Telegram bots, routing incoming updates to the appropriate handlers and
+    providing methods for sending messages and integrating with other services.
+    """
     
     def __init__(self):
+        """
+        Initializes the GEMWorkflowBots instance.
+
+        This method sets up the bot configurations, integration endpoints,
+        broadcast channels, and data storage from environment variables.
+        """
         # Bot configuration - support for multiple bot tokens
         self.active_bot = os.environ.get('TELEGRAM_BOT_TOKEN', '')
         self.bot_configs = {
@@ -65,14 +79,36 @@ class GEMWorkflowBots:
         self.referrals = []
     
     def identify_bot(self, bot_token: str) -> Optional[str]:
-        """Identify which bot is being called based on token"""
+        """
+        Identify which bot is being called based on its token.
+
+        Args:
+            bot_token (str): The token of the bot to identify.
+
+        Returns:
+            Optional[str]: The name of the bot if found, otherwise None.
+        """
         for bot_name, config in self.bot_configs.items():
             if config['token'] == bot_token:
                 return bot_name
         return None
     
     def process_update(self, update: Dict[str, Any], bot_token: str = None) -> Dict[str, Any]:
-        """Process incoming Telegram update"""
+        """
+        Process an incoming Telegram update.
+
+        This method identifies the bot that received the update and routes it
+        to the appropriate handler.
+
+        Args:
+            update (Dict[str, Any]): The incoming Telegram update.
+            bot_token (str, optional): The token of the bot that received the
+                                       update. Defaults to the active bot token.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing the result of the update
+                            processing.
+        """
         try:
             # Identify which bot received the update
             bot_name = self.identify_bot(bot_token or self.active_bot)
@@ -102,7 +138,18 @@ class GEMWorkflowBots:
             return {'error': str(e)}
     
     def send_message(self, chat_id: str, text: str, bot_token: str = None) -> bool:
-        """Send message via Telegram API"""
+        """
+        Send a message via the Telegram API.
+
+        Args:
+            chat_id (str): The ID of the chat to send the message to.
+            text (str): The text of the message to send.
+            bot_token (str, optional): The token of the bot to send the message
+                                       with. Defaults to the active bot token.
+
+        Returns:
+            bool: True if the message was sent successfully, False otherwise.
+        """
         token = bot_token or self.active_bot
         if not token:
             logger.warning("No bot token configured")
@@ -122,7 +169,17 @@ class GEMWorkflowBots:
             return False
     
     def log_to_integration(self, service: str, data: Dict) -> bool:
-        """Log data to integrated service (Notion/Trello)"""
+        """
+        Log data to an integrated service like Notion or Trello.
+
+        Args:
+            service (str): The name of the service to log to (e.g., 'notion',
+                           'trello').
+            data (Dict): The data to log.
+
+        Returns:
+            bool: True if the data was logged successfully, False otherwise.
+        """
         webhook_url = self.integrations.get(service)
         if not webhook_url:
             return False
@@ -136,7 +193,17 @@ class GEMWorkflowBots:
     
     # @GEMAssist_bot Handlers
     def handle_gemassist(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Handle GEMAssist bot commands - Central operations"""
+        """
+        Handle commands for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         commands = {
             '/start': self.gemassist_start,
             '/help': self.gemassist_help,
@@ -156,7 +223,17 @@ class GEMWorkflowBots:
         return handler(chat_id, text, user)
     
     def gemassist_start(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /start command"""
+        """
+        Handle the /start command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         welcome = """
 <b>Welcome to GEM Enterprise Central Operations!</b> 🛡️
 
@@ -183,7 +260,17 @@ Use /submitcase to start your recovery case.
         return {'status': 'success', 'action': 'welcome_sent'}
     
     def gemassist_help(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /help command"""
+        """
+        Handle the /help command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         help_text = """
 <b>GEM Enterprise Commands:</b>
 
@@ -205,7 +292,17 @@ Use /submitcase to start your recovery case.
         return {'status': 'success'}
     
     def gemassist_services(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /services command"""
+        """
+        Handle the /services command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         services = """
 <b>GEM Enterprise Services</b> 🌟
 
@@ -234,7 +331,17 @@ Use /book for consultation.
         return {'status': 'success'}
     
     def gemassist_submitcase(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /submitcase command"""
+        """
+        Handle the /submitcase command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         intake_form = """
 <b>Submit Your Case</b> 📋
 
@@ -271,7 +378,17 @@ Or reply with your case details.
         return {'status': 'success'}
     
     def gemassist_kyc(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /kyc command"""
+        """
+        Handle the /kyc command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         kyc_info = """
 <b>KYC Verification Process</b> ✅
 
@@ -298,7 +415,17 @@ Verification typically takes 24-48 hours.
         return {'status': 'success'}
     
     def gemassist_dashboard(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /dashboard command"""
+        """
+        Handle the /dashboard command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         dashboard_link = """
 <b>Client Dashboard Access</b> 🖥️
 
@@ -318,7 +445,17 @@ Need help? Use /contact
         return {'status': 'success'}
     
     def gemassist_book(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /book command"""
+        """
+        Handle the /book command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         booking = """
 <b>Schedule Consultation</b> 📅
 
@@ -346,7 +483,17 @@ Or reply with your preferred date/time.
         return {'status': 'success'}
     
     def gemassist_toolkit(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /toolkit command"""
+        """
+        Handle the /toolkit command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         toolkit = """
 <b>Recovery Toolkit</b> 🛠️
 
@@ -368,7 +515,17 @@ Need assistance? Use /contact
         return {'status': 'success'}
     
     def gemassist_refer(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /refer command"""
+        """
+        Handle the /refer command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         referral = """
 <b>Referral Program</b> 🎁
 
@@ -400,7 +557,17 @@ Share: https://gem-enterprise.com/ref/{}
         return {'status': 'success'}
     
     def gemassist_contact(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /contact command"""
+        """
+        Handle the /contact command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         contact = """
 <b>Contact GEM Enterprise</b> 📞
 
@@ -424,7 +591,17 @@ Tech City, TC 12345
         return {'status': 'success'}
     
     def gemassist_terms(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """GEMAssist /terms command"""
+        """
+        Handle the /terms command for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         terms = """
 <b>Terms of Service</b> 📄
 
@@ -443,7 +620,17 @@ By using our services, you agree to our terms.
         return {'status': 'success'}
     
     def gemassist_default(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Default handler for GEMAssist"""
+        """
+        Default handler for the GEMAssist bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         self.send_message(chat_id, "I'll forward your message to our team. Use /help for commands.")
         
         # Log message for team review
@@ -459,7 +646,17 @@ By using our services, you agree to our terms.
     
     # @CyberGEMSecure_bot Handlers
     def handle_cybergemsecure(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Handle CyberGEMSecure bot commands - Education & Compliance"""
+        """
+        Handle commands for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         commands = {
             '/start': self.secure_start,
             '/help': self.secure_help,
@@ -484,7 +681,17 @@ By using our services, you agree to our terms.
         return handler(chat_id, text, user)
     
     def secure_start(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /start command"""
+        """
+        Handle the /start command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         welcome = """
 <b>Welcome to CyberGEM Secure!</b> 🔐
 
@@ -502,7 +709,17 @@ Use /help for all commands
         return {'status': 'success'}
     
     def secure_dailygem(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /dailygem command"""
+        """
+        Handle the /dailygem command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         daily_tip = """
 <b>Daily Security Gem</b> 💎
 
@@ -527,7 +744,17 @@ Stay secure! 🔐
         return {'status': 'success'}
     
     def secure_news(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /news command"""
+        """
+        Handle the /news command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         news = """
 <b>Latest Cybersecurity News</b> 📰
 
@@ -551,7 +778,17 @@ Full news: https://gem-secure.com/news
         return {'status': 'success'}
     
     def secure_gdpr(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /gdpr command"""
+        """
+        Handle the /gdpr command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         gdpr_info = """
 <b>GDPR Compliance Guide</b> 🇪🇺
 
@@ -575,7 +812,17 @@ Need compliance help? /consult
         return {'status': 'success'}
     
     def secure_monitor(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /monitor command"""
+        """
+        Handle the /monitor command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         monitor = """
 <b>Security Monitoring Services</b> 🔍
 
@@ -596,7 +843,17 @@ Setup: /monitor [domain/email]
         return {'status': 'success'}
     
     def secure_riskcheck(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /riskcheck command"""
+        """
+        Handle the /riskcheck command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         risk_check = """
 <b>Free Security Risk Assessment</b> 📊
 
@@ -618,7 +875,17 @@ Or reply with your domain/email for quick scan.
         return {'status': 'success'}
     
     def secure_assist(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /assist - Redirect to GemCyberAssist"""
+        """
+        Handle the /assist command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         redirect = """
 <b>Need Personal Assistance?</b> 🤝
 
@@ -637,7 +904,17 @@ Start now: @GemCyberAssist_bot
         return {'status': 'success'}
     
     def secure_tools(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /tools command"""
+        """
+        Handle the /tools command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         tools = """
 <b>Security Tools & Resources</b> 🛠️
 
@@ -662,7 +939,17 @@ Upgrade: /services
         return {'status': 'success'}
     
     def secure_library(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /library command"""
+        """
+        Handle the /library command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         library = """
 <b>Security Knowledge Library</b> 📚
 
@@ -689,7 +976,17 @@ New content weekly!
         return {'status': 'success'}
     
     def secure_train(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /train command"""
+        """
+        Handle the /train command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         training = """
 <b>Security Training Programs</b> 🎓
 
@@ -714,7 +1011,17 @@ Group discounts available!
         return {'status': 'success'}
     
     def secure_privacy(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /privacy command"""
+        """
+        Handle the /privacy command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         privacy = """
 <b>Privacy Protection Guide</b> 🔒
 
@@ -740,7 +1047,17 @@ Protect your digital footprint!
         return {'status': 'success'}
     
     def secure_about(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /about command"""
+        """
+        Handle the /about command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         about = """
 <b>About CyberGEM Secure</b> 🌟
 
@@ -767,7 +1084,17 @@ Learn more: https://gem-secure.com
         return {'status': 'success'}
     
     def secure_services(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /services command"""
+        """
+        Handle the /services command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         services = """
 <b>CyberGEM Security Services</b> 💼
 
@@ -790,7 +1117,17 @@ Contact sales: /contact
         return {'status': 'success'}
     
     def secure_consult(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /consult command"""
+        """
+        Handle the /consult command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         consult = """
 <b>Book Security Consultation</b> 📅
 
@@ -815,7 +1152,17 @@ Reply with preferred date/time.
         return {'status': 'success'}
     
     def secure_contact(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /contact command"""
+        """
+        Handle the /contact command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         contact = """
 <b>Contact CyberGEM Secure</b> 📞
 
@@ -839,7 +1186,17 @@ Emergency: 24/7/365
         return {'status': 'success'}
     
     def secure_help(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """CyberGEMSecure /help command"""
+        """
+        Handle the /help command for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         help_text = """
 <b>CyberGEM Secure Commands:</b>
 
@@ -870,19 +1227,52 @@ Emergency: 24/7/365
         return {'status': 'success'}
     
     def secure_default(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Default handler for CyberGEMSecure"""
+        """
+        Default handler for the CyberGEMSecure bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         self.send_message(chat_id, "Thanks for your message. Use /help for available commands.")
         return {'status': 'success'}
     
     # @GemCyberAssist_bot Handlers
     def handle_cyberassist(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Handle GemCyberAssist bot - Mirrors GEMAssist with focus on recovery"""
+        """
+        Handle commands for the GemCyberAssist bot.
+
+        This bot mirrors the functionality of the GEMAssist bot with a focus on
+        recovery services.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         # Uses same commands as GEMAssist but with recovery focus
         return self.handle_gemassist(chat_id, text, user)
     
     # @realestatechannel_bot Handlers  
     def handle_realestate(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Handle Real Estate bot commands"""
+        """
+        Handle commands for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         commands = {
             '/start': self.realestate_start,
             '/help': self.realestate_help,
@@ -901,7 +1291,17 @@ Emergency: 24/7/365
         return handler(chat_id, text, user)
     
     def realestate_start(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /start command"""
+        """
+        Handle the /start command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         welcome = """
 <b>Welcome to GEM Real Estate Channel!</b> 🏢
 
@@ -919,7 +1319,17 @@ Use /help for all commands
         return {'status': 'success'}
     
     def realestate_updates(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /updates command"""
+        """
+        Handle the /updates command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         updates = """
 <b>Real Estate Market Update</b> 📊
 
@@ -946,7 +1356,17 @@ Full report: https://gem-realty.com/market
         return {'status': 'success'}
     
     def realestate_services(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /services command"""
+        """
+        Handle the /services command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         services = """
 <b>GEM Real Estate Services</b> 🏗️
 
@@ -974,7 +1394,17 @@ Contact us: /book
         return {'status': 'success'}
     
     def realestate_book(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /book command"""
+        """
+        Handle the /book command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         booking = """
 <b>Schedule Real Estate Consultation</b> 📅
 
@@ -995,7 +1425,17 @@ Reply with property address for quick evaluation.
         return {'status': 'success'}
     
     def realestate_submitcase(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /submitcase command"""
+        """
+        Handle the /submitcase command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         submit = """
 <b>Submit Property Inquiry</b> 🏠
 
@@ -1015,7 +1455,17 @@ Or reply with details.
         return {'status': 'success'}
     
     def realestate_dashboard(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /dashboard command"""
+        """
+        Handle the /dashboard command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         dashboard = """
 <b>Property Dashboard</b> 💻
 
@@ -1035,7 +1485,17 @@ Need help? /contact
         return {'status': 'success'}
     
     def realestate_contact(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /contact command"""
+        """
+        Handle the /contact command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         contact = """
 <b>Contact GEM Real Estate</b> 📞
 
@@ -1059,7 +1519,17 @@ Sunday: 11 AM - 5 PM
         return {'status': 'success'}
     
     def realestate_refer(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /refer command"""
+        """
+        Handle the /refer command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         refer = """
 <b>Real Estate Referral Program</b> 🎁
 
@@ -1082,7 +1552,17 @@ Track earnings: /dashboard
         return {'status': 'success'}
     
     def realestate_terms(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /terms command"""
+        """
+        Handle the /terms command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         terms = """
 <b>Real Estate Terms of Service</b> 📄
 
@@ -1105,7 +1585,17 @@ Questions? /contact
         return {'status': 'success'}
     
     def realestate_help(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Real Estate /help command"""
+        """
+        Handle the /help command for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         help_text = """
 <b>Real Estate Bot Commands:</b>
 
@@ -1127,19 +1617,49 @@ Questions? /contact
         return {'status': 'success'}
     
     def realestate_default(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Default handler for Real Estate bot"""
+        """
+        Default handler for the Real Estate bot.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         self.send_message(chat_id, "Thank you for your interest. Use /help for available commands.")
         return {'status': 'success'}
     
     # Default handler for unknown bots
     def handle_default(self, chat_id: str, text: str, user: Dict) -> Dict:
-        """Default handler for unidentified bots"""
+        """
+        Default handler for unidentified bots.
+
+        Args:
+            chat_id (str): The ID of the chat.
+            text (str): The text of the message.
+            user (Dict): The user who sent the message.
+
+        Returns:
+            Dict: A dictionary containing the result of the command processing.
+        """
         self.send_message(chat_id, "Welcome to GEM Enterprise. Please use /help for available commands.")
         return {'status': 'success'}
 
     # RSS Feed Integration
     def process_rss_feed(self, feed_url: str, bot_name: str, channel: str) -> bool:
-        """Process RSS feed and broadcast to channel"""
+        """
+        Process an RSS feed and broadcast new entries to a Telegram channel.
+
+        Args:
+            feed_url (str): The URL of the RSS feed.
+            bot_name (str): The name of the bot to use for broadcasting.
+            channel (str): The name of the channel to broadcast to.
+
+        Returns:
+            bool: True if the feed was processed successfully, False otherwise.
+        """
         try:
             import feedparser
             feed = feedparser.parse(feed_url)
@@ -1167,7 +1687,17 @@ Read more: {entry.link}
     
     # Scheduled Posts
     def send_scheduled_post(self, bot_name: str, post_type: str) -> bool:
-        """Send scheduled motivational or educational posts"""
+        """
+        Send a scheduled motivational or educational post.
+
+        Args:
+            bot_name (str): The name of the bot to send the post with.
+            post_type (str): The type of post to send (e.g., 'motivation', 'tip',
+                             'market').
+
+        Returns:
+            bool: True if the post was sent successfully, False otherwise.
+        """
         posts = {
             'motivation': """
 💎 <b>Daily Motivation</b>
@@ -1208,11 +1738,18 @@ Time to explore investment opportunities!
 
 # Workflow automation classes
 class GEMAutomationWorkflows:
-    """Predefined automation workflows for GEM bots"""
+    """
+    A class that defines predefined automation workflows for GEM bots.
+    """
     
     @staticmethod
     def intake_workflow():
-        """Client intake automation workflow"""
+        """
+        Returns the client intake automation workflow.
+
+        Returns:
+            Dict: A dictionary representing the client intake workflow.
+        """
         return {
             'name': 'Client Intake',
             'triggers': ['form_submission', 'bot_command', 'email_received'],
@@ -1228,7 +1765,12 @@ class GEMAutomationWorkflows:
     
     @staticmethod
     def kyc_workflow():
-        """KYC verification workflow"""
+        """
+        Returns the KYC verification workflow.
+
+        Returns:
+            Dict: A dictionary representing the KYC verification workflow.
+        """
         return {
             'name': 'KYC Verification',
             'triggers': ['kyc_initiated', 'documents_uploaded'],
@@ -1244,7 +1786,12 @@ class GEMAutomationWorkflows:
     
     @staticmethod
     def recovery_workflow():
-        """Asset recovery workflow"""
+        """
+        Returns the asset recovery workflow.
+
+        Returns:
+            Dict: A dictionary representing the asset recovery workflow.
+        """
         return {
             'name': 'Asset Recovery',
             'triggers': ['case_submitted', 'evidence_received'],
@@ -1260,7 +1807,12 @@ class GEMAutomationWorkflows:
     
     @staticmethod 
     def rss_broadcast_workflow():
-        """RSS to channel broadcast workflow"""
+        """
+        Returns the RSS to channel broadcast workflow.
+
+        Returns:
+            Dict: A dictionary representing the RSS broadcast workflow.
+        """
         return {
             'name': 'RSS Broadcast',
             'triggers': ['rss_update', 'scheduled_time'],
