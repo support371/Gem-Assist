@@ -1,6 +1,8 @@
 """
-Notion CMS Integration for GEM Enterprise
-Comprehensive content management system using Notion as a backend
+This module provides a comprehensive content management system (CMS) using
+Notion as a backend. It includes the `NotionCMS` class, which handles the
+connection to Notion, content creation, retrieval, and management. It also
+provides standalone functions for easy access to different types of content.
 """
 
 import os
@@ -20,9 +22,21 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 class NotionCMS:
-    """Complete Notion CMS for managing website content"""
+    """
+    A complete Notion-based CMS for managing website content.
+
+    This class handles the connection to the Notion API, provides methods for
+    creating and managing content databases, and allows for the creation,
+    retrieval, and updating of content within a Notion database.
+    """
     
     def __init__(self):
+        """
+        Initializes the NotionCMS instance.
+
+        This method sets up the Notion client using the integration secret and
+        database ID from the environment variables.
+        """
         if not NOTION_AVAILABLE:
             logger.warning("Notion client not available - CMS features disabled")
             self.client = None
@@ -40,7 +54,19 @@ class NotionCMS:
         logger.info("Notion CMS initialized successfully")
     
     def create_content_database(self, name: str, parent_page_id: Optional[str] = None) -> Optional[str]:
-        """Create a new database for content management"""
+        """
+        Create a new database for content management.
+
+        Args:
+            name (str): The name of the new database.
+            parent_page_id (Optional[str], optional): The ID of the parent page
+                                                      for the new database.
+                                                      Defaults to None.
+
+        Returns:
+            Optional[str]: The ID of the newly created database, or None if an
+                           error occurred.
+        """
         if not self.client:
             return None
             
@@ -130,7 +156,19 @@ class NotionCMS:
             return None
     
     def get_content(self, content_type: Optional[str] = None, status: str = "Published") -> List[Dict]:
-        """Fetch content from Notion database"""
+        """
+        Fetch content from the Notion database.
+
+        Args:
+            content_type (Optional[str], optional): The type of content to
+                                                      fetch. Defaults to None.
+            status (str, optional): The status of the content to fetch.
+                                    Defaults to "Published".
+
+        Returns:
+            List[Dict]: A list of dictionaries, where each dictionary
+                        represents a content item.
+        """
         if not self.client or not self.database_id:
             return []
             
@@ -195,23 +233,48 @@ class NotionCMS:
             return []
     
     def get_services_content(self) -> List[Dict]:
-        """Get all service-related content"""
+        """
+        Get all service-related content from the Notion database.
+
+        Returns:
+            List[Dict]: A list of dictionaries representing the services.
+        """
         return self.get_content(content_type="Service")
     
     def get_news_content(self) -> List[Dict]:
-        """Get all news and updates"""
+        """
+        Get all news and updates from the Notion database.
+
+        Returns:
+            List[Dict]: A list of dictionaries representing the news articles.
+        """
         return self.get_content(content_type="News")
     
     def get_testimonials(self) -> List[Dict]:
-        """Get all testimonials"""
+        """
+        Get all testimonials from the Notion database.
+
+        Returns:
+            List[Dict]: A list of dictionaries representing the testimonials.
+        """
         return self.get_content(content_type="Testimonial")
     
     def get_team_members(self) -> List[Dict]:
-        """Get all team member profiles"""
+        """
+        Get all team member profiles from the Notion database.
+
+        Returns:
+            List[Dict]: A list of dictionaries representing the team members.
+        """
         return self.get_content(content_type="Team Member")
     
     def get_featured_content(self) -> List[Dict]:
-        """Get all featured content across types"""
+        """
+        Get all featured content across all content types.
+
+        Returns:
+            List[Dict]: A list of dictionaries representing the featured content.
+        """
         if not self.client or not self.database_id:
             return []
             
@@ -255,7 +318,19 @@ class NotionCMS:
             return []
     
     def create_content(self, title: str, content_type: str, content: str, **kwargs) -> Optional[str]:
-        """Create new content in Notion"""
+        """
+        Create a new content page in the Notion database.
+
+        Args:
+            title (str): The title of the new content.
+            content_type (str): The type of the new content.
+            content (str): The main content of the new page.
+            **kwargs: Additional properties for the new page.
+
+        Returns:
+            Optional[str]: The ID of the newly created page, or None if an
+                           error occurred.
+        """
         if not self.client or not self.database_id:
             return None
             
@@ -359,7 +434,16 @@ class NotionCMS:
             return None
     
     def update_content(self, page_id: str, **updates) -> bool:
-        """Update existing content in Notion"""
+        """
+        Update an existing content page in the Notion database.
+
+        Args:
+            page_id (str): The ID of the page to update.
+            **updates: The properties to update.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
         if not self.client:
             return False
             
@@ -404,7 +488,16 @@ class NotionCMS:
             return False
     
     def _extract_content(self, page: Dict) -> Optional[Dict]:
-        """Extract content from a Notion page"""
+        """
+        Extract content from a Notion page object.
+
+        Args:
+            page (Dict): The Notion page object.
+
+        Returns:
+            Optional[Dict]: A dictionary containing the extracted content, or
+                            None if an error occurred.
+        """
         try:
             properties = page['properties']
             
@@ -441,7 +534,15 @@ class NotionCMS:
             return None
     
     def _extract_blocks_content(self, blocks: List[Dict]) -> str:
-        """Extract text content from Notion blocks"""
+        """
+        Extract text content from a list of Notion blocks.
+
+        Args:
+            blocks (List[Dict]): A list of Notion block objects.
+
+        Returns:
+            str: The extracted text content.
+        """
         content = []
         
         for block in blocks:
@@ -479,13 +580,31 @@ class NotionCMS:
         return "\n\n".join(content)
     
     def _get_text_from_block(self, block_data: Dict) -> str:
-        """Extract text from block data"""
+        """
+        Extract text from a Notion block's data.
+
+        Args:
+            block_data (Dict): The data of the Notion block.
+
+        Returns:
+            str: The extracted text.
+        """
         if 'rich_text' in block_data:
             return ''.join([text['plain_text'] for text in block_data['rich_text']])
         return ""
     
     def _get_property(self, properties: Dict, name: str, prop_type: str) -> Any:
-        """Get property value by type"""
+        """
+        Get the value of a property from a Notion page's properties.
+
+        Args:
+            properties (Dict): The properties of the Notion page.
+            name (str): The name of the property.
+            prop_type (str): The type of the property.
+
+        Returns:
+            Any: The value of the property, or None if not found.
+        """
         if name not in properties:
             return None
             
@@ -516,23 +635,49 @@ class NotionCMS:
 notion_cms = NotionCMS()
 
 def get_services_from_notion():
-    """Get services content from Notion"""
+    """
+    Get services content from Notion.
+
+    Returns:
+        List[Dict]: A list of dictionaries representing the services.
+    """
     return notion_cms.get_services_content()
 
 def get_news_from_notion():
-    """Get news content from Notion"""
+    """
+    Get news content from Notion.
+
+    Returns:
+        List[Dict]: A list of dictionaries representing the news articles.
+    """
     return notion_cms.get_news_content()
 
 def get_testimonials_from_notion():
-    """Get testimonials from Notion"""
+    """
+    Get testimonials from Notion.
+
+    Returns:
+        List[Dict]: A list of dictionaries representing the testimonials.
+    """
     return notion_cms.get_testimonials()
 
 def get_featured_content():
-    """Get featured content from Notion"""
+    """
+    Get featured content from Notion.
+
+    Returns:
+        List[Dict]: A list of dictionaries representing the featured content.
+    """
     return notion_cms.get_featured_content()
 
 def create_sample_content():
-    """Create sample content in Notion for demonstration"""
+    """
+    Create sample content in Notion for demonstration purposes.
+
+    Returns:
+        bool: True if the sample content was created successfully, False
+              otherwise.
+    """
     if not notion_cms.client:
         return False
     

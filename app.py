@@ -1,3 +1,11 @@
+"""
+This is the main Flask application for the GEM Enterprise website.
+
+It handles all the routing and business logic for the various services offered,
+including cybersecurity, real estate, and Telegram bot automation. It also
+integrates with a Notion CMS for content management and provides an admin
+panel for managing testimonials and other site content.
+"""
 import os
 import logging
 from datetime import datetime
@@ -68,7 +76,15 @@ except ImportError as e:
     logging.warning(f"GEM Telegram workflow bots not available: {e}")
 
 def get_notion_team_data():
-    """Fetch team member data from Notion database"""
+    """
+    Fetch team member data from a Notion database.
+
+    This function queries a Notion database for team member information,
+    extracts relevant properties, and returns a list of team members.
+
+    Returns:
+        list: A list of dictionaries, where each dictionary represents a team member.
+    """
     if not NOTION_LIBRARY_AVAILABLE or not NotionClient:
         return []
         
@@ -128,7 +144,15 @@ def get_notion_team_data():
         return []
 
 def categorize_team_members(team_members):
-    """Categorize team members into cybersecurity and real estate divisions"""
+    """
+    Categorize team members into cybersecurity and real estate divisions.
+
+    Args:
+        team_members (list): A list of team member dictionaries.
+
+    Returns:
+        tuple: A tuple containing two lists: cybersecurity_team and real_estate_team.
+    """
     cybersecurity_team = []
     real_estate_team = []
     
@@ -205,6 +229,17 @@ else:
     Membership = None
 
 def allowed_file(filename, file_type='any'):
+    """
+    Check if a filename has an allowed extension.
+
+    Args:
+        filename (str): The name of the file to check.
+        file_type (str, optional): The type of file to check ('video', 'image', or 'any').
+                                   Defaults to 'any'.
+
+    Returns:
+        bool: True if the file has an allowed extension, False otherwise.
+    """
     if file_type == 'video':
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_VIDEO_EXTENSIONS
     elif file_type == 'image':
@@ -215,17 +250,34 @@ def allowed_file(filename, file_type='any'):
 # Routes
 @app.route('/')
 def index():
-    """Home page with main services overview"""
+    """
+    Render the home page.
+
+    Returns:
+        str: The rendered HTML for the home page.
+    """
     return render_template('index.html')
 
 @app.route('/about')
 def about():
-    """About Gem Assist Enterprise"""
+    """
+    Render the about page.
+
+    Returns:
+        str: The rendered HTML for the about page.
+    """
     return render_template('about.html')
 
 @app.route('/services')
 def services():
-    """Services overview page"""
+    """
+    Render the services page.
+
+    Fetches services content from Notion if available.
+
+    Returns:
+        str: The rendered HTML for the services page.
+    """
     # Get services content from Notion if available
     notion_services = []
     if CMS_AVAILABLE:
@@ -242,18 +294,33 @@ def services():
 
 @app.route('/contact')
 def contact():
-    """Contact information and form"""
+    """
+    Render the contact page.
+
+    Returns:
+        str: The rendered HTML for the contact page.
+    """
     return render_template('contact.html')
 
 @app.route('/telegram-bot-automation')
 def telegram_bot():
-    """Telegram bot automation services"""
+    """
+    Render the Telegram bot automation page.
+
+    Returns:
+        str: The rendered HTML for the Telegram bot automation page.
+    """
     return render_template('telegram.html')
 
 # Telegram Bot Webhook Endpoints
 @app.route('/telegram/webhook', methods=['POST'])
 def telegram_webhook():
-    """Handle incoming Telegram bot updates"""
+    """
+    Handle incoming Telegram bot updates.
+
+    Returns:
+        Response: A JSON response indicating the status of the update processing.
+    """
     if not BOT_AVAILABLE:
         return jsonify({'error': 'Bot handler not available'}), 503
     
@@ -276,7 +343,12 @@ def telegram_webhook():
 
 @app.route('/make/webhook', methods=['POST'])
 def make_webhook():
-    """Handle incoming Make.com automation triggers"""
+    """
+    Handle incoming Make.com automation triggers.
+
+    Returns:
+        Response: A JSON response indicating the status of the webhook processing.
+    """
     try:
         # Get webhook data
         data = request.get_json()
@@ -311,7 +383,12 @@ def make_webhook():
 
 @app.route('/telegram/bot-setup')
 def telegram_bot_setup():
-    """Telegram bot setup instructions"""
+    """
+    Render the Telegram bot setup instructions page.
+
+    Returns:
+        str: The rendered HTML for the Telegram bot setup page.
+    """
     # Check environment variable status
     bot_token_set = bool(os.environ.get('TELEGRAM_BOT_TOKEN'))
     channel_id_set = bool(os.environ.get('TELEGRAM_CHANNEL_ID'))
@@ -324,7 +401,12 @@ def telegram_bot_setup():
 
 @app.route('/telegram/test-bot', methods=['GET'])
 def test_bot():
-    """Test bot functionality endpoint"""
+    """
+    Test bot functionality endpoint.
+
+    Returns:
+        Response: A JSON response with the bot's configuration and status.
+    """
     if not BOT_AVAILABLE:
         return jsonify({'status': 'error', 'message': 'Bot handler not available'}), 503
     
@@ -342,22 +424,42 @@ def test_bot():
 
 @app.route('/recovery-service-handbook')
 def recovery_service():
-    """Professional Asset Recovery Service Handbook"""
+    """
+    Render the Professional Asset Recovery Service Handbook page.
+
+    Returns:
+        str: The rendered HTML for the recovery service handbook page.
+    """
     return render_template('recovery-handbook.html')
 
 @app.route('/business-analysis-service')
 def business_analysis():
-    """Comprehensive Business Analysis & Integration Service"""
+    """
+    Render the Comprehensive Business Analysis & Integration Service page.
+
+    Returns:
+        str: The rendered HTML for the business analysis service page.
+    """
     return render_template('business-analysis.html')
 
 @app.route('/leadership-vision')
 def leadership_vision():
-    """Leadership Team, Vision & Mission"""
+    """
+    Render the Leadership Team, Vision & Mission page.
+
+    Returns:
+        str: The rendered HTML for the leadership vision page.
+    """
     return render_template('leadership-vision.html')
 
 @app.route('/leadership')
 def leadership():
-    """Company Leadership and Board Members"""
+    """
+    Render the Company Leadership and Board Members page.
+
+    Returns:
+        str: The rendered HTML for the leadership page.
+    """
     executives = {}
     board_members = []
     departments = {}
@@ -390,13 +492,23 @@ def leadership():
 
 @app.route('/api/leadership-data')
 def api_leadership_data():
-    """API endpoint for leadership data"""
+    """
+    API endpoint for leadership data.
+
+    Returns:
+        Response: A JSON response containing leadership data from Notion.
+    """
     leadership_data = get_leadership_data_from_notion()
     return jsonify(leadership_data)
 
 @app.route('/membership')
 def membership():
-    """Membership portal and information"""
+    """
+    Render the membership portal and information page.
+
+    Returns:
+        str: The rendered HTML for the membership page.
+    """
     membership_tiers = {
         'gold': {
             'name': 'Gold Membership',
@@ -442,7 +554,13 @@ def membership():
 
 @app.route('/apply-membership', methods=['GET', 'POST'])
 def apply_membership():
-    """Membership application form"""
+    """
+    Handle the membership application form.
+
+    Returns:
+        Response or str: A redirect to the membership page on successful submission,
+                         or the rendered HTML for the application form.
+    """
     if request.method == 'POST':
         if not USE_DATABASE:
             flash('Membership applications are temporarily unavailable.', 'error')
@@ -480,7 +598,13 @@ def apply_membership():
 
 @app.route('/admin/board-members', methods=['GET', 'POST'])
 def admin_board_members():
-    """Admin interface for managing board members"""
+    """
+    Admin interface for managing board members.
+
+    Returns:
+        Response or str: A redirect to the admin board members page on form submission,
+                         or the rendered HTML for the admin interface.
+    """
     if not USE_DATABASE:
         flash('Database not available', 'error')
         return redirect(url_for('admin_panel'))
@@ -544,7 +668,12 @@ def admin_board_members():
 
 @app.route('/admin/memberships')
 def admin_memberships():
-    """Admin interface for managing memberships"""
+    """
+    Admin interface for managing memberships.
+
+    Returns:
+        str: The rendered HTML for the admin memberships page.
+    """
     if not USE_DATABASE:
         flash('Database not available', 'error')
         return redirect(url_for('admin_panel'))
@@ -554,7 +683,15 @@ def admin_memberships():
 
 @app.route('/admin/membership/<int:id>/approve', methods=['POST'])
 def approve_membership(id):
-    """Approve a membership application"""
+    """
+    Approve a membership application.
+
+    Args:
+        id (int): The ID of the membership to approve.
+
+    Returns:
+        Response: A redirect to the admin memberships page.
+    """
     if not USE_DATABASE:
         return jsonify({'error': 'Database not configured'}), 500
     
@@ -577,27 +714,52 @@ def approve_membership(id):
 
 @app.route('/media-generator')
 def media_generator():
-    """AI Media Generator - Enterprise content creation"""
+    """
+    Render the AI Media Generator page.
+
+    Returns:
+        str: The rendered HTML for the media generator page.
+    """
     return render_template('sidebar-media.html')
 
 @app.route('/market-insights')
 def market_insights():
-    """Active Market Insights and Trends"""
+    """
+    Render the Active Market Insights and Trends page.
+
+    Returns:
+        str: The rendered HTML for the market insights page.
+    """
     return render_template('market_insights.html')
 
 @app.route('/power_of_attorney')
 def power_of_attorney():
-    """Power of Attorney services"""
+    """
+    Render the Power of Attorney services page.
+
+    Returns:
+        str: The rendered HTML for the power of attorney page.
+    """
     return render_template('power-of-attorney.html')
 
 @app.route('/monitoring-threats')
 def monitoring():
-    """Threat monitoring services"""
+    """
+    Render the Threat monitoring services page.
+
+    Returns:
+        str: The rendered HTML for the monitoring page.
+    """
     return render_template('monitoring.html')
 
 @app.route('/real-estate-testimonials')
 def testimonials():
-    """Client testimonials for real estate services"""
+    """
+    Render the client testimonials for real estate services page.
+
+    Returns:
+        str: The rendered HTML for the testimonials page.
+    """
     # Try to get testimonials from Notion first
     notion_testimonials = []
     if CMS_AVAILABLE:
@@ -624,22 +786,42 @@ def testimonials():
 
 @app.route('/partners-and-trustees')
 def partners():
-    """Partners and trustees information"""
+    """
+    Render the partners and trustees information page.
+
+    Returns:
+        str: The rendered HTML for the partners page.
+    """
     return render_template('partners.html')
 
 @app.route('/client-access')
 def client_access():
-    """Client portal access"""
+    """
+    Render the client portal access page.
+
+    Returns:
+        str: The rendered HTML for the client access page.
+    """
     return render_template('client.html')
 
 @app.route('/admin-panel')
 def admin_panel():
-    """Administrative panel"""
+    """
+    Render the administrative panel.
+
+    Returns:
+        str: The rendered HTML for the admin panel.
+    """
     return render_template('admin.html')
 
 @app.route('/gem-news-and-newsletter')
 def news():
-    """News and newsletter page"""
+    """
+    Render the news and newsletter page.
+
+    Returns:
+        str: The rendered HTML for the news page.
+    """
     # Get news from Notion if available
     notion_news = []
     if CMS_AVAILABLE:
@@ -656,7 +838,12 @@ def news():
 
 @app.route('/teams')
 def teams():
-    """Team members and structure"""
+    """
+    Render the team members and structure page.
+
+    Returns:
+        str: The rendered HTML for the teams page.
+    """
     # Try to get team members from Notion CMS first
     notion_team = []
     if CMS_AVAILABLE:
@@ -684,12 +871,22 @@ def teams():
 
 @app.route('/investment-portfolio')
 def investment_portfolio():
-    """Investment portfolio services"""
+    """
+    Render the investment portfolio services page.
+
+    Returns:
+        str: The rendered HTML for the investment portfolio page.
+    """
     return render_template('portfolio.html')
 
 @app.route('/vip-board-members')
 def vip_board():
-    """VIP Board Members - Executive Leadership"""
+    """
+    Render the VIP Board Members - Executive Leadership page.
+
+    Returns:
+        str: The rendered HTML for the VIP board members page.
+    """
     executives = {}
     if USE_DATABASE:
         # Get all VIP board members from database
@@ -709,7 +906,13 @@ def vip_board():
 
 @app.route('/submit-testimonial', methods=['GET', 'POST'])
 def submit_testimonial():
-    """Handle testimonial submission"""
+    """
+    Handle testimonial submission.
+
+    Returns:
+        Response or str: A redirect to the testimonials page on successful submission,
+                         or the rendered HTML for the submission form.
+    """
     if request.method == 'POST':
         if not USE_DATABASE:
             flash('Database not configured. Testimonial submission is temporarily unavailable.', 'error')
@@ -774,7 +977,12 @@ def submit_testimonial():
 
 @app.route('/admin/testimonials')
 def admin_testimonials():
-    """Admin panel for managing testimonials"""
+    """
+    Admin panel for managing testimonials.
+
+    Returns:
+        str: The rendered HTML for the admin testimonials page.
+    """
     if not USE_DATABASE:
         flash('Database not configured.', 'error')
         return redirect(url_for('admin_panel'))
@@ -790,7 +998,15 @@ def admin_testimonials():
 
 @app.route('/admin/testimonial/<int:id>/approve', methods=['POST'])
 def approve_testimonial(id):
-    """Approve a testimonial"""
+    """
+    Approve a testimonial.
+
+    Args:
+        id (int): The ID of the testimonial to approve.
+
+    Returns:
+        Response: A redirect to the admin testimonials page.
+    """
     if not USE_DATABASE:
         return jsonify({'error': 'Database not configured'}), 500
     
@@ -805,7 +1021,15 @@ def approve_testimonial(id):
 
 @app.route('/admin/testimonial/<int:id>/reject', methods=['POST'])
 def reject_testimonial(id):
-    """Reject a testimonial"""
+    """
+    Reject a testimonial.
+
+    Args:
+        id (int): The ID of the testimonial to reject.
+
+    Returns:
+        Response: A redirect to the admin testimonials page.
+    """
     if not USE_DATABASE:
         return jsonify({'error': 'Database not configured'}), 500
     
@@ -818,7 +1042,13 @@ def reject_testimonial(id):
 
 @app.route('/admin/vip-board', methods=['GET', 'POST'])
 def admin_vip_board():
-    """Admin interface for managing VIP board members"""
+    """
+    Admin interface for managing VIP board members.
+
+    Returns:
+        Response or str: A redirect to the admin VIP board page on form submission,
+                         or the rendered HTML for the admin interface.
+    """
     if not USE_DATABASE:
         flash('Database not available', 'error')
         return redirect(url_for('admin_panel'))
@@ -888,7 +1118,15 @@ def admin_vip_board():
 
 @app.route('/admin/testimonial/<int:id>/feature', methods=['POST'])
 def feature_testimonial(id):
-    """Toggle featured status of a testimonial"""
+    """
+    Toggle the featured status of a testimonial.
+
+    Args:
+        id (int): The ID of the testimonial to feature or unfeature.
+
+    Returns:
+        Response: A redirect to the admin testimonials page.
+    """
     if not USE_DATABASE:
         return jsonify({'error': 'Database not configured'}), 500
     
@@ -903,7 +1141,15 @@ def feature_testimonial(id):
 # Notion CMS API endpoints
 @app.route('/api/notion/content/<content_type>')
 def api_notion_content(content_type):
-    """API endpoint to get content from Notion CMS"""
+    """
+    API endpoint to get content from Notion CMS.
+
+    Args:
+        content_type (str): The type of content to fetch (e.g., 'services', 'news').
+
+    Returns:
+        Response: A JSON response containing the requested content.
+    """
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
     
@@ -923,7 +1169,12 @@ def api_notion_content(content_type):
 
 @app.route('/api/notion/sync', methods=['POST'])
 def api_notion_sync():
-    """Sync content from Notion database"""
+    """
+    Sync content from Notion database.
+
+    Returns:
+        Response: A JSON response indicating the status of the sync.
+    """
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
     
@@ -947,7 +1198,12 @@ def api_notion_sync():
 
 @app.route('/admin/notion-setup')
 def notion_setup():
-    """Setup page for Notion CMS configuration"""
+    """
+    Render the setup page for Notion CMS configuration.
+
+    Returns:
+        str: The rendered HTML for the Notion setup page.
+    """
     if not CMS_AVAILABLE:
         flash('Notion CMS is not available. Please check your configuration.', 'error')
         return redirect(url_for('admin_panel'))
@@ -976,7 +1232,12 @@ def notion_setup():
 
 @app.route('/admin/notion-onboarding')
 def notion_onboarding():
-    """Notion CMS onboarding guide"""
+    """
+    Render the Notion CMS onboarding guide.
+
+    Returns:
+        str: The rendered HTML for the Notion onboarding page.
+    """
     has_secret = os.environ.get('NOTION_INTEGRATION_SECRET') is not None
     has_database = os.environ.get('NOTION_DATABASE_ID') is not None
     
@@ -986,7 +1247,12 @@ def notion_onboarding():
 
 @app.route('/admin/notion-setup/initialize', methods=['POST'])
 def notion_initialize():
-    """Initialize Notion database with sample content"""
+    """
+    Initialize Notion database with sample content.
+
+    Returns:
+        Response: A redirect to the Notion setup page.
+    """
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
     
@@ -1005,7 +1271,15 @@ def notion_initialize():
 
 @app.route('/service/<slug>')
 def service_detail(slug):
-    """Display individual service content from Notion"""
+    """
+    Display individual service content from Notion.
+
+    Args:
+        slug (str): The URL slug of the service to display.
+
+    Returns:
+        str or tuple: The rendered HTML for the service detail page, or a 404 error.
+    """
     if CMS_AVAILABLE and content_sync:
         service = content_sync.get_service_by_slug(slug)
         if service:
@@ -1018,7 +1292,12 @@ def service_detail(slug):
 
 @app.route('/api/notion/clear-cache', methods=['POST'])
 def api_clear_cache():
-    """Clear the Notion content cache"""
+    """
+    Clear the Notion content cache.
+
+    Returns:
+        Response: A JSON response indicating the status of the cache clearing.
+    """
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
     
@@ -1033,7 +1312,12 @@ def api_clear_cache():
 
 @app.route('/api/notion/cached-content')
 def api_cached_content():
-    """Get cached content without syncing"""
+    """
+    Get cached content without syncing.
+
+    Returns:
+        Response: A JSON response containing the cached content.
+    """
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
     
@@ -1043,14 +1327,40 @@ def api_cached_content():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/health')
+def health_check():
+    """
+    Health check endpoint for the application.
+
+    Returns:
+        Response: A JSON response indicating that the application is healthy.
+    """
+    return jsonify({'status': 'healthy'})
+
 @app.errorhandler(404)
 def not_found_error(error):
-    """Handle 404 errors"""
+    """
+    Handle 404 errors.
+
+    Args:
+        error: The error object.
+
+    Returns:
+        tuple: A tuple containing the rendered HTML for the 404 page and the status code.
+    """
     return render_template('index.html'), 404
 
 @app.errorhandler(500)
 def internal_error(error):
-    """Handle 500 errors"""
+    """
+    Handle 500 errors.
+
+    Args:
+        error: The error object.
+
+    Returns:
+        tuple: A tuple containing the rendered HTML for the 500 page and the status code.
+    """
     return render_template('index.html'), 500
 
 if __name__ == '__main__':

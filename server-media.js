@@ -1,7 +1,7 @@
 /**
- * GEM Enterprise - AI-Powered Media Generation Server
- * Enterprise-grade Express.js backend for automated content creation
- * Handles image, video, TTS, chat, and voice call generation
+ * @file GEM Enterprise - AI-Powered Media Generation Server
+ * @description Enterprise-grade Express.js backend for automated content creation. Handles image, video, TTS, chat, and voice call generation.
+ * @version 1.0.0
  */
 
 const express = require('express');
@@ -55,7 +55,12 @@ const upload = multer({
     }
 });
 
-// Logging utility
+/**
+ * A logging utility for the media server.
+ * @param {string} level - The log level (e.g., 'info', 'error').
+ * @param {string} message - The log message.
+ * @param {Object} [meta={}] - Additional metadata for the log entry.
+ */
 const log = (level, message, meta = {}) => {
     const timestamp = new Date().toISOString();
     const logEntry = {
@@ -68,7 +73,13 @@ const log = (level, message, meta = {}) => {
     console.log(JSON.stringify(logEntry));
 };
 
-// Error handling middleware
+/**
+ * Error handling middleware for the Express app.
+ * @param {Error} error - The error object.
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @param {Function} next - The next middleware function.
+ */
 const handleError = (error, req, res, next) => {
     log('error', error.message, { 
         stack: error.stack,
@@ -84,7 +95,10 @@ const handleError = (error, req, res, next) => {
     });
 };
 
-// Utility function to ensure directory exists
+/**
+ * Utility function to ensure a directory exists.
+ * @param {string} dirPath - The path to the directory.
+ */
 const ensureDir = async (dirPath) => {
     try {
         await fs.mkdir(dirPath, { recursive: true });
@@ -94,7 +108,12 @@ const ensureDir = async (dirPath) => {
     }
 };
 
-// AWS S3 upload utility (optional)
+/**
+ * Utility function to upload a file to AWS S3 (optional).
+ * @param {string} filePath - The path to the file to upload.
+ * @param {string} fileName - The name of the file.
+ * @returns {Promise<string|null>} A promise that resolves to the S3 URL of the uploaded file, or null if S3 is not configured.
+ */
 const uploadToS3 = async (filePath, fileName) => {
     if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
         log('info', 'AWS credentials not configured, storing locally only');
@@ -127,9 +146,14 @@ const uploadToS3 = async (filePath, fileName) => {
 };
 
 /**
- * ENDPOINT 1: AI Image Generation
- * POST /api/media/image
- * Generates images using OpenAI DALL-E or similar services
+ * @route POST /api/media/image
+ * @group Media Generation - Operations for generating media
+ * @param {string} prompt.body.required - The prompt for image generation.
+ * @param {string} size.body - The size of the generated image (e.g., '1024x1024').
+ * @param {string} quality.body - The quality of the generated image (e.g., 'standard').
+ * @param {string} style.body - The style of the generated image (e.g., 'vivid').
+ * @returns {object} 200 - An object containing the details of the generated image.
+ * @returns {Error}  500 - Unexpected error.
  */
 app.post('/api/media/image', async (req, res) => {
     try {
@@ -206,9 +230,14 @@ app.post('/api/media/image', async (req, res) => {
 });
 
 /**
- * ENDPOINT 2: AI Video Generation
- * POST /api/media/video
- * Generates videos using Replicate or Runway Gen-2
+ * @route POST /api/media/video
+ * @group Media Generation - Operations for generating media
+ * @param {string} prompt.body.required - The prompt for video generation.
+ * @param {number} duration.body - The duration of the video in seconds.
+ * @param {number} width.body - The width of the video.
+ * @param {number} height.body - The height of the video.
+ * @returns {object} 200 - An object containing the details of the generated video.
+ * @returns {Error}  500 - Unexpected error.
  */
 app.post('/api/media/video', async (req, res) => {
     try {
@@ -321,9 +350,13 @@ app.post('/api/media/video', async (req, res) => {
 });
 
 /**
- * ENDPOINT 3: Text-to-Speech (TTS)
- * POST /api/media/tts
- * Generates audio using ElevenLabs or Amazon Polly
+ * @route POST /api/media/tts
+ * @group Media Generation - Operations for generating media
+ * @param {string} text.body.required - The text to convert to speech.
+ * @param {string} voice.body - The voice to use for the speech (e.g., 'Rachel').
+ * @param {string} model.body - The model to use for the speech (e.g., 'eleven_monolingual_v1').
+ * @returns {object} 200 - An object containing the details of the generated audio.
+ * @returns {Error}  500 - Unexpected error.
  */
 app.post('/api/media/tts', async (req, res) => {
     try {
@@ -397,9 +430,13 @@ app.post('/api/media/tts', async (req, res) => {
 });
 
 /**
- * ENDPOINT 4: Humanized Chat with Memory
- * POST /api/media/chat
- * AI chat with conversation memory and enterprise context
+ * @route POST /api/media/chat
+ * @group Media Generation - Operations for generating media
+ * @param {string} message.body.required - The user's message.
+ * @param {string} conversationId.body - The ID of the conversation.
+ * @param {string} context.body - The context of the conversation (e.g., 'enterprise').
+ * @returns {object} 200 - An object containing the AI's response.
+ * @returns {Error}  500 - Unexpected error.
  */
 app.post('/api/media/chat', async (req, res) => {
     try {
@@ -503,9 +540,14 @@ app.post('/api/media/chat', async (req, res) => {
 });
 
 /**
- * ENDPOINT 5: Voice Call Placement
- * POST /api/media/call/place
- * Places voice calls using Twilio with TTS
+ * @route POST /api/media/call/place
+ * @group Media Generation - Operations for generating media
+ * @param {string} to.body.required - The phone number to call.
+ * @param {string} message.body.required - The message to speak.
+ * @param {string} voice.body - The voice to use for the call (e.g., 'alice').
+ * @param {string} callbackUrl.body - The URL for status callbacks.
+ * @returns {object} 200 - An object containing the details of the call.
+ * @returns {Error}  500 - Unexpected error.
  */
 app.post('/api/media/call/place', async (req, res) => {
     try {
@@ -584,9 +626,11 @@ app.post('/api/media/call/place', async (req, res) => {
 });
 
 /**
- * TwiML Webhook Endpoint
- * GET /api/media/twiml/:filename
- * Serves TwiML files for Twilio calls
+ * @route GET /api/media/twiml/:filename
+ * @group Media Generation - Operations for generating media
+ * @param {string} filename.path.required - The name of the TwiML file to serve.
+ * @returns {string} 200 - The TwiML content.
+ * @returns {Error}  404 - TwiML file not found.
  */
 app.get('/api/media/twiml/:filename', async (req, res) => {
     try {
@@ -605,9 +649,9 @@ app.get('/api/media/twiml/:filename', async (req, res) => {
 });
 
 /**
- * Health Check Endpoint
- * GET /api/media/health
- * Returns server status and configuration
+ * @route GET /api/media/health
+ * @group Health Check - Operations for checking the server's health
+ * @returns {object} 200 - An object containing the server's health status.
  */
 app.get('/api/media/health', (req, res) => {
     const health = {
@@ -627,7 +671,7 @@ app.get('/api/media/health', (req, res) => {
 });
 
 /**
- * Static file serving for generated assets
+ * Static file serving for generated assets.
  */
 app.use('/generated-assets', express.static(path.join(__dirname, 'generated-assets')));
 
