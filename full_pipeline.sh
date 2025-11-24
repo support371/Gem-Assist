@@ -53,7 +53,7 @@ fi
 echo "🚀 (3/6) Running Full Test Suite..."
 
 echo "[1/7] Running health checks..."
-# TODO: Add your health check command (e.g., curl -f http://localhost:3000/health)
+curl -f http://localhost:5000/
 
 echo "[2/7] Verifying static assets load correctly..."
 # TODO: Add your static asset test command
@@ -62,9 +62,7 @@ echo "[3/7] Testing API endpoints..."
 # TODO: Add your API test suite (e.g., npm test)
 
 echo "[4/7] Checking database connections (using Neon.tech)..."
-# TODO: Add your DB connection test. This script MUST use the $DATABASE_URL var.
-# Example for node.js/pg:
-# node -e "const { Client } = require('pg'); const client = new Client({ connectionString: process.env.DATABASE_URL }); client.connect().then(() => { console.log('DB connection OK'); client.end(); }).catch(err => { console.error('DB connection FAILED:', err); process.exit(1); })"
+python test_db_connection.py
 
 echo "[5.1/7] Running security scans..."
 # TODO: Add your security scan (e.g., npm audit --production)
@@ -87,7 +85,7 @@ if [ -z "$VERCEL_TOKEN" ]; then
   exit 1
 fi
 
-vercel --prod --token=$VERCEL_TOKEN
+vercel --prod --token=$VERCEL_TOKEN --yes
 echo "✅ Deployed to Vercel."
 
 # --- 6. Push to Git Repository ---
