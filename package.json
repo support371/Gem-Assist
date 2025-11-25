@@ -10,13 +10,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@dataconnect/generated": "file:src/dataconnect-generated",
-    "aws-sdk": "^2.1692.0",
-    "axios": "^1.12.2",
-    "body-parser": "^2.2.0",
+    "axios": "^1.13.2",
+    "cheerio": "^1.1.2",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "form-data": "^4.0.4",
@@ -24,10 +22,17 @@
     "joi": "^18.0.1",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
-    "node-fetch": "^3.3.2",
-    "pg": "^8.16.3",
+    "node-cron": "^4.2.1",
     "sharp": "^0.34.4",
-    "twilio": "^5.10.2",
     "uuid": "^13.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/support371/Gem-Assist.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/support371/Gem-Assist/issues"
+  },
+  "homepage": "https://github.com/support371/Gem-Assist#readme"
 }

@@ -1,15 +1,15 @@
-modules = ["nodejs-20", "python-3.11"]
+modules = ["python-3.11", "nodejs-20"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["driversi686Linux.mesa-demos", "freetype", "google-cloud-sdk-gce", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "openssl", "postgresql", "see-cat", "systemdUkify", "tcl", "tk", "unzip", "wget", "zlib"]
+packages = ["openssl", "postgresql", "unzip", "mailutils"]
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["sh", "-c", "gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 main:app"]
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
 
 [workflows]
-runButton = "Start Flask App"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"
@@ -25,25 +25,21 @@ name = "Start application"
 author = "agent"
 
 [[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Start application"
-
-[[workflows.workflow]]
-name = "Start Flask App"
-author = 46920073
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python main.py"
+args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
+waitForPort = 5000
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 9005
+localPort = 40935
+externalPort = 3002
+
+[[ports]]
+localPort = 45495
 externalPort = 3000
 
 [agent]
-integrations = ["web_scraper==1.0.0", "perplexity_v0==1.0.0", "python_notion==1.0.0"]
+integrations = ["python_openai:1.0.0", "twilio_send_message:1.0.0"]

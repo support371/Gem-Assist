@@ -16,39 +16,12 @@
 
 <section class="py-5">
     <div class="container">
-        <h1 class="text-center mb-5">
-            <i class="fas fa-handshake me-3"></i>
-            Partners & Trustees
-        </h1>
-
-        <!-- Partners & Trustees Slider Section -->
-        <section id="partners-trustees-slider" class="mb-5">
-            <div class="section-header text-center mb-4">
-                <h2>Our Trusted Partners & Strategic Trustees</h2>
-                <p class="text-muted">Building trust through world-class partnerships and governance</p>
-            </div>
-            <div class="swiper-container partners-swiper">
-                <div class="swiper-wrapper" id="company-slider">
-                    <!-- Slides will be injected dynamically -->
-                </div>
-                <!-- Navigation Arrows -->
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-                <!-- Pagination -->
-                <div class="swiper-pagination"></div>
-            </div>
-        </section>
-    </div>
-</section>
-
-<section class="py-5">
-    <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto">
                 <div class="content-card">
                     <h2>Our Strategic Partnerships</h2>
                     <p class="lead">GEM Enterprise collaborates with trusted partners and serves as trustees to provide comprehensive security and trust services to our clients.</p>
-
+                    
                     <div class="partnership-highlight mt-5">
                         <div class="row align-items-center">
                             <div class="col-md-6">
@@ -69,7 +42,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <h3 class="mt-5">Partnership Benefits</h3>
                     <div class="benefits-grid">
                         <div class="benefit-card">
@@ -93,7 +66,7 @@
                             <p>Long-term partnerships built on transparency, reliability, and mutual success.</p>
                         </div>
                     </div>
-
+                    
                     <h3 class="mt-5">Trustee Services</h3>
                     <div class="trustee-services">
                         <div class="trustee-service">
@@ -125,7 +98,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <h3 class="mt-5">Partnership Process</h3>
                     <div class="process-flow">
                         <div class="process-step">
@@ -166,12 +139,12 @@
                             <p>Partnership launch and ongoing relationship management</p>
                         </div>
                     </div>
-
+                    
                     <div class="alert alert-info mt-5">
                         <i class="fas fa-info-circle me-2"></i>
                         <strong>Partnership Opportunities:</strong> We are always seeking qualified partners in cybersecurity, real estate, legal services, and related fields. Contact us to explore mutual opportunities.
                     </div>
-
+                    
                     <div class="cta-section mt-5 text-center">
                         <h4>Interested in Partnership?</h4>
                         <p>Explore partnership opportunities and trustee services with GEM Enterprise.</p>
@@ -187,192 +160,4 @@
         </div>
     </div>
 </section>
-
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-
-<style>
-#partners-trustees-slider {
-    padding: 40px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 16px;
-    margin-bottom: 3rem;
-}
-#partners-trustees-slider h2 {
-    color: #fff;
-    margin-bottom: 10px;
-    font-size: 32px;
-    font-weight: 700;
-}
-#partners-trustees-slider .text-muted {
-    color: rgba(255,255,255,0.8) !important;
-    font-size: 16px;
-}
-.partners-swiper {
-    padding: 40px 0;
-}
-.partners-swiper .swiper-slide {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 30px 20px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
-    min-height: 280px;
-}
-.partners-swiper .swiper-slide:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-}
-.company-logo {
-    max-width: 140px;
-    max-height: 80px;
-    margin-bottom: 20px;
-    object-fit: contain;
-}
-.company-type {
-    font-weight: 700;
-    font-size: 14px;
-    margin-bottom: 10px;
-    color: #667eea;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.company-name {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #333;
-}
-.company-description {
-    font-size: 14px;
-    color: #666;
-    text-align: center;
-    line-height: 1.6;
-}
-.partners-swiper .swiper-button-next,
-.partners-swiper .swiper-button-prev {
-    color: #fff;
-    background: rgba(255,255,255,0.2);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-}
-.partners-swiper .swiper-button-next:after,
-.partners-swiper .swiper-button-prev:after {
-    font-size: 20px;
-}
-.partners-swiper .swiper-pagination-bullet {
-    background: #fff;
-    opacity: 0.5;
-}
-.partners-swiper .swiper-pagination-bullet-active {
-    opacity: 1;
-    background: #fff;
-}
-</style>
-
-<script>
-// List of verified partners and trustees
-const companies = [
-    {
-        name: "AWS",
-        type: "Technology Partner",
-        description: "Cloud infrastructure & enterprise security solutions powering our global operations",
-        logo: "https://logos-world.net/wp-content/uploads/2021/04/Amazon-AWS-Logo.png",
-        link: "https://aws.amazon.com"
-    },
-    {
-        name: "Microsoft Azure",
-        type: "Technology Partner",
-        description: "Enterprise cloud computing, AI services, and compliance frameworks",
-        logo: "https://logos-world.net/wp-content/uploads/2020/04/Microsoft-Azure-Logo.png",
-        link: "https://azure.microsoft.com"
-    },
-    {
-        name: "Google Cloud",
-        type: "Technology Partner",
-        description: "Advanced data analytics, AI/ML capabilities, and security services",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Cloud_logo.svg",
-        link: "https://cloud.google.com"
-    },
-    {
-        name: "Deloitte Digital",
-        type: "Strategic Trustee",
-        description: "Digital transformation advisory, risk management, and cybersecurity governance",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Deloitte.svg",
-        link: "https://www.deloitte.com"
-    },
-    {
-        name: "PwC Advisory",
-        type: "Compliance Trustee",
-        description: "Independent audit, compliance verification, and trust assurance services",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/5/5e/PwC_logo.svg",
-        link: "https://www.pwc.com"
-    },
-    {
-        name: "Alliance Trust Realty LLC",
-        type: "Real Estate Partner",
-        description: "Professional real estate services, asset management, and property investment solutions",
-        logo: "https://via.placeholder.com/140x60/764ba2/ffffff?text=Alliance+Trust",
-        link: "#"
-    }
-];
-
-// Inject slides dynamically
-document.addEventListener('DOMContentLoaded', function() {
-    const sliderWrapper = document.getElementById("company-slider");
-
-    companies.forEach(c => {
-        const slide = document.createElement("div");
-        slide.className = "swiper-slide";
-        slide.innerHTML = `
-            <a href="${c.link}" target="_blank" style="text-decoration: none; width: 100%; text-align: center;">
-                <img src="${c.logo}" alt="${c.name}" class="company-logo" onerror="this.src='https://via.placeholder.com/140x60/667eea/ffffff?text=${encodeURIComponent(c.name)}'">
-                <div class="company-type">${c.type}</div>
-                <div class="company-name">${c.name}</div>
-                <div class="company-description">${c.description}</div>
-            </a>
-        `;
-        sliderWrapper.appendChild(slide);
-    });
-
-    // Initialize Swiper
-    new Swiper('.partners-swiper', {
-        loop: true,
-        slidesPerView: 1,
-        spaceBetween: 30,
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-        },
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        autoplay: {
-            delay: 4000,
-            disableOnInteraction: false,
-        },
-        breakpoints: {
-            640: { 
-                slidesPerView: 1,
-                spaceBetween: 20
-            },
-            768: { 
-                slidesPerView: 2,
-                spaceBetween: 25
-            },
-            1024: { 
-                slidesPerView: 3,
-                spaceBetween: 30
-            },
-        }
-    });
-});
-</script>
-
 {% endblock %}
