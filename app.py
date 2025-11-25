@@ -782,9 +782,9 @@ def admin_panel():
     return render_template("admin.html")
 
 
-@app.route("/gem-news-and-newsletter")
+@app.route("/news")
 def news():
-    """News and newsletter page"""
+    """News articles page"""
     # Get news from Notion if available
     notion_news = []
     if CMS_AVAILABLE:
@@ -798,6 +798,18 @@ def news():
             notion_news = content.get("news", [])
 
     return render_template("news.html", notion_news=notion_news)
+
+
+@app.route("/newsletter")
+def newsletter():
+    """Newsletter subscription page"""
+    return render_template("newsletter.html")
+
+
+@app.route("/trustees")
+def trustees():
+    """Trustees and fiduciaries page"""
+    return render_template("trustees.html")
 
 
 @app.route("/teams")
