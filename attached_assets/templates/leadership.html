@@ -1,0 +1,789 @@
+{% extends 'base.html' %}
+
+{% block title %}Leadership & Board - Gem Assist Enterprise{% endblock %}
+
+{% block content %}
+<!-- Leadership Hero Section -->
+<section class="leadership-hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Leadership & Board</h1>
+            <p class="hero-description">
+                Guiding GEM Enterprise with Vision, Integrity, and Excellence
+            </p>
+            <div class="header-actions mt-4">
+                <a href="{{ url_for('vip_board') }}" class="btn btn-warning btn-lg me-3">
+                    <i class="fas fa-crown me-2"></i>Executive Board
+                </a>
+                <a href="{{ url_for('membership') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-users me-2"></i>Membership Portal
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Executive Leadership Section -->
+<section class="executive-leadership py-5 bg-darker">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="display-5 fw-bold">Executive Leadership</h2>
+            <p class="lead text-muted">Our C-Suite executives driving strategic initiatives</p>
+        </div>
+        
+        <div class="row g-4">
+            {% if executives.CEO %}
+            <div class="col-lg-3 col-md-6">
+                <div class="executive-card-compact">
+                    <div class="executive-image-compact">
+                        {% if executives.CEO.headshot_url %}
+                        <img src="{{ executives.CEO.headshot_url }}" alt="{{ executives.CEO.name }}">
+                        {% else %}
+                        <div class="executive-placeholder">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="executive-info-compact">
+                        <h4>{{ executives.CEO.name }}</h4>
+                        <p class="text-warning fw-bold">Chief Executive Officer</p>
+                        <div class="executive-links">
+                            {% if executives.CEO.email %}
+                            <a href="mailto:{{ executives.CEO.email }}" class="me-2"><i class="fas fa-envelope"></i></a>
+                            {% endif %}
+                            {% if executives.CEO.alignable_url %}
+                            <a href="{{ executives.CEO.alignable_url }}" target="_blank"><i class="fas fa-link"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if executives.CFO %}
+            <div class="col-lg-3 col-md-6">
+                <div class="executive-card-compact">
+                    <div class="executive-image-compact">
+                        {% if executives.CFO.headshot_url %}
+                        <img src="{{ executives.CFO.headshot_url }}" alt="{{ executives.CFO.name }}">
+                        {% else %}
+                        <div class="executive-placeholder">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="executive-info-compact">
+                        <h4>{{ executives.CFO.name }}</h4>
+                        <p class="text-primary fw-bold">Chief Financial Officer</p>
+                        <div class="executive-links">
+                            {% if executives.CFO.email %}
+                            <a href="mailto:{{ executives.CFO.email }}" class="me-2"><i class="fas fa-envelope"></i></a>
+                            {% endif %}
+                            {% if executives.CFO.alignable_url %}
+                            <a href="{{ executives.CFO.alignable_url }}" target="_blank"><i class="fas fa-link"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if executives.COO %}
+            <div class="col-lg-3 col-md-6">
+                <div class="executive-card-compact">
+                    <div class="executive-image-compact">
+                        {% if executives.COO.headshot_url %}
+                        <img src="{{ executives.COO.headshot_url }}" alt="{{ executives.COO.name }}">
+                        {% else %}
+                        <div class="executive-placeholder">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="executive-info-compact">
+                        <h4>{{ executives.COO.name }}</h4>
+                        <p class="text-success fw-bold">Chief Operations Officer</p>
+                        <div class="executive-links">
+                            {% if executives.COO.email %}
+                            <a href="mailto:{{ executives.COO.email }}" class="me-2"><i class="fas fa-envelope"></i></a>
+                            {% endif %}
+                            {% if executives.COO.alignable_url %}
+                            <a href="{{ executives.COO.alignable_url }}" target="_blank"><i class="fas fa-link"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if executives.LEGAL %}
+            <div class="col-lg-3 col-md-6">
+                <div class="executive-card-compact">
+                    <div class="executive-image-compact">
+                        {% if executives.LEGAL.headshot_url %}
+                        <img src="{{ executives.LEGAL.headshot_url }}" alt="{{ executives.LEGAL.name }}">
+                        {% else %}
+                        <div class="executive-placeholder">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="executive-info-compact">
+                        <h4>{{ executives.LEGAL.name }}</h4>
+                        <p class="text-danger fw-bold">Chief Legal Officer</p>
+                        <div class="executive-links">
+                            {% if executives.LEGAL.email %}
+                            <a href="mailto:{{ executives.LEGAL.email }}" class="me-2"><i class="fas fa-envelope"></i></a>
+                            {% endif %}
+                            {% if executives.LEGAL.alignable_url %}
+                            <a href="{{ executives.LEGAL.alignable_url }}" target="_blank"><i class="fas fa-link"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Board Members Section -->
+<section class="board-members-section">
+    <div class="container">
+        <h2 class="section-title">Board of Directors</h2>
+        
+        <!-- Notion Integration Notice -->
+        <div class="content-notice">
+            <i class="fas fa-database"></i>
+            <p><strong>Leadership data will be loaded from your Notion database.</strong></p>
+            {% if not leadership_data %}
+            <div class="alert alert-warning">
+                <strong>Notion Setup Required:</strong> Your database needs to be shared with the integration.
+                <br>Go to your Notion database → "..." → Connections → Add your integration.
+            </div>
+            {% else %}
+            <div class="alert alert-success">
+                <strong>Connected!</strong> Displaying {{ leadership_data|length }} board members from Notion.
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="leadership-grid">
+            {% if leadership_data %}
+                {% for leader in leadership_data %}
+                <div class="leader-card {% if leader.featured %}featured{% endif %}">
+                    <div class="leader-image">
+                        {% if leader.photo_url %}
+                            <img src="{{ leader.photo_url }}" alt="{{ leader.name }}" class="responsive-image loaded">
+                        {% else %}
+                            <div class="image-placeholder" data-type="leader-photo">
+                                <i class="fas fa-user-tie"></i>
+                                <span>Add {{ leader.name }} Photo</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="leader-info">
+                        <h3 class="leader-name">{{ leader.name }}</h3>
+                        <p class="leader-title">{{ leader.position }}</p>
+                        {% if leader.bio %}
+                        <p class="leader-bio">{{ leader.bio }}</p>
+                        {% endif %}
+                        {% if leader.expertise %}
+                        <div class="leader-credentials">
+                            {% for skill in leader.expertise %}
+                            <span class="credential">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div class="leader-social">
+                            {% if leader.alignable %}
+                            <a href="{{ leader.alignable }}" class="social-link" target="_blank">
+                                <i class="fas fa-link"></i>
+                            </a>
+                            {% endif %}
+                            {% if leader.email %}
+                            <a href="mailto:{{ leader.email }}" class="social-link">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <!-- Fallback content when Notion data is not available -->
+            <div class="leader-card featured">
+                <div class="leader-image">
+                    <div class="image-placeholder" data-type="ceo-photo">
+                        <i class="fas fa-user-tie"></i>
+                        <span>CEO Photo</span>
+                    </div>
+                </div>
+                <div class="leader-info">
+                    <h3 class="leader-name">Leadership Team</h3>
+                    <p class="leader-title">Your Board Members</p>
+                    <p class="leader-bio">
+                        Connect your Notion database to display your leadership team automatically. Your database should include fields for Name, Position, Bio, Email, LinkedIn, and Photo.
+                    </p>
+                    <div class="leader-credentials">
+                        <span class="credential">Database: Connected</span>
+                        <span class="credential">Permissions: Setup Required</span>
+                    </div>
+                    <div class="leader-social">
+                        <a href="https://notion.so" class="social-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+
+<!-- Rest of page content -->
+            <div class="leader-card">
+                <div class="leader-image">
+                    <!-- Add real photo here -->
+                    <div class="image-placeholder">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Add CFO Photo</span>
+                    </div>
+                </div>
+                <div class="leader-info">
+                    <h3 class="leader-name">[CFO Name]</h3>
+                    <p class="leader-title">Chief Financial Officer</p>
+                    <p class="leader-bio">
+                        [Add CFO biography - financial expertise, strategic planning]
+                    </p>
+                    <div class="leader-social">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COO -->
+            <div class="leader-card">
+                <div class="leader-image">
+                    <!-- Add real photo here -->
+                    <div class="image-placeholder">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Add COO Photo</span>
+                    </div>
+                </div>
+                <div class="leader-info">
+                    <h3 class="leader-name">[COO Name]</h3>
+                    <p class="leader-title">Chief Operating Officer</p>
+                    <p class="leader-bio">
+                        [Add COO biography - operational excellence, process optimization]
+                    </p>
+                    <div class="leader-social">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Board Members -->
+            <div class="leader-card">
+                <div class="leader-image">
+                    <!-- Add real photo here -->
+                    <div class="image-placeholder">
+                        <i class="fas fa-user"></i>
+                        <span>Add Photo</span>
+                    </div>
+                </div>
+                <div class="leader-info">
+                    <h3 class="leader-name">[Board Member Name]</h3>
+                    <p class="leader-title">Board Member</p>
+                    <p class="leader-bio">
+                        [Add board member biography]
+                    </p>
+                    <div class="leader-social">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="leader-card">
+                <div class="leader-image">
+                    <!-- Add real photo here -->
+                    <div class="image-placeholder">
+                        <i class="fas fa-user"></i>
+                        <span>Add Photo</span>
+                    </div>
+                </div>
+                <div class="leader-info">
+                    <h3 class="leader-name">[Board Member Name]</h3>
+                    <p class="leader-title">Board Member</p>
+                    <p class="leader-bio">
+                        [Add board member biography]
+                    </p>
+                    <div class="leader-social">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Advisory Board Section -->
+<section class="advisory-board-section">
+    <div class="container">
+        <h2 class="section-title">Advisory Board</h2>
+        <div class="advisors-grid">
+            <div class="advisor-card">
+                <div class="advisor-image">
+                    <div class="image-placeholder">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Add Advisor Photo</span>
+                    </div>
+                </div>
+                <div class="advisor-info">
+                    <h4>[Advisor Name]</h4>
+                    <p class="advisor-title">Security Expert</p>
+                    <p class="advisor-company">[Company/Institution]</p>
+                </div>
+            </div>
+            
+            <div class="advisor-card">
+                <div class="advisor-image">
+                    <div class="image-placeholder">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Add Advisor Photo</span>
+                    </div>
+                </div>
+                <div class="advisor-info">
+                    <h4>[Advisor Name]</h4>
+                    <p class="advisor-title">Technology Advisor</p>
+                    <p class="advisor-company">[Company/Institution]</p>
+                </div>
+            </div>
+            
+            <div class="advisor-card">
+                <div class="advisor-image">
+                    <div class="image-placeholder">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Add Advisor Photo</span>
+                    </div>
+                </div>
+                <div class="advisor-info">
+                    <h4>[Advisor Name]</h4>
+                    <p class="advisor-title">Business Strategy</p>
+                    <p class="advisor-company">[Company/Institution]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Company Values -->
+<section class="company-values-section">
+    <div class="container">
+        <h2 class="section-title">Our Core Values</h2>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Integrity</h3>
+                <p>Maintaining the highest ethical standards in all business operations</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Innovation</h3>
+                <p>Continuously advancing technology and solutions for our clients</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Excellence</h3>
+                <p>Delivering exceptional quality in every service and interaction</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Trust</h3>
+                <p>Building lasting relationships through transparency and reliability</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Leadership Page Styles */
+.leadership-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+    padding: 120px 0 80px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.leadership-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path fill="%23ffd700" fill-opacity="0.05" d="M1200 120L0 16V0h1200v120z"/></svg>');
+    background-size: cover;
+}
+
+.hero-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    opacity: 0.95;
+}
+
+/* Content Notice */
+.content-notice {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid var(--warning-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 3rem;
+    color: var(--warning-color);
+}
+
+.content-notice i {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.content-notice ul {
+    margin-top: 1rem;
+    padding-left: 1.5rem;
+}
+
+/* Board Members Section */
+.board-members-section {
+    padding: 80px 0;
+    background: var(--bg-secondary);
+}
+
+.leadership-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.leader-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.leader-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-color: var(--primary-color);
+}
+
+.leader-card.featured {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+}
+
+.leader-image {
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+}
+
+.leader-card.featured .leader-image {
+    height: 100%;
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(31, 41, 55, 0.6) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+}
+
+.image-placeholder i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.image-placeholder span {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.leader-info {
+    padding: 2rem;
+}
+
+.leader-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.leader-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.leader-bio {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.leader-credentials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.credential {
+    padding: 0.25rem 0.75rem;
+    background: rgba(6, 102, 204, 0.1);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+}
+
+.leader-social {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Advisory Board */
+.advisory-board-section {
+    padding: 80px 0;
+}
+
+.advisors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.advisor-card {
+    text-align: center;
+    padding: 2rem;
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.advisor-image {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.advisor-info h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.advisor-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.advisor-company {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Company Values */
+.company-values-section {
+    padding: 80px 0;
+    background: var(--bg-secondary);
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.value-card {
+    text-align: center;
+    padding: 2rem;
+}
+
+.value-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, rgba(6, 102, 204, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.value-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.value-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Executive Cards */
+.executive-card-compact {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.executive-card-compact:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.executive-image-compact {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(255, 215, 0, 0.3);
+}
+
+.executive-image-compact img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.executive-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #2a2a4a, #1a1a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.executive-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.executive-links a {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.executive-links a:hover {
+    background: var(--primary-color);
+    transform: translateY(-3px);
+}
+
+.header-actions {
+    position: relative;
+    z-index: 1;
+    margin-top: 2rem;
+}
+
+.bg-darker {
+    background-color: var(--bg-darker);
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .leader-card.featured {
+        grid-column: span 1;
+        grid-template-columns: 1fr;
+    }
+    
+    .leadership-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .executive-image-compact {
+        width: 120px;
+        height: 120px;
+    }
+}
+</style>
+{% endblock %}

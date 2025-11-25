@@ -1,0 +1,517 @@
+{% extends "base.html" %}
+
+{% block title %}Membership - Gem Assist Enterprise{% endblock %}
+
+{% block content %}
+<!-- Membership Hero Section -->
+<section class="membership-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-12 text-center">
+                <h1 class="display-3 fw-bold mb-4">Exclusive Membership Program</h1>
+                <p class="lead mb-5">Join GEM Enterprise's elite network of security and business professionals</p>
+                <div class="hero-badges">
+                    <span class="badge bg-warning text-dark me-2"><i class="fas fa-crown me-1"></i>Premium Benefits</span>
+                    <span class="badge bg-success me-2"><i class="fas fa-shield-alt me-1"></i>Priority Security</span>
+                    <span class="badge bg-info"><i class="fas fa-users me-1"></i>Exclusive Network</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Membership Tiers Section -->
+<section class="membership-tiers py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Choose Your Membership Level</h2>
+            <p class="lead text-muted">Select the tier that best fits your needs</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for tier_key, tier in membership_tiers.items() %}
+            <div class="col-lg-4">
+                <div class="membership-card {% if tier_key == 'gold' %}featured{% endif %}">
+                    {% if tier_key == 'gold' %}
+                    <div class="ribbon">Most Popular</div>
+                    {% endif %}
+                    <div class="tier-header">
+                        <div class="tier-icon">
+                            {% if tier_key == 'gold' %}
+                            <i class="fas fa-crown"></i>
+                            {% elif tier_key == 'silver' %}
+                            <i class="fas fa-medal"></i>
+                            {% else %}
+                            <i class="fas fa-certificate"></i>
+                            {% endif %}
+                        </div>
+                        <h3 class="tier-name">{{ tier.name }}</h3>
+                        <div class="tier-price">
+                            <span class="price">{{ tier.price }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tier-benefits">
+                        <ul class="benefits-list">
+                            {% for benefit in tier.benefits %}
+                            <li>
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                {{ benefit }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <div class="tier-action">
+                        <a href="{{ url_for('apply_membership') }}?tier={{ tier_key }}" class="btn btn-primary btn-lg w-100">
+                            {% if tier_key == 'gold' %}
+                            Get Started Now
+                            {% else %}
+                            Choose {{ tier.name.split()[0] }}
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Current Members Section -->
+{% if members %}
+<section class="current-members py-5 bg-dark">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Our Distinguished Members</h2>
+            <p class="lead text-muted">Join an exclusive network of industry leaders</p>
+        </div>
+        
+        <div class="members-slider">
+            <div class="row g-4">
+                {% for member in members[:8] %}
+                <div class="col-lg-3 col-md-6">
+                    <div class="member-card">
+                        <div class="member-avatar">
+                            {% if member.photo_url %}
+                            <img src="{{ member.photo_url }}" alt="{{ member.full_name }}">
+                            {% else %}
+                            <div class="avatar-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            {% endif %}
+                            <span class="member-badge">
+                                {% if member.membership_type == 'gold' %}
+                                <i class="fas fa-crown text-warning"></i>
+                                {% elif member.membership_type == 'silver' %}
+                                <i class="fas fa-medal text-light"></i>
+                                {% else %}
+                                <i class="fas fa-certificate text-info"></i>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <h5>{{ member.full_name }}</h5>
+                        <p class="member-title">{{ member.position or 'Member' }}</p>
+                        {% if member.company %}
+                        <p class="member-company">{{ member.company }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Membership Benefits Grid -->
+<section class="benefits-grid py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Membership Benefits</h2>
+            <p class="lead text-muted">Unlock exclusive advantages with your membership</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Priority Security Services</h4>
+                    <p>Get immediate access to our top-tier security experts and emergency response team</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>Exclusive Network Access</h4>
+                    <p>Connect with industry leaders and decision-makers in our private member community</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>Market Intelligence</h4>
+                    <p>Receive exclusive market insights and trend analysis reports monthly</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h4>Professional Development</h4>
+                    <p>Access premium training programs and certification courses</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h4>VIP Events</h4>
+                    <p>Invitations to exclusive conferences, workshops, and networking events</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>Dedicated Support</h4>
+                    <p>Personal account manager and 24/7 priority customer support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="membership-cta py-5">
+    <div class="container">
+        <div class="cta-box">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2 class="mb-3">Ready to Join Our Elite Network?</h2>
+                    <p class="lead mb-0">Start your membership application today and unlock exclusive benefits</p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                    <a href="{{ url_for('apply_membership') }}" class="btn btn-warning btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Apply Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.membership-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+    padding: 120px 0 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.membership-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+}
+
+.hero-badges {
+    margin-top: 2rem;
+}
+
+.hero-badges .badge {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.membership-tiers {
+    background: var(--bg-secondary);
+}
+
+.membership-card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.membership-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.membership-card.featured {
+    border: 2px solid var(--warning-color);
+    transform: scale(1.05);
+}
+
+.membership-card.featured:hover {
+    transform: scale(1.05) translateY(-10px);
+}
+
+.ribbon {
+    position: absolute;
+    top: 20px;
+    right: -30px;
+    background: var(--warning-color);
+    color: #000;
+    padding: 5px 40px;
+    transform: rotate(45deg);
+    font-weight: bold;
+    font-size: 0.8rem;
+    z-index: 1;
+}
+
+.tier-header {
+    padding: 3rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.tier-icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.membership-card:nth-child(1) .tier-icon {
+    color: var(--warning-color);
+}
+
+.membership-card:nth-child(2) .tier-icon {
+    color: #c0c0c0;
+}
+
+.membership-card:nth-child(3) .tier-icon {
+    color: #cd7f32;
+}
+
+.tier-name {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.tier-price {
+    margin-top: 1rem;
+}
+
+.price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.tier-benefits {
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+.benefits-list {
+    list-style: none;
+    padding: 0;
+}
+
+.benefits-list li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+}
+
+.benefits-list li:last-child {
+    border-bottom: none;
+}
+
+.tier-action {
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.current-members {
+    position: relative;
+    overflow: hidden;
+}
+
+.member-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.member-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.member-avatar {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1.5rem;
+    position: relative;
+}
+
+.member-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2a2a4a, #1a1a3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.member-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background: var(--bg-darker);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--bg-card);
+}
+
+.member-card h5 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.member-title {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.member-company {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.benefits-grid {
+    background: var(--bg-secondary);
+}
+
+.benefit-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 2.5rem;
+    text-align: center;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.benefit-card:hover .benefit-icon {
+    transform: scale(1.1);
+    background: var(--primary-color);
+}
+
+.benefit-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.2) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.benefit-card h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.benefit-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.membership-cta {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.cta-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 3rem;
+    backdrop-filter: blur(10px);
+}
+
+.cta-box h2 {
+    color: white;
+}
+
+.cta-box p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 992px) {
+    .membership-card.featured {
+        transform: none;
+    }
+    
+    .ribbon {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .price {
+        font-size: 2rem;
+    }
+    
+    .member-avatar {
+        width: 80px;
+        height: 80px;
+    }
+}
+</style>
+{% endblock %}
