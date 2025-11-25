@@ -67,3 +67,8 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+venv/
+__pycache__/
+*.pyc
+*.log
+.vercel/

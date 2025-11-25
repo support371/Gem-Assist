@@ -1,6 +1,8 @@
 """
-Automated Notion Content Sync Service
-Handles automatic synchronization of content between Notion and the website
+This module provides a service for automatically synchronizing content between
+a Notion database and the GEM Enterprise website. It includes the
+`NotionContentSync` class, which handles the syncing and caching of content,
+as well as standalone functions for easy access to the sync service.
 """
 
 import os
@@ -13,20 +15,41 @@ from notion_cms import notion_cms
 logger = logging.getLogger(__name__)
 
 class NotionContentSync:
-    """Service for syncing and caching Notion content"""
+    """
+    A service for syncing and caching content from a Notion database.
+
+    This class provides methods for syncing all content from Notion, caching it
+    locally, and retrieving specific types of content from the cache.
+    """
     
     def __init__(self):
+        """
+        Initializes the NotionContentSync instance.
+
+        This method sets up the cache directory and file path.
+        """
         self.cache_dir = 'static/cache'
         self.cache_file = os.path.join(self.cache_dir, 'notion_content.json')
         self._ensure_cache_dir()
     
     def _ensure_cache_dir(self):
-        """Ensure cache directory exists"""
+        """
+        Ensures that the cache directory exists.
+        """
         if not os.path.exists(self.cache_dir):
             os.makedirs(self.cache_dir)
     
     def sync_all_content(self) -> Dict[str, Any]:
-        """Sync all content from Notion and cache it locally"""
+        """
+        Sync all content from Notion and cache it locally.
+
+        This method fetches all content types from the Notion database, caches
+        them in a JSON file, and returns the synced content.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing all the synced content,
+                            along with metadata about the sync.
+        """
         try:
             if not notion_cms.client:
                 logger.warning("Notion client not configured")
@@ -60,7 +83,16 @@ class NotionContentSync:
             return cached
     
     def get_service_by_slug(self, slug: str) -> Dict[str, Any]:
-        """Get a specific service by URL slug"""
+        """
+        Get a specific service by its URL slug from the cache.
+
+        Args:
+            slug (str): The URL slug of the service to retrieve.
+
+        Returns:
+            Dict[str, Any]: A dictionary representing the service, or None if
+                            not found.
+        """
         content = self._load_cached_content()
         services = content.get('services', [])
         
@@ -71,7 +103,17 @@ class NotionContentSync:
         return None
     
     def get_news_by_date(self, limit: int = 10) -> List[Dict[str, Any]]:
-        """Get news articles sorted by date"""
+        """
+        Get news articles sorted by date from the cache.
+
+        Args:
+            limit (int, optional): The maximum number of news articles to
+                                   return. Defaults to 10.
+
+        Returns:
+            List[Dict[str, Any]]: A list of dictionaries representing the news
+                                  articles.
+        """
         content = self._load_cached_content()
         news = content.get('news', [])
         
@@ -83,7 +125,13 @@ class NotionContentSync:
         return sorted_news[:limit]
     
     def get_featured_services(self) -> List[Dict[str, Any]]:
-        """Get featured services"""
+        """
+        Get featured services from the cache.
+
+        Returns:
+            List[Dict[str, Any]]: A list of dictionaries representing the
+                                  featured services.
+        """
         content = self._load_cached_content()
         services = content.get('services', [])
         
@@ -91,7 +139,12 @@ class NotionContentSync:
         return sorted(featured, key=lambda x: x.get('priority', 999))
     
     def _save_cache(self, content: Dict[str, Any]):
-        """Save content to cache file"""
+        """
+        Save content to the cache file.
+
+        Args:
+            content (Dict[str, Any]): The content to save to the cache.
+        """
         try:
             with open(self.cache_file, 'w') as f:
                 json.dump(content, f, indent=2, default=str)
@@ -100,7 +153,14 @@ class NotionContentSync:
             logger.error(f"Error saving cache: {e}")
     
     def _load_cached_content(self) -> Dict[str, Any]:
-        """Load content from cache file"""
+        """
+        Load content from the cache file.
+
+        Returns:
+            Dict[str, Any]: The content loaded from the cache, or an empty
+                            structure if the cache is not found or an error
+                            occurs.
+        """
         try:
             if os.path.exists(self.cache_file):
                 with open(self.cache_file, 'r') as f:
@@ -120,7 +180,12 @@ class NotionContentSync:
         }
     
     def clear_cache(self):
-        """Clear the content cache"""
+        """
+        Clear the content cache by deleting the cache file.
+
+        Returns:
+            bool: True if the cache was cleared successfully, False otherwise.
+        """
         try:
             if os.path.exists(self.cache_file):
                 os.remove(self.cache_file)
@@ -134,15 +199,34 @@ class NotionContentSync:
 content_sync = NotionContentSync()
 
 def auto_sync_content():
-    """Function to be called periodically to sync content"""
+    """
+    A function to be called periodically to sync content from Notion.
+
+    Returns:
+        Dict[str, Any]: The result of the content sync.
+    """
     return content_sync.sync_all_content()
 
 def get_cached_content():
-    """Get cached content without syncing"""
+    """
+    Get the cached content without initiating a new sync.
+
+    Returns:
+        Dict[str, Any]: The content from the cache.
+    """
     return content_sync._load_cached_content()
 
 def initialize_default_content():
-    """Initialize default content structure in Notion"""
+    """
+    Initialize the Notion database with a default content structure.
+
+    This function creates sample services, news articles, and testimonials in
+    the Notion database for demonstration purposes.
+
+    Returns:
+        bool: True if the default content was initialized successfully, False
+              otherwise.
+    """
     if not notion_cms.client:
         return False
     

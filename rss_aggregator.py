@@ -1,6 +1,8 @@
 """
-RSS Aggregator and Content Curation System for GEM Enterprise
-Collects RSS feeds from financial and cybersecurity sources for Telegram distribution
+This module provides a system for aggregating and curating content from RSS
+feeds for distribution to Telegram channels. It includes classes for managing
+RSS feed sources, parsing content items, and a workflow manager for automating
+the process from fetching to posting.
 """
 
 import os
@@ -20,7 +22,19 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class RSSFeedSource:
-    """RSS Feed Source Configuration"""
+    """
+    A dataclass to represent an RSS feed source.
+
+    Attributes:
+        name (str): The name of the RSS feed source.
+        url (str): The URL of the RSS feed.
+        category (str): The category of the feed (e.g., 'financial',
+                        'cybersecurity').
+        enabled (bool): Whether the feed is currently enabled.
+        update_frequency (int): The frequency in seconds at which to update the
+                                feed.
+        last_updated (Optional[datetime]): The last time the feed was updated.
+    """
     name: str
     url: str
     category: str  # 'financial', 'cybersecurity', 'real_estate', 'general'
@@ -30,7 +44,26 @@ class RSSFeedSource:
 
 @dataclass
 class ContentItem:
-    """Parsed content item from RSS feed"""
+    """
+    A dataclass to represent a parsed content item from an RSS feed.
+
+    Attributes:
+        id (str): A unique identifier for the content item.
+        source (str): The name of the source of the content item.
+        title (str): The title of the content item.
+        description (str): A brief description of the content item.
+        content (str): The full content of the content item.
+        url (str): The URL of the original content.
+        published (datetime): The publication date and time of the content.
+        category (str): The category of the content.
+        tags (List[str]): A list of tags associated with the content.
+        status (str): The status of the content item (e.g., 'pending',
+                      'approved').
+        telegram_channels (List[str]): A list of Telegram channels to post the
+                                      content to.
+        customized_content (Optional[str]): Customized content for Telegram.
+        ai_summary (Optional[str]): An AI-generated summary of the content.
+    """
     id: str
     source: str
     title: str
@@ -46,9 +79,20 @@ class ContentItem:
     ai_summary: Optional[str] = None
 
 class RSSAggregator:
-    """Main RSS Aggregation and Content Curation System"""
+    """
+    The main RSS aggregation and content curation system.
+
+    This class manages the fetching, parsing, and curation of content from
+    multiple RSS feed sources.
+    """
     
     def __init__(self):
+        """
+        Initializes the RSSAggregator instance.
+
+        This method sets up the default RSS feed sources, storage for content
+        items, and Telegram channel mappings.
+        """
         # Default RSS feeds for financial and cybersecurity news
         self.feed_sources = [
             # Cybersecurity Feeds
@@ -142,7 +186,18 @@ class RSSAggregator:
         }
     
     def add_feed_source(self, name: str, url: str, category: str) -> bool:
-        """Add a new RSS feed source"""
+        """
+        Add a new RSS feed source.
+
+        Args:
+            name (str): The name of the new feed source.
+            url (str): The URL of the new RSS feed.
+            category (str): The category of the new feed source.
+
+        Returns:
+            bool: True if the feed source was added successfully, False
+                  otherwise.
+        """
         try:
             # Test the feed first
             feed = feedparser.parse(url)
@@ -160,7 +215,12 @@ class RSSAggregator:
             return False
     
     def fetch_all_feeds(self) -> List[ContentItem]:
-        """Fetch content from all enabled RSS feeds"""
+        """
+        Fetch content from all enabled RSS feeds.
+
+        Returns:
+            List[ContentItem]: A list of all the fetched content items.
+        """
         all_items = []
         
         for source in self.feed_sources:
@@ -184,7 +244,15 @@ class RSSAggregator:
         return all_items
     
     def fetch_feed(self, source: RSSFeedSource) -> List[ContentItem]:
-        """Fetch and parse a single RSS feed"""
+        """
+        Fetch and parse a single RSS feed.
+
+        Args:
+            source (RSSFeedSource): The RSS feed source to fetch.
+
+        Returns:
+            List[ContentItem]: A list of content items from the feed.
+        """
         try:
             logger.info(f"Fetching RSS feed: {source.name}")
             feed = feedparser.parse(source.url)
@@ -230,7 +298,15 @@ class RSSAggregator:
             return []
     
     def extract_tags(self, entry: Dict) -> List[str]:
-        """Extract tags from RSS entry"""
+        """
+        Extract tags from an RSS entry.
+
+        Args:
+            entry (Dict): The RSS entry to extract tags from.
+
+        Returns:
+            List[str]: A list of tags.
+        """
         tags = []
         
         # Check for category tags
@@ -244,7 +320,16 @@ class RSSAggregator:
         return tags
     
     def extract_article_content(self, url: str) -> Optional[str]:
-        """Extract full article content from URL using trafilatura"""
+        """
+        Extract the full article content from a URL using trafilatura.
+
+        Args:
+            url (str): The URL of the article to extract.
+
+        Returns:
+            Optional[str]: The extracted article content, or None if an error
+                           occurred.
+        """
         try:
             downloaded = trafilatura.fetch_url(url)
             if downloaded:
@@ -255,7 +340,19 @@ class RSSAggregator:
         return None
     
     def ai_summarize(self, content: str, max_length: int = 200) -> str:
-        """Generate AI summary of content (placeholder for actual AI integration)"""
+        """
+        Generate an AI summary of the content.
+
+        Note: This is a placeholder for actual AI integration.
+
+        Args:
+            content (str): The content to summarize.
+            max_length (int, optional): The maximum length of the summary.
+                                        Defaults to 200.
+
+        Returns:
+            str: The summarized content.
+        """
         # This would connect to an AI service like OpenAI or Perplexity
         # For now, returns a truncated version
         
@@ -268,7 +365,17 @@ class RSSAggregator:
         return summary
     
     def customize_content(self, item: ContentItem, custom_text: str = None) -> ContentItem:
-        """Customize content for Telegram posting"""
+        """
+        Customize the content of an item for Telegram posting.
+
+        Args:
+            item (ContentItem): The content item to customize.
+            custom_text (str, optional): Custom text to use for the content.
+                                         Defaults to None.
+
+        Returns:
+            ContentItem: The customized content item.
+        """
         try:
             # Extract full article if needed
             if not item.content or len(item.content) < 100:
@@ -302,7 +409,16 @@ class RSSAggregator:
             return item
     
     def approve_content(self, content_id: str) -> bool:
-        """Approve content for posting"""
+        """
+        Approve a content item for posting.
+
+        Args:
+            content_id (str): The ID of the content item to approve.
+
+        Returns:
+            bool: True if the content was approved successfully, False
+                  otherwise.
+        """
         for item in self.pending_review:
             if item.id == content_id:
                 item.status = 'approved'
@@ -311,7 +427,16 @@ class RSSAggregator:
         return False
     
     def reject_content(self, content_id: str) -> bool:
-        """Reject content from posting"""
+        """
+        Reject a content item from posting.
+
+        Args:
+            content_id (str): The ID of the content item to reject.
+
+        Returns:
+            bool: True if the content was rejected successfully, False
+                  otherwise.
+        """
         for item in self.pending_review:
             if item.id == content_id:
                 item.status = 'rejected'
@@ -319,18 +444,45 @@ class RSSAggregator:
         return False
     
     def get_pending_content(self, category: str = None) -> List[ContentItem]:
-        """Get pending content for review"""
+        """
+        Get a list of content items that are pending review.
+
+        Args:
+            category (str, optional): The category of content to retrieve.
+                                      Defaults to None.
+
+        Returns:
+            List[ContentItem]: A list of pending content items.
+        """
         if category:
             return [item for item in self.pending_review if item.category == category and item.status == 'pending']
         return [item for item in self.pending_review if item.status == 'pending']
     
     def get_approved_content(self, limit: int = 10) -> List[ContentItem]:
-        """Get approved content ready for posting"""
+        """
+        Get a list of approved content items that are ready for posting.
+
+        Args:
+            limit (int, optional): The maximum number of items to retrieve.
+                                   Defaults to 10.
+
+        Returns:
+            List[ContentItem]: A list of approved content items.
+        """
         approved = [item for item in self.approved_content if item.status == 'approved']
         return approved[:limit]
     
     def mark_as_posted(self, content_id: str) -> bool:
-        """Mark content as posted to Telegram"""
+        """
+        Mark a content item as having been posted to Telegram.
+
+        Args:
+            content_id (str): The ID of the content item to mark as posted.
+
+        Returns:
+            bool: True if the content was marked as posted successfully, False
+                  otherwise.
+        """
         for item in self.approved_content:
             if item.id == content_id:
                 item.status = 'posted'
@@ -338,7 +490,12 @@ class RSSAggregator:
         return False
     
     def get_feed_stats(self) -> Dict:
-        """Get statistics about RSS feeds and content"""
+        """
+        Get statistics about the RSS feeds and content.
+
+        Returns:
+            Dict: A dictionary of statistics.
+        """
         stats = {
             'total_feeds': len(self.feed_sources),
             'active_feeds': len([s for s in self.feed_sources if s.enabled]),
@@ -363,14 +520,35 @@ class RSSAggregator:
         return stats
     
     def export_content(self, status: str = 'approved') -> List[Dict]:
-        """Export content as JSON-serializable format"""
+        """
+        Export content as a JSON-serializable format.
+
+        Args:
+            status (str, optional): The status of the content to export.
+                                    Defaults to 'approved'.
+
+        Returns:
+            List[Dict]: A list of dictionaries representing the exported
+                        content.
+        """
         items = self.pending_review + self.approved_content
         filtered = [item for item in items if item.status == status]
         
         return [asdict(item) for item in filtered]
     
     def schedule_posting(self, content_id: str, post_time: datetime, channels: List[str]) -> bool:
-        """Schedule content for future posting"""
+        """
+        Schedule a content item for future posting.
+
+        Args:
+            content_id (str): The ID of the content item to schedule.
+            post_time (datetime): The time to post the content.
+            channels (List[str]): The channels to post the content to.
+
+        Returns:
+            bool: True if the content was scheduled successfully, False
+                  otherwise.
+        """
         for item in self.approved_content:
             if item.id == content_id:
                 item.scheduled_time = post_time
@@ -379,15 +557,34 @@ class RSSAggregator:
         return False
 
 class RSSWorkflowManager:
-    """Manages the workflow from RSS to Telegram posting"""
+    """
+    Manages the workflow from RSS to Telegram posting.
+
+    This class orchestrates the process of fetching, customizing, approving,
+    and posting content from RSS feeds.
+    """
     
     def __init__(self, aggregator: RSSAggregator):
+        """
+        Initializes the RSSWorkflowManager instance.
+
+        Args:
+            aggregator (RSSAggregator): The RSSAggregator instance to use.
+        """
         self.aggregator = aggregator
         self.workflow_queue = []
         self.posting_schedule = []
     
     def run_workflow(self) -> Dict:
-        """Execute the complete RSS to Telegram workflow"""
+        """
+        Execute the complete RSS to Telegram workflow.
+
+        This method runs the entire workflow, from fetching feeds to queuing
+        content for review.
+
+        Returns:
+            Dict: A dictionary containing the results of the workflow.
+        """
         workflow_result = {
             'timestamp': datetime.utcnow().isoformat(),
             'steps': []
@@ -444,7 +641,13 @@ class RSSWorkflowManager:
         return workflow_result
     
     def process_posting_queue(self) -> List[Dict]:
-        """Process approved content for Telegram posting"""
+        """
+        Process the approved content for Telegram posting.
+
+        Returns:
+            List[Dict]: A list of dictionaries representing the items that were
+                        queued for posting.
+        """
         posted_items = []
         approved = self.aggregator.get_approved_content(limit=5)
         
