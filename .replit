@@ -1,7 +1,8 @@
-modules = ["python-3.11", "nodejs-20"]
+modules = ["nodejs-20", "python-3.11"]
 
 [nix]
 channel = "stable-25_05"
+packages = ["driversi686Linux.mesa-demos", "google-cloud-sdk-gce", "openssl", "postgresql", "see-cat", "systemdUkify", "unzip", "wget"]
 packages = ["openssl", "postgresql", "unzip", "mailutils"]
 
 [deployment]
@@ -25,21 +26,16 @@ name = "Start application"
 author = "agent"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
-waitForPort = 5000
+task = "workflow.run"
+args = "Start application"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 40935
-externalPort = 3002
-
-[[ports]]
-localPort = 45495
+localPort = 9005
 externalPort = 3000
 
 [agent]
-integrations = ["python_openai:1.0.0", "twilio_send_message:1.0.0"]
+integrations = ["web_scraper==1.0.0", "perplexity_v0==1.0.0", "python_notion==1.0.0"]

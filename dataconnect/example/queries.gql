@@ -1,0 +1,34 @@
+mutation CreateUser @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  user_insert(data: {
+    id_expr: "uuidV4()",
+    displayName: "New User",
+    createdAt_expr: "request.time"
+  })
+}
+
+query ListPublicLists @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  lists(where: {public: {eq: true}}) {
+    id
+    name
+    description
+  }
+}
+
+mutation AddMovieToList($listId: UUID!, $movieId: UUID!) @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  listMovie_insert(data: {
+    listId: $listId,
+    movieId: $movieId,
+    position: 0
+  })
+}
+
+query GetMyWatches @auth(level: USER) {
+  watches(where: {userId: {eq_expr: "auth.uid"}}) {
+    id
+    movie {
+      id
+      title
+    }
+    watchDate
+  }
+}
