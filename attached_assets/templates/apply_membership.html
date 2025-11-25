@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Apply for Membership - Gem Assist Enterprise{% endblock %}
+
+{% block content %}
+<!-- Application Hero -->
+<section class="application-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold mb-3">Membership Application</h1>
+                <p class="lead">Join GEM Enterprise's exclusive professional network</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Application Form Section -->
+<section class="application-form-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="application-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-plus me-2"></i>Application Details</h3>
+                        <p class="text-muted mb-0">Please fill in all required information</p>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('apply_membership') }}" class="application-form">
+                        <!-- Personal Information -->
+                        <div class="form-section">
+                            <h4 class="section-title">Personal Information</h4>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="full_name" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="full_name" name="full_name" required>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="company" class="form-label">Company/Organization</label>
+                                    <input type="text" class="form-control" id="company" name="company">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="position" class="form-label">Current Position/Title</label>
+                                <input type="text" class="form-control" id="position" name="position">
+                            </div>
+                        </div>
+                        
+                        <!-- Membership Selection -->
+                        <div class="form-section">
+                            <h4 class="section-title">Membership Selection</h4>
+                            
+                            <div class="membership-options">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="membership-option">
+                                            <input type="radio" class="btn-check" name="membership_type" id="gold" value="gold" autocomplete="off">
+                                            <label class="btn btn-outline-warning w-100" for="gold">
+                                                <i class="fas fa-crown mb-2"></i>
+                                                <h5>Gold</h5>
+                                                <p class="mb-0">$500/month</p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <div class="membership-option">
+                                            <input type="radio" class="btn-check" name="membership_type" id="silver" value="silver" autocomplete="off" checked>
+                                            <label class="btn btn-outline-light w-100" for="silver">
+                                                <i class="fas fa-medal mb-2"></i>
+                                                <h5>Silver</h5>
+                                                <p class="mb-0">$250/month</p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <div class="membership-option">
+                                            <input type="radio" class="btn-check" name="membership_type" id="bronze" value="bronze" autocomplete="off">
+                                            <label class="btn btn-outline-info w-100" for="bronze">
+                                                <i class="fas fa-certificate mb-2"></i>
+                                                <h5>Bronze</h5>
+                                                <p class="mb-0">$100/month</p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Referral Information -->
+                        <div class="form-section">
+                            <h4 class="section-title">Referral Information</h4>
+                            
+                            <div class="mb-3">
+                                <label for="referred_by" class="form-label">Referred By (Optional)</label>
+                                <input type="text" class="form-control" id="referred_by" name="referred_by" 
+                                       placeholder="Enter the name or member ID of who referred you">
+                                <small class="form-text text-muted">If you were referred by an existing member</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Terms and Conditions -->
+                        <div class="form-section">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#" class="text-primary">Terms and Conditions</a> and <a href="#" class="text-primary">Privacy Policy</a> *
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="newsletter">
+                                <label class="form-check-label" for="newsletter">
+                                    I would like to receive updates and exclusive offers via email
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Application
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Sidebar Information -->
+            <div class="col-lg-4">
+                <div class="info-card mb-4">
+                    <h4><i class="fas fa-info-circle me-2"></i>Application Process</h4>
+                    <ol class="process-list">
+                        <li>Submit your application</li>
+                        <li>Receive confirmation email with member ID</li>
+                        <li>Application review (24-48 hours)</li>
+                        <li>Approval notification</li>
+                        <li>Access to member portal</li>
+                    </ol>
+                </div>
+                
+                <div class="info-card mb-4">
+                    <h4><i class="fas fa-shield-alt me-2"></i>Member Benefits</h4>
+                    <ul class="benefits-list">
+                        <li>Priority access to services</li>
+                        <li>Exclusive networking events</li>
+                        <li>Professional development resources</li>
+                        <li>Market intelligence reports</li>
+                        <li>Dedicated support team</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card">
+                    <h4><i class="fas fa-question-circle me-2"></i>Need Help?</h4>
+                    <p>Contact our membership team:</p>
+                    <p class="mb-2">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:membership@gemassist.com">membership@gemassist.com</a>
+                    </p>
+                    <p>
+                        <i class="fas fa-phone me-2"></i>
+                        <a href="tel:+1234567890">+1 (234) 567-890</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.application-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+    padding: 100px 0 60px;
+    color: white;
+}
+
+.application-form-section {
+    background: var(--bg-secondary);
+    min-height: 100vh;
+}
+
+.application-card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.application-card .card-header {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+    padding: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.application-card .card-header h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.application-form {
+    padding: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.section-title {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+    color: var(--text-primary);
+}
+
+.membership-option label {
+    padding: 1.5rem;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 150px;
+    justify-content: center;
+}
+
+.membership-option label i {
+    font-size: 2rem;
+}
+
+.membership-option input:checked + label {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--primary-color);
+}
+
+.form-check-input {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.info-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-card h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.process-list {
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.process-list li {
+    margin-bottom: 0.5rem;
+}
+
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    color: var(--text-secondary);
+}
+
+.benefits-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.benefits-list li::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+}
+
+.info-card a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.info-card a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 991px) {
+    .application-card {
+        margin-bottom: 2rem;
+    }
+}
+</style>
+
+<script>
+// Get tier from URL parameter if present
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tier = urlParams.get('tier');
+    if (tier) {
+        const tierInput = document.getElementById(tier);
+        if (tierInput) {
+            tierInput.checked = true;
+        }
+    }
+});
+</script>
+{% endblock %}

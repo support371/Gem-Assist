@@ -14,6 +14,19 @@
     </div>
 </section>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container mt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
 <section class="py-5">
     <div class="container">
         <!-- Display Notion News if Available -->
@@ -62,6 +75,7 @@
                 </div>
             </div>
             
+        </div>
         {% else %}
         <!-- Default Static News Content -->
         <div class="row">
@@ -188,17 +202,19 @@
                     <div class="newsletter-signup">
                         <h4><i class="fas fa-envelope me-2"></i>Subscribe to Newsletter</h4>
                         <p>Stay updated with the latest security insights and company news.</p>
-                        <form id="newsletterForm">
+                        <form action="{{ url_for('subscribe_newsletter') }}" method="POST" id="newsletterForm">
                             <div class="mb-3">
-                                <input type="email" class="form-control" placeholder="Your email address" required>
+                                <input type="text" name="name" class="form-control" placeholder="Your name (optional)">
                             </div>
                             <div class="mb-3">
-                                <select class="form-select" required>
-                                    <option value="">Select interests...</option>
+                                <input type="email" name="email" class="form-control" placeholder="Your email address" required>
+                            </div>
+                            <div class="mb-3">
+                                <select name="interests" class="form-select">
+                                    <option value="all">All Updates</option>
                                     <option value="security">Security Updates</option>
                                     <option value="realestate">Real Estate News</option>
                                     <option value="technology">Technology Insights</option>
-                                    <option value="all">All Updates</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">
@@ -262,6 +278,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

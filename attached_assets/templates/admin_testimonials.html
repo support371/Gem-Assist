@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Manage Testimonials{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4 text-center mb-3">Manage Testimonials</h1>
+        <p class="lead text-center">Review and approve client testimonials</p>
+    </div>
+</div>
+
+<div class="container my-5">
+    <!-- Stats Overview -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <h3>{{ pending|length }}</h3>
+                    <p class="mb-0">Pending Review</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3>{{ approved|length }}</h3>
+                    <p class="mb-0">Approved</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                    <h3>{{ rejected|length }}</h3>
+                    <p class="mb-0">Rejected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Testimonials -->
+    {% if pending %}
+    <div class="card bg-dark mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0"><i class="fas fa-clock me-2"></i>Pending Review</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Service</th>
+                            <th>Rating</th>
+                            <th>Media</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for testimonial in pending %}
+                        <tr>
+                            <td>{{ testimonial.submitted_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <strong>{{ testimonial.client_name }}</strong><br>
+                                <small>{{ testimonial.company_name or 'Individual' }}</small>
+                            </td>
+                            <td>{{ testimonial.service_type.value|replace('_', ' ')|title }}</td>
+                            <td>
+                                {% for i in range(testimonial.rating|int) %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if testimonial.video_url %}
+                                <i class="fas fa-video text-info"></i>
+                                {% endif %}
+                                {% if testimonial.image_url %}
+                                <i class="fas fa-image text-info"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="viewTestimonial({{ testimonial.id }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <form method="POST" action="{{ url_for('approve_testimonial', id=testimonial.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ url_for('reject_testimonial', id=testimonial.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Hidden row for testimonial details -->
+                        <tr id="details-{{ testimonial.id }}" style="display: none;">
+                            <td colspan="6">
+                                <div class="p-3 bg-darker">
+                                    {% if testimonial.title %}
+                                    <h5 class="text-primary">{{ testimonial.title }}</h5>
+                                    {% endif %}
+                                    <p>{{ testimonial.testimonial_text }}</p>
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            Email: {{ testimonial.client_email }} | 
+                                            Phone: {{ testimonial.client_phone or 'N/A' }} |
+                                            Display Consent: {{ 'Yes' if testimonial.consent_to_display else 'No' }} |
+                                            Contact Consent: {{ 'Yes' if testimonial.consent_to_contact else 'No' }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Approved Testimonials -->
+    {% if approved %}
+    <div class="card bg-dark mb-4">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0"><i class="fas fa-check-circle me-2"></i>Approved Testimonials</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Service</th>
+                            <th>Rating</th>
+                            <th>Featured</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for testimonial in approved %}
+                        <tr>
+                            <td>{{ testimonial.submitted_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <strong>{{ testimonial.client_name }}</strong><br>
+                                <small>{{ testimonial.company_name or 'Individual' }}</small>
+                            </td>
+                            <td>{{ testimonial.service_type.value|replace('_', ' ')|title }}</td>
+                            <td>
+                                {% for i in range(testimonial.rating|int) %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if testimonial.is_featured %}
+                                <span class="badge bg-warning text-dark">Featured</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Regular</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="viewTestimonial({{ testimonial.id }})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <form method="POST" action="{{ url_for('feature_testimonial', id=testimonial.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ url_for('reject_testimonial', id=testimonial.id) }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Hidden row for testimonial details -->
+                        <tr id="details-{{ testimonial.id }}" style="display: none;">
+                            <td colspan="6">
+                                <div class="p-3 bg-darker">
+                                    {% if testimonial.title %}
+                                    <h5 class="text-primary">{{ testimonial.title }}</h5>
+                                    {% endif %}
+                                    <p>{{ testimonial.testimonial_text }}</p>
+                                    {% if testimonial.approved_at %}
+                                    <small class="text-muted">Approved on {{ testimonial.approved_at.strftime('%Y-%m-%d %H:%M') }} by {{ testimonial.approved_by }}</small>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Back to Admin Panel -->
+    <div class="text-center mt-4">
+        <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Admin Panel
+        </a>
+    </div>
+</div>
+
+<style>
+.bg-darker {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.table-dark {
+    background: var(--bg-card);
+}
+
+.badge {
+    padding: 0.5em 1em;
+}
+</style>
+
+<script>
+function viewTestimonial(id) {
+    const detailsRow = document.getElementById('details-' + id);
+    if (detailsRow.style.display === 'none') {
+        detailsRow.style.display = 'table-row';
+    } else {
+        detailsRow.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

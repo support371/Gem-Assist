@@ -1,0 +1,985 @@
+{% extends "base.html" %}
+
+{% block title %}Gem Assist Enterprise - Professional Security & Trust Services{% endblock %}
+
+{% block content %}
+<!-- Modern Hero Section - Full Page with Dynamic Elements -->
+<section class="modern-hero-section">
+    <div class="hero-background-effects">
+        <div class="floating-particles"></div>
+        <div class="gradient-orbs"></div>
+    </div>
+
+    <div class="container-fluid px-0">
+        <div class="row g-0 min-vh-100 align-items-center">
+            <!-- Left Content - Asymmetric Layout -->
+            <div class="col-xl-5 col-lg-6 order-lg-1 order-2">
+                <div class="hero-content-modern">
+                    <div class="hero-badge-container">
+                        <span class="hero-badge">
+                            <i class="fas fa-shield-virus me-2"></i>
+                            Enterprise Security Platform
+                        </span>
+                    </div>
+
+                    <h1 class="hero-title-modern">
+                        <span class="title-line-1">Next-Generation</span>
+                        <span class="title-line-2">Security & Trust</span>
+                        <span class="title-line-3">Solutions</span>
+                    </h1>
+
+                    <p class="hero-description-modern">
+                        Advanced cybersecurity monitoring, asset recovery, and real estate services. 
+                        Powered by AI-driven threat detection and backed by federal compliance standards.
+                    </p>
+
+                    <!-- Interactive Stats Grid -->
+                    <div class="hero-metrics-grid">
+                        <div class="metric-card" data-animate="counter">
+                            <div class="metric-icon">
+                                <i class="fas fa-shield-check"></i>
+                            </div>
+                            <div class="metric-content">
+                                <span class="metric-number" data-count="99.9">0</span><span class="metric-symbol">%</span>
+                                <span class="metric-label">Uptime Guarantee</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card" data-animate="counter">
+                            <div class="metric-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="metric-content">
+                                <span class="metric-number" data-count="2">0</span><span class="metric-symbol">min</span>
+                                <span class="metric-label">Response Time</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card" data-animate="counter">
+                            <div class="metric-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="metric-content">
+                                <span class="metric-number" data-count="50">0</span><span class="metric-symbol">M+</span>
+                                <span class="metric-label">Assets Managed</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Strategic CTAs -->
+                    <div class="hero-cta-section">
+                        <div class="primary-cta-group">
+                            <a href="{{ url_for('services') }}" class="cta-primary">
+                                <span class="cta-icon"><i class="fas fa-rocket"></i></span>
+                                <span class="cta-text">
+                                    <strong>Explore Services</strong>
+                                    <small>Full solution overview</small>
+                                </span>
+                                <span class="cta-arrow"><i class="fas fa-arrow-right"></i></span>
+                            </a>
+
+                            <a href="{{ url_for('contact') }}" class="cta-secondary">
+                                <span class="cta-icon"><i class="fas fa-calendar-check"></i></span>
+                                <span class="cta-text">Schedule Consultation</span>
+                            </a>
+                        </div>
+
+                        <div class="trust-indicators">
+                            <span class="trust-item">
+                                <i class="fas fa-certificate me-1"></i>
+                                SOC 2 Certified
+                            </span>
+                            <span class="trust-item">
+                                <i class="fas fa-award me-1"></i>
+                                Federal Compliant
+                            </span>
+                            <span class="trust-item">
+                                <i class="fas fa-users-cog me-1"></i>
+                                24/7 Support
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Visual - Interactive Dashboard with Security Operations Image -->
+            <div class="col-xl-7 col-lg-6 order-lg-2 order-1">
+                <div class="hero-visual-modern">
+                    <!-- Security Operations Center Image -->
+                    <div class="security-operations-preview mb-4">
+                        <div class="operations-image-container">
+                            <img src="{{ url_for('static', filename='images/Cybersecurity_operations_center_22991021.png') }}" 
+                                 alt="Cybersecurity Operations Center" 
+                                 class="operations-image">
+                            <div class="operations-overlay">
+                                <div class="overlay-content">
+                                    <div class="status-badge-overlay">
+                                        <div class="pulse-dot-overlay"></div>
+                                        <span>Systems Operational</span>
+                                    </div>
+                                    <div class="real-time-metrics">
+                                        <div class="metric-overlay">
+                                            <strong>1,247</strong>
+                                            <small>Threats Blocked</small>
+                                        </div>
+                                        <div class="metric-overlay">
+                                            <strong>99.9%</strong>
+                                            <small>Uptime</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Security Dashboard -->
+                    <div class="dashboard-container">
+                        <div class="dashboard-header-modern">
+                            <div class="header-left">
+                                <h6><i class="fas fa-shield-alt me-2"></i>Security Operations Center</h6>
+                                <span class="live-indicator">
+                                    <span class="pulse-dot"></span>
+                                    Live Monitoring
+                                </span>
+                            </div>
+                            <div class="header-right">
+                                <div class="dashboard-controls">
+                                    <button class="control-btn active">Real-time</button>
+                                    <button class="control-btn">Analytics</button>
+                                    <button class="control-btn">Reports</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-grid">
+                            <!-- Threat Detection Card -->
+                            <div class="dashboard-card threat-card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-bug me-2 text-danger"></i>Threat Detection</h6>
+                                    <span class="status-badge active">Active</span>
+                                </div>
+                                <div class="card-content">
+                                    <div class="threat-visual">
+                                        <div class="threat-chart">
+                                            <div class="chart-bar" data-value="85"></div>
+                                            <div class="chart-bar" data-value="72"></div>
+                                            <div class="chart-bar" data-value="94"></div>
+                                            <div class="chart-bar" data-value="68"></div>
+                                        </div>
+                                    </div>
+                                    <div class="threat-stats">
+                                        <span class="stat">
+                                            <strong data-animate="counter" data-count="1247">0</strong>
+                                            <small>Threats Blocked</small>
+                                        </span>
+                                        <span class="stat">
+                                            <strong data-animate="counter" data-count="98.7">0</strong><small>%</small>
+                                            <small>Success Rate</small>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Network Status Card -->
+                            <div class="dashboard-card network-card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-network-wired me-2 text-success"></i>Network Status</h6>
+                                    <span class="status-badge secure">Secure</span>
+                                </div>
+                                <div class="card-content">
+                                    <div class="network-topology">
+                                        <div class="node central-node">
+                                            <i class="fas fa-server"></i>
+                                        </div>
+                                        <div class="node client-node node-1"></div>
+                                        <div class="node client-node node-2"></div>
+                                        <div class="node client-node node-3"></div>
+                                        <div class="connection con-1"></div>
+                                        <div class="connection con-2"></div>
+                                        <div class="connection con-3"></div>
+                                    </div>
+                                    <div class="network-stats">
+                                        <div class="stat-row">
+                                            <span>Latency</span>
+                                            <strong class="text-success">12ms</strong>
+                                        </div>
+                                        <div class="stat-row">
+                                            <span>Throughput</span>
+                                            <strong class="text-info">1.2Gbps</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Asset Protection Card -->
+                            <div class="dashboard-card asset-card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-coins me-2 text-warning"></i>Asset Protection</h6>
+                                    <span class="status-badge monitoring">Monitoring</span>
+                                </div>
+                                <div class="card-content">
+                                    <div class="asset-progress">
+                                        <div class="progress-circle" data-percent="98.7">
+                                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                                <path class="circle-bg" d="M18 2.0845
+                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                                                <path class="circle" stroke-dasharray="98.7, 100" d="M18 2.0845
+                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                                            </svg>
+                                            <div class="percentage">98.7%</div>
+                                        </div>
+                                    </div>
+                                    <div class="asset-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Protected Assets</span>
+                                            <strong class="detail-value">$50M+</strong>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Recovery Rate</span>
+                                            <strong class="detail-value text-success">94%</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+        <div class="scroll-text">Scroll to explore</div>
+        <div class="scroll-arrow">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+</section>
+
+<!-- Modern Services Grid - Dynamic Card Layout -->
+<section class="modern-services-section">
+    <div class="container">
+        <!-- Section Header with Dynamic Elements -->
+        <div class="section-header-modern">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="header-content">
+                        <span class="section-eyebrow">
+                            <i class="fas fa-cogs me-2"></i>
+                            Core Solutions
+                        </span>
+                        <h2 class="section-title-modern">
+                            Comprehensive Enterprise
+                            <span class="highlight-text">Security Platform</span>
+                        </h2>
+                        <p class="section-description">
+                            Integrated solutions combining advanced cybersecurity, asset recovery, and real estate services 
+                            with AI-powered automation and federal compliance standards.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="header-cta">
+                        <a href="{{ url_for('services') }}" class="btn-modern-outline">
+                            <span>View All Services</span>
+                            <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Services Grid -->
+        <div class="services-grid-modern">
+            <!-- Primary Service Card - Larger Featured -->
+            <div class="service-card-modern primary-card" data-service="cybersecurity">
+                <div class="card-background">
+                    <div class="bg-pattern"></div>
+                </div>
+                <div class="card-content">
+                    <div class="service-header">
+                        <div class="service-icon-modern">
+                            <i class="fas fa-shield-virus"></i>
+                        </div>
+                        <div class="service-meta">
+                            <span class="service-category">Core Security</span>
+                            <div class="service-rating">
+                                <i class="fas fa-star"></i>
+                                <span>Enterprise Grade</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="service-title">Advanced Threat Monitoring</h3>
+                    <p class="service-description">
+                        AI-powered 24/7 threat detection with real-time response capabilities. 
+                        Federal compliance standards with SOC 2 certification.
+                    </p>
+
+                    <!-- Service Media Gallery -->
+                    <div class="service-media-gallery">
+                        <div class="media-tabs">
+                            <button class="media-tab active" data-tab="dashboard">Live Dashboard</button>
+                            <button class="media-tab" data-tab="demo">Demo Video</button>
+                        </div>
+
+                        <div class="media-content">
+                            <div class="tab-content active" data-content="dashboard">
+                                <div class="media-frame dashboard-preview">
+                                    <div class="dashboard-mockup">
+                                        <div class="threat-indicator active">
+                                            <span class="indicator-dot"></span>
+                                            <span class="indicator-text">Real-time Monitoring</span>
+                                        </div>
+                                        <div class="threat-chart">
+                                            <div class="chart-bar" data-threat="low"></div>
+                                            <div class="chart-bar" data-threat="medium"></div>
+                                            <div class="chart-bar" data-threat="critical"></div>
+                                        </div>
+                                        <div class="threat-stats">
+                                            <span>2.4M+ Threats Blocked</span>
+                                            <span>99.9% Success Rate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-content" data-content="demo">
+                                <div class="video-placeholder" data-video="cybersecurity-demo">
+                                    <div class="video-overlay">
+                                        <i class="fas fa-play-circle"></i>
+                                        <span>Watch Cybersecurity Demo</span>
+                                        <small>See threat detection in action</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="service-features">
+                        <span class="feature-tag">Real-time Detection</span>
+                        <span class="feature-tag">AI Analysis</span>
+                        <span class="feature-tag">Incident Response</span>
+                    </div>
+
+                    <div class="service-stats">
+                        <div class="stat">
+                            <strong data-animate="counter" data-count="99.9">0</strong><span class="unit">%</span>
+                            <small>Uptime</small>
+                        </div>
+                        <div class="stat">
+                            <strong data-animate="counter" data-count="2">0</strong><span class="unit">min</span>
+                            <small>Response</small>
+                        </div>
+                    </div>
+
+                    <div class="service-action">
+                        <a href="{{ url_for('monitoring') }}" class="btn-service">
+                            <span>Explore Security</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary Service Cards -->
+            <div class="service-card-modern secondary-card" data-service="telegram">
+                <div class="card-content">
+                    <div class="service-header">
+                        <div class="service-icon-modern telegram-icon">
+                            <i class="fab fa-telegram-plane"></i>
+                        </div>
+                        <span class="service-category">Automation</span>
+                    </div>
+
+                    <h4 class="service-title">Telegram Automation</h4>
+                    <p class="service-description">
+                        Advanced bot solutions for secure communications and workflow automation.
+                    </p>
+
+                    <!-- Service Media Gallery -->
+                    <div class="service-media-gallery compact">
+                        <div class="media-showcase">
+                            <div class="bot-interface-preview">
+                                <div class="bot-header">
+                                    <i class="fab fa-telegram"></i>
+                                    <span>GEM Enterprise Bot</span>
+                                    <div class="bot-status online"></div>
+                                </div>
+                                <div class="bot-conversation">
+                                    <div class="bot-message">
+                                        <span>Automated security alert sent</span>
+                                        <small>✓ ✓</small>
+                                    </div>
+                                    <div class="bot-message">
+                                        <span>Report generated: Q4 Analysis</span>
+                                        <small>✓ ✓</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="media-actions">
+                            <button class="media-action-btn" data-action="video">
+                                <i class="fas fa-play"></i>
+                                <span>Demo Video</span>
+                            </button>
+                            <button class="media-action-btn" data-action="gallery">
+                                <i class="fas fa-images"></i>
+                                <span>Screenshots</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="service-highlights">
+                        <div class="highlight">
+                            <i class="fas fa-robot me-2"></i>
+                            <span>Smart Bots</span>
+                        </div>
+                        <div class="highlight">
+                            <i class="fas fa-lock me-2"></i>
+                            <span>Secure Messaging</span>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('telegram_bot') }}" class="btn-service-minimal">
+                        Learn More <i class="fas fa-chevron-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="service-card-modern secondary-card" data-service="realestate">
+                <div class="card-content">
+                    <div class="service-header">
+                        <div class="service-icon-modern realestate-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <span class="service-category">Real Estate</span>
+                    </div>
+
+                    <h4 class="service-title">Asset Management</h4>
+                    <p class="service-description">
+                        Professional real estate services through Alliance Trust Realty LLC partnership.
+                    </p>
+
+                    <!-- Service Media Gallery -->
+                    <div class="service-media-gallery compact">
+                        <div class="media-showcase">
+                            <div class="property-showcase">
+                                <div class="property-image-placeholder">
+                                    <div class="image-overlay">
+                                        <i class="fas fa-building"></i>
+                                        <span>Property Portfolio</span>
+                                    </div>
+                                </div>
+                                <div class="property-stats">
+                                    <div class="stat-item">
+                                        <strong>$50M+</strong>
+                                        <span>Assets Under Management</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <strong>94%</strong>
+                                        <span>Recovery Rate</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="media-actions">
+                            <button class="media-action-btn" data-action="video">
+                                <i class="fas fa-play"></i>
+                                <span>Property Tour</span>
+                            </button>
+                            <button class="media-action-btn" data-action="gallery">
+                                <i class="fas fa-images"></i>
+                                <span>Gallery</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="service-highlights">
+                        <div class="highlight">
+                            <i class="fas fa-chart-line me-2"></i>
+                            <span>Portfolio Growth</span>
+                        </div>
+                        <div class="highlight">
+                            <i class="fas fa-handshake me-2"></i>
+                            <span>Trust Services</span>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('investment_portfolio') }}" class="btn-service-minimal">
+                        Learn More <i class="fas fa-chevron-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="service-card-modern secondary-card" data-service="recovery">
+                <div class="card-content">
+                    <div class="service-header">
+                        <div class="service-icon-modern recovery-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span class="service-category">Recovery</span>
+                    </div>
+
+                    <h4 class="service-title">Asset Recovery</h4>
+                    <p class="service-description">
+                        Specialized digital asset recovery with forensic analysis and legal support.
+                    </p>
+
+                    <!-- Service Media Gallery -->
+                    <div class="service-media-gallery compact">
+                        <div class="media-showcase">
+                            <div class="forensics-showcase">
+                                <div class="forensics-diagram">
+                                    <div class="recovery-flow">
+                                        <div class="flow-step active">
+                                            <i class="fas fa-search"></i>
+                                            <span>Detection</span>
+                                        </div>
+                                        <div class="flow-step">
+                                            <i class="fas fa-microscope"></i>
+                                            <span>Analysis</span>
+                                        </div>
+                                        <div class="flow-step">
+                                            <i class="fas fa-undo-alt"></i>
+                                            <span>Recovery</span>
+                                        </div>
+                                    </div>
+                                    <div class="recovery-stats">
+                                        <span>$2.3M+ Assets Recovered</span>
+                                        <span>94% Success Rate</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="media-actions">
+                            <button class="media-action-btn" data-action="video">
+                                <i class="fas fa-play"></i>
+                                <span>Process Video</span>
+                            </button>
+                            <button class="media-action-btn" data-action="case-study">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Case Studies</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="service-highlights">
+                        <div class="highlight">
+                            <i class="fas fa-search me-2"></i>
+                            <span>Forensic Analysis</span>
+                        </div>
+                        <div class="highlight">
+                            <i class="fas fa-gavel me-2"></i>
+                            <span>Legal Support</span>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('recovery_service') }}" class="btn-service-minimal">
+                        Learn More <i class="fas fa-chevron-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-card multimedia-enhanced">
+                    <div class="service-icon">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <h4>Legal Services</h4>
+                    <p>Power of attorney, legal documentation, and trust management services for secure asset protection.</p>
+
+                    <!-- Legal Service Media -->
+                    <div class="service-media-preview">
+                        <div class="legal-document-preview">
+                            <div class="document-stack">
+                                <div class="document-item">Power of Attorney</div>
+                                <div class="document-item">Trust Agreement</div>
+                                <div class="document-item">Legal Compliance</div>
+                            </div>
+                        </div>
+                        <div class="media-preview-actions">
+                            <button class="preview-btn" data-media="legal-video">
+                                <i class="fas fa-play"></i> Process Overview
+                            </button>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('power_of_attorney') }}" class="btn btn-outline-primary">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-card multimedia-enhanced">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>Investment Portfolio</h4>
+                    <p>Strategic investment management and portfolio optimization with comprehensive risk assessment.</p>
+
+                    <!-- Investment Portfolio Media -->
+                    <div class="service-media-preview">
+                        <div class="portfolio-chart-preview">
+                            <div class="chart-visualization">
+                                <div class="chart-line-animation">
+                                    <span class="growth-indicator">+23.4%</span>
+                                </div>
+                                <div class="portfolio-stats">
+                                    <small>YTD Performance</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media-preview-actions">
+                            <button class="preview-btn" data-media="portfolio-video">
+                                <i class="fas fa-play"></i> Portfolio Analysis
+                            </button>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('investment_portfolio') }}" class="btn btn-outline-primary">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-card multimedia-enhanced">
+                    <div class="service-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h4>Partnership Services</h4>
+                    <p>Trusted partnerships and trustee services for secure business relationships and asset management.</p>
+
+                    <!-- Partnership Services Media -->
+                    <div class="service-media-preview">
+                        <div class="partnership-network">
+                            <div class="network-visualization">
+                                <div class="network-node central">GEM</div>
+                                <div class="network-node partner">Alliance Trust</div>
+                                <div class="network-node partner">Legal Partners</div>
+                                <div class="network-connections"></div>
+                            </div>
+                        </div>
+                        <div class="media-preview-actions">
+                            <button class="preview-btn" data-media="partnership-video">
+                                <i class="fas fa-play"></i> Partnership Network
+                            </button>
+                        </div>
+                    </div>
+
+                    <a href="{{ url_for('partners') }}" class="btn btn-outline-primary">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enterprise Stats Section - Interactive Data Visualization -->
+<section class="enterprise-stats-section">
+    <div class="container">
+        <div class="stats-grid-modern">
+            <div class="stat-card-modern primary-stat">
+                <div class="stat-visual">
+                    <div class="stat-chart">
+                        <div class="chart-ring">
+                            <svg viewBox="0 0 100 100" class="ring-chart">
+                                <circle cx="50" cy="50" r="45" class="ring-bg"></circle>
+                                <circle cx="50" cy="50" r="45" class="ring-progress" data-percent="99.9"></circle>
+                            </svg>
+                            <div class="chart-center">
+                                <span class="chart-value" data-animate="counter" data-count="99.9">0</span><span class="chart-unit">%</span>
+                                <span class="chart-label">Uptime</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-content">
+                    <h3>Enterprise Reliability</h3>
+                    <p>Industry-leading uptime with 24/7 monitoring and instant failover protection</p>
+                    <div class="stat-features">
+                        <span class="feature-point">
+                            <i class="fas fa-check-circle"></i>
+                            99.9% SLA Guarantee
+                        </span>
+                        <span class="feature-point">
+                            <i class="fas fa-shield-alt"></i>
+                            Redundant Infrastructure
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card-modern">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <span class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +23%
+                    </span>
+                </div>
+                <div class="stat-value">
+                    <span class="value-number" data-animate="counter" data-count="500">0</span><span class="value-unit">+</span>
+                </div>
+                <div class="stat-label">Enterprise Clients</div>
+                <div class="stat-description">Fortune 500 companies trust our security solutions</div>
+            </div>
+
+            <div class="stat-card-modern">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <span class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +15%
+                    </span>
+                </div>
+                <div class="stat-value">
+                    <span class="value-number" data-animate="counter" data-count="2.4">0</span><span class="value-unit">M+</span>
+                </div>
+                <div class="stat-label">Threats Blocked</div>
+                <div class="stat-description">Real-time threat detection and mitigation</div>
+            </div>
+
+            <div class="stat-card-modern">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <span class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +41%
+                    </span>
+                </div>
+                <div class="stat-value">
+                    <span class="value-number" data-animate="counter" data-count="150">0</span><span class="value-unit">M+</span>
+                </div>
+                <div class="stat-label">Assets Protected</div>
+                <div class="stat-description">Total value of client assets under protection</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modern Testimonials Section - Social Proof -->
+<section class="modern-testimonials-section">
+    <div class="container">
+        <div class="section-header-centered">
+            <span class="section-eyebrow">
+                <i class="fas fa-quote-left me-2"></i>
+                Client Success Stories
+            </span>
+            <h2 class="section-title-modern">
+                Trusted by Industry Leaders
+            </h2>
+            <p class="section-description-centered">
+                See how enterprises worldwide leverage our security platform to protect their most valuable assets
+            </p>
+        </div>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card featured">
+                <div class="testimonial-header">
+                    <div class="client-avatar">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="client-info">
+                        <h5>Fortune 100 Financial Institution</h5>
+                        <span class="client-title">Chief Information Security Officer</span>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <blockquote class="testimonial-quote">
+                    "GEM Enterprise's threat detection capabilities are unmatched. We've seen a 94% reduction in security incidents since implementation. Their 24/7 monitoring gives us peace of mind knowing our $50B+ in assets are protected."
+                </blockquote>
+                <div class="testimonial-metrics">
+                    <div class="metric">
+                        <strong>94%</strong>
+                        <span>Incident Reduction</span>
+                    </div>
+                    <div class="metric">
+                        <strong>$50B+</strong>
+                        <span>Assets Protected</span>
+                    </div>
+                    <div class="metric">
+                        <strong>2 min</strong>
+                        <span>Response Time</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="client-avatar">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <div class="client-info">
+                        <h6>Global Manufacturing Corp</h6>
+                        <span class="client-title">IT Security Director</span>
+                    </div>
+                </div>
+                <blockquote class="testimonial-quote">
+                    "The real estate asset recovery service helped us reclaim $2.3M in misappropriated funds. Professional, efficient, and results-driven."
+                </blockquote>
+                <div class="testimonial-result">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <strong>$2.3M Recovered</strong>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="client-avatar">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <div class="client-info">
+                        <h6>Healthcare Network</h6>
+                        <span class="client-title">Chief Technology Officer</span>
+                    </div>
+                </div>
+                <blockquote class="testimonial-quote">
+                    "HIPAA compliance made simple. Their automation solutions reduced our manual compliance work by 78% while maintaining perfect audit scores."
+                </blockquote>
+                <div class="testimonial-result">
+                    <i class="fas fa-shield-check text-success"></i>
+                    <strong>100% Compliance Rate</strong>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"GEM Enterprise delivered exceptional results for our digital transformation project."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JS</div>
+                    <div class="author-info">
+                        <div class="author-name">John Smith</div>
+                        <div class="author-title">CTO, TechCorp</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Their cybersecurity solutions transformed our security posture completely. Outstanding expertise and support."</p>
+                </div>
+                <div class="testimonial-author">
+                    <img src="/static/images/Cybersecurity_professional_headshot_d382df29.png" alt="Cybersecurity Professional" class="author-photo">
+                    <div class="author-info">
+                        <div class="author-name">Sarah Chen</div>
+                        <div class="author-title">CISO, SecureTech</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modern CTA Section - Conversion Optimized -->
+<section class="modern-cta-section">
+    <div class="cta-background-effects">
+        <div class="cta-gradient-mesh"></div>
+        <div class="cta-floating-elements">
+            <div class="floating-icon icon-1">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="floating-icon icon-2">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="floating-icon icon-3">
+                <i class="fas fa-cog"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="cta-content">
+            <div class="cta-main">
+                <h2 class="cta-title">
+                    Ready to Secure Your Enterprise?
+                </h2>
+                <p class="cta-description">
+                    Join 500+ Fortune companies who trust GEM Enterprise for comprehensive 
+                    security, asset protection, and business intelligence solutions.
+                </p>
+
+                <div class="cta-features-grid">
+                    <div class="cta-feature">
+                        <i class="fas fa-rocket"></i>
+                        <span>Quick Setup</span>
+                    </div>
+                    <div class="cta-feature">
+                        <i class="fas fa-headset"></i>
+                        <span>24/7 Support</span>
+                    </div>
+                    <div class="cta-feature">
+                        <i class="fas fa-certificate"></i>
+                        <span>SOC 2 Certified</span>
+                    </div>
+                    <div class="cta-feature">
+                        <i class="fas fa-shield-check"></i>
+                        <span>99.9% Uptime</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-actions">
+                <div class="primary-cta-container">
+                    <a href="{{ url_for('contact') }}" class="cta-primary-large">
+                        <span class="cta-icon-large">
+                            <i class="fas fa-calendar-check"></i>
+                        </span>
+                        <div class="cta-text-large">
+                            <strong>Schedule Enterprise Consultation</strong>
+                            <small>Free security assessment & custom solution design</small>
+                        </div>
+                        <span class="cta-arrow-large">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </a>
+                </div>
+
+                <div class="secondary-cta-container">
+                    <a href="{{ url_for('services') }}" class="cta-secondary-large">
+                        <span class="cta-icon-small">
+                            <i class="fas fa-play-circle"></i>
+                        </span>
+                        <span>Watch Demo</span>
+                    </a>
+
+                    <a href="tel:+1-555-GEM-SECURE" class="cta-tertiary">
+                        <span class="cta-icon-small">
+                            <i class="fas fa-phone"></i>
+                        </span>
+                        <span>Call Now</span>
+                    </a>
+                </div>
+
+                <div class="cta-trust-signals">
+                    <div class="trust-signal">
+                        <i class="fas fa-users-cog text-primary"></i>
+                        <span>500+ Enterprise Clients</span>
+                    </div>
+                    <div class="trust-signal">
+                        <i class="fas fa-award text-warning"></i>
+                        <span>Federal Compliant</span>
+                    </div>
+                    <div class="trust-signal">
+                        <i class="fas fa-clock text-success"></i>
+                        <span>2-Minute Response</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

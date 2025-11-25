@@ -14,148 +14,147 @@ from typing import Dict, Any, List, Optional
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
 class GEMWorkflowBots:
     """Master handler for all GEM Telegram workflow bots"""
-
+    
     def __init__(self):
         # Bot configuration - support for multiple bot tokens
-        self.active_bot = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+        self.active_bot = os.environ.get('TELEGRAM_BOT_TOKEN', '')
         self.bot_configs = {
-            "GEMAssist": {
-                "token": os.environ.get("GEMASSIST_BOT_TOKEN", self.active_bot),
-                "username": "@GEMAssist_bot",
-                "purpose": "Central operations bot",
+            'GEMAssist': {
+                'token': os.environ.get('GEMASSIST_BOT_TOKEN', self.active_bot),
+                'username': '@GEMAssist_bot',
+                'purpose': 'Central operations bot'
             },
-            "GemCyberAssist": {
-                "token": os.environ.get("GEMCYBERASSIST_BOT_TOKEN", self.active_bot),
-                "username": "@GemCyberAssist_bot",
-                "purpose": "Client service assistant",
+            'GemCyberAssist': {
+                'token': os.environ.get('GEMCYBERASSIST_BOT_TOKEN', self.active_bot),
+                'username': '@GemCyberAssist_bot',
+                'purpose': 'Client service assistant'
             },
-            "CyberGEMSecure": {
-                "token": os.environ.get("CYBERGEMSECURE_BOT_TOKEN", self.active_bot),
-                "username": "@CyberGEMSecure_bot",
-                "purpose": "Cybersecurity education + compliance",
+            'CyberGEMSecure': {
+                'token': os.environ.get('CYBERGEMSECURE_BOT_TOKEN', self.active_bot),
+                'username': '@CyberGEMSecure_bot',
+                'purpose': 'Cybersecurity education + compliance'
             },
-            "RealEstateChannel": {
-                "token": os.environ.get("REALESTATE_BOT_TOKEN", self.active_bot),
-                "username": "@realestatechannel_bot",
-                "purpose": "Real estate content & services",
-            },
+            'RealEstateChannel': {
+                'token': os.environ.get('REALESTATE_BOT_TOKEN', self.active_bot),
+                'username': '@realestatechannel_bot',
+                'purpose': 'Real estate content & services'
+            }
         }
-
+        
         # Integration endpoints
         self.integrations = {
-            "make": os.environ.get("MAKE_WEBHOOK_URL", ""),
-            "notion": os.environ.get("NOTION_WEBHOOK_URL", ""),
-            "trello": os.environ.get("TRELLO_WEBHOOK_URL", ""),
-            "typeform": os.environ.get("TYPEFORM_WEBHOOK_URL", ""),
+            'make': os.environ.get('MAKE_WEBHOOK_URL', ''),
+            'notion': os.environ.get('NOTION_WEBHOOK_URL', ''),
+            'trello': os.environ.get('TRELLO_WEBHOOK_URL', ''),
+            'typeform': os.environ.get('TYPEFORM_WEBHOOK_URL', ''),
         }
-
+        
         # Broadcast channels
         self.channels = {
-            "security": os.environ.get("SECURITY_CHANNEL_ID", ""),
-            "realestate": os.environ.get("REALESTATE_CHANNEL_ID", ""),
-            "client": os.environ.get("CLIENT_CHANNEL_ID", ""),
+            'security': os.environ.get('SECURITY_CHANNEL_ID', ''),
+            'realestate': os.environ.get('REALESTATE_CHANNEL_ID', ''),
+            'client': os.environ.get('CLIENT_CHANNEL_ID', ''),
         }
-
+        
         # Data storage
         self.case_submissions = []
         self.kyc_submissions = []
         self.consultations = []
         self.referrals = []
-
+    
     def identify_bot(self, bot_token: str) -> Optional[str]:
         """Identify which bot is being called based on token"""
         for bot_name, config in self.bot_configs.items():
-            if config["token"] == bot_token:
+            if config['token'] == bot_token:
                 return bot_name
         return None
-
-    def process_update(
-        self, update: Dict[str, Any], bot_token: Optional[str] = None
-    ) -> Dict[str, Any]:
+    
+    def process_update(self, update: Dict[str, Any], bot_token: str = None) -> Dict[str, Any]:
         """Process incoming Telegram update"""
         try:
             # Identify which bot received the update
             bot_name = self.identify_bot(bot_token or self.active_bot)
-
+            
             # Extract message data
-            message = update.get("message", {})
-            chat_id = message.get("chat", {}).get("id")
-            text = message.get("text", "")
-            user = message.get("from", {})
-
+            message = update.get('message', {})
+            chat_id = message.get('chat', {}).get('id')
+            text = message.get('text', '')
+            user = message.get('from', {})
+            
             logger.info(f"Processing {bot_name} update: {text[:50]}")
-
+            
             # Route to appropriate bot handler
-            if bot_name == "GEMAssist":
+            if bot_name == 'GEMAssist':
                 return self.handle_gemassist(chat_id, text, user)
-            elif bot_name == "GemCyberAssist":
+            elif bot_name == 'GemCyberAssist':
                 return self.handle_cyberassist(chat_id, text, user)
-            elif bot_name == "CyberGEMSecure":
+            elif bot_name == 'CyberGEMSecure':
                 return self.handle_cybergemsecure(chat_id, text, user)
-            elif bot_name == "RealEstateChannel":
+            elif bot_name == 'RealEstateChannel':
                 return self.handle_realestate(chat_id, text, user)
             else:
                 return self.handle_default(chat_id, text, user)
-
+            
         except Exception as e:
             logger.error(f"Error processing update: {e}")
-            return {"error": str(e)}
-
-    def send_message(
-        self, chat_id: str, text: str, bot_token: Optional[str] = None
-    ) -> bool:
+            return {'error': str(e)}
+    
+    def send_message(self, chat_id: str, text: str, bot_token: str = None) -> bool:
         """Send message via Telegram API"""
         token = bot_token or self.active_bot
         if not token:
             logger.warning("No bot token configured")
             return False
-
+        
         try:
             url = f"https://api.telegram.org/bot{token}/sendMessage"
-            payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
+            payload = {
+                'chat_id': chat_id,
+                'text': text,
+                'parse_mode': 'HTML'
+            }
             response = requests.post(url, json=payload, timeout=10)
             return response.status_code == 200
         except Exception as e:
             logger.error(f"Error sending message: {e}")
             return False
-
+    
     def log_to_integration(self, service: str, data: Dict) -> bool:
         """Log data to integrated service (Notion/Trello)"""
         webhook_url = self.integrations.get(service)
         if not webhook_url:
             return False
-
+        
         try:
             response = requests.post(webhook_url, json=data, timeout=10)
             return response.status_code == 200
         except Exception as e:
             logger.error(f"Error logging to {service}: {e}")
             return False
-
+    
     # @GEMAssist_bot Handlers
     def handle_gemassist(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Handle GEMAssist bot commands - Central operations"""
         commands = {
-            "/start": self.gemassist_start,
-            "/help": self.gemassist_help,
-            "/contact": self.gemassist_contact,
-            "/services": self.gemassist_services,
-            "/toolkit": self.gemassist_toolkit,
-            "/book": self.gemassist_book,
-            "/submitcase": self.gemassist_submitcase,
-            "/refer": self.gemassist_refer,
-            "/terms": self.gemassist_terms,
-            "/dashboard": self.gemassist_dashboard,
-            "/kyc": self.gemassist_kyc,
+            '/start': self.gemassist_start,
+            '/help': self.gemassist_help,
+            '/contact': self.gemassist_contact,
+            '/services': self.gemassist_services,
+            '/toolkit': self.gemassist_toolkit,
+            '/book': self.gemassist_book,
+            '/submitcase': self.gemassist_submitcase,
+            '/refer': self.gemassist_refer,
+            '/terms': self.gemassist_terms,
+            '/dashboard': self.gemassist_dashboard,
+            '/kyc': self.gemassist_kyc,
         }
-
-        command = text.split()[0] if text else ""
+        
+        command = text.split()[0] if text else ''
         handler = commands.get(command, self.gemassist_default)
         return handler(chat_id, text, user)
-
+    
     def gemassist_start(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /start command"""
         welcome = """
@@ -172,20 +171,17 @@ Use /services to explore our offerings.
 Use /submitcase to start your recovery case.
         """
         self.send_message(chat_id, welcome)
-
+        
         # Log to Notion/Trello
-        self.log_to_integration(
-            "notion",
-            {
-                "event": "user_start",
-                "bot": "GEMAssist",
-                "user": user.get("username", "unknown"),
-                "timestamp": datetime.utcnow().isoformat(),
-            },
-        )
-
-        return {"status": "success", "action": "welcome_sent"}
-
+        self.log_to_integration('notion', {
+            'event': 'user_start',
+            'bot': 'GEMAssist',
+            'user': user.get('username', 'unknown'),
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+        return {'status': 'success', 'action': 'welcome_sent'}
+    
     def gemassist_help(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /help command"""
         help_text = """
@@ -206,8 +202,8 @@ Use /submitcase to start your recovery case.
 /terms - Terms of service
         """
         self.send_message(chat_id, help_text)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def gemassist_services(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /services command"""
         services = """
@@ -235,8 +231,8 @@ Use /submitcase to start your case.
 Use /book for consultation.
         """
         self.send_message(chat_id, services)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def gemassist_submitcase(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /submitcase command"""
         intake_form = """
@@ -256,29 +252,24 @@ Please provide the following information:
 Or reply with your case details.
         """
         self.send_message(chat_id, intake_form)
-
+        
         # Log case submission request
-        self.case_submissions.append(
-            {
-                "user": user.get("username"),
-                "chat_id": chat_id,
-                "timestamp": datetime.utcnow().isoformat(),
-                "status": "pending",
-            }
-        )
-
+        self.case_submissions.append({
+            'user': user.get('username'),
+            'chat_id': chat_id,
+            'timestamp': datetime.utcnow().isoformat(),
+            'status': 'pending'
+        })
+        
         # Log to integration
-        self.log_to_integration(
-            "trello",
-            {
-                "event": "case_submission_initiated",
-                "user": user.get("username"),
-                "timestamp": datetime.utcnow().isoformat(),
-            },
-        )
-
-        return {"status": "success"}
-
+        self.log_to_integration('trello', {
+            'event': 'case_submission_initiated',
+            'user': user.get('username'),
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+        return {'status': 'success'}
+    
     def gemassist_kyc(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /kyc command"""
         kyc_info = """
@@ -297,17 +288,15 @@ Complete your verification to access full services:
 Verification typically takes 24-48 hours.
         """
         self.send_message(chat_id, kyc_info)
-
-        self.kyc_submissions.append(
-            {
-                "user": user.get("username"),
-                "timestamp": datetime.utcnow().isoformat(),
-                "status": "initiated",
-            }
-        )
-
-        return {"status": "success"}
-
+        
+        self.kyc_submissions.append({
+            'user': user.get('username'),
+            'timestamp': datetime.utcnow().isoformat(),
+            'status': 'initiated'
+        })
+        
+        return {'status': 'success'}
+    
     def gemassist_dashboard(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /dashboard command"""
         dashboard_link = """
@@ -326,8 +315,8 @@ Access your secure client portal:
 Need help? Use /contact
         """
         self.send_message(chat_id, dashboard_link)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def gemassist_book(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /book command"""
         booking = """
@@ -347,17 +336,15 @@ Book your free consultation:
 Or reply with your preferred date/time.
         """
         self.send_message(chat_id, booking)
-
-        self.consultations.append(
-            {
-                "user": user.get("username"),
-                "requested": datetime.utcnow().isoformat(),
-                "status": "pending",
-            }
-        )
-
-        return {"status": "success"}
-
+        
+        self.consultations.append({
+            'user': user.get('username'),
+            'requested': datetime.utcnow().isoformat(),
+            'status': 'pending'
+        })
+        
+        return {'status': 'success'}
+    
     def gemassist_toolkit(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /toolkit command"""
         toolkit = """
@@ -378,8 +365,8 @@ Download our comprehensive recovery toolkit:
 Need assistance? Use /contact
         """
         self.send_message(chat_id, toolkit)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def gemassist_refer(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /refer command"""
         referral = """
@@ -400,22 +387,18 @@ Earn rewards for successful referrals!
 Your code: <code>GEM{}</code>
 
 Share: https://gem-enterprise.com/ref/{}
-        """.format(
-            user.get("id", "0000")[:4], user.get("id", "0000")[:4]
-        )
-
+        """.format(user.get('id', '0000')[:4], user.get('id', '0000')[:4])
+        
         self.send_message(chat_id, referral)
-
-        self.referrals.append(
-            {
-                "referrer": user.get("username"),
-                "code": f"GEM{user.get('id', '0000')[:4]}",
-                "created": datetime.utcnow().isoformat(),
-            }
-        )
-
-        return {"status": "success"}
-
+        
+        self.referrals.append({
+            'referrer': user.get('username'),
+            'code': f"GEM{user.get('id', '0000')[:4]}",
+            'created': datetime.utcnow().isoformat()
+        })
+        
+        return {'status': 'success'}
+    
     def gemassist_contact(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /contact command"""
         contact = """
@@ -438,8 +421,8 @@ Emergency: 24/7
 Tech City, TC 12345
         """
         self.send_message(chat_id, contact)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def gemassist_terms(self, chat_id: str, text: str, user: Dict) -> Dict:
         """GEMAssist /terms command"""
         terms = """
@@ -457,54 +440,49 @@ View our complete terms:
 By using our services, you agree to our terms.
         """
         self.send_message(chat_id, terms)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def gemassist_default(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Default handler for GEMAssist"""
-        self.send_message(
-            chat_id, "I'll forward your message to our team. Use /help for commands."
-        )
-
+        self.send_message(chat_id, "I'll forward your message to our team. Use /help for commands.")
+        
         # Log message for team review
-        self.log_to_integration(
-            "notion",
-            {
-                "event": "message_received",
-                "bot": "GEMAssist",
-                "user": user.get("username"),
-                "message": text,
-                "timestamp": datetime.utcnow().isoformat(),
-            },
-        )
-
-        return {"status": "success"}
-
+        self.log_to_integration('notion', {
+            'event': 'message_received',
+            'bot': 'GEMAssist',
+            'user': user.get('username'),
+            'message': text,
+            'timestamp': datetime.utcnow().isoformat()
+        })
+        
+        return {'status': 'success'}
+    
     # @CyberGEMSecure_bot Handlers
     def handle_cybergemsecure(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Handle CyberGEMSecure bot commands - Education & Compliance"""
         commands = {
-            "/start": self.secure_start,
-            "/help": self.secure_help,
-            "/dailygem": self.secure_dailygem,
-            "/news": self.secure_news,
-            "/privacy": self.secure_privacy,
-            "/gdpr": self.secure_gdpr,
-            "/monitor": self.secure_monitor,
-            "/consult": self.secure_consult,
-            "/riskcheck": self.secure_riskcheck,
-            "/assist": self.secure_assist,
-            "/tools": self.secure_tools,
-            "/library": self.secure_library,
-            "/train": self.secure_train,
-            "/about": self.secure_about,
-            "/services": self.secure_services,
-            "/contact": self.secure_contact,
+            '/start': self.secure_start,
+            '/help': self.secure_help,
+            '/dailygem': self.secure_dailygem,
+            '/news': self.secure_news,
+            '/privacy': self.secure_privacy,
+            '/gdpr': self.secure_gdpr,
+            '/monitor': self.secure_monitor,
+            '/consult': self.secure_consult,
+            '/riskcheck': self.secure_riskcheck,
+            '/assist': self.secure_assist,
+            '/tools': self.secure_tools,
+            '/library': self.secure_library,
+            '/train': self.secure_train,
+            '/about': self.secure_about,
+            '/services': self.secure_services,
+            '/contact': self.secure_contact,
         }
-
-        command = text.split()[0] if text else ""
+        
+        command = text.split()[0] if text else ''
         handler = commands.get(command, self.secure_default)
         return handler(chat_id, text, user)
-
+    
     def secure_start(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /start command"""
         welcome = """
@@ -521,8 +499,8 @@ Use /news for latest threats
 Use /help for all commands
         """
         self.send_message(chat_id, welcome)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_dailygem(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /dailygem command"""
         daily_tip = """
@@ -546,8 +524,8 @@ Two-factor authentication reduces account breach risk by 99.9%!
 Stay secure! 🔐
         """
         self.send_message(chat_id, daily_tip)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_news(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /news command"""
         news = """
@@ -570,8 +548,8 @@ Subscribe to alerts: /monitor
 Full news: https://gem-secure.com/news
         """
         self.send_message(chat_id, news)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_gdpr(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /gdpr command"""
         gdpr_info = """
@@ -594,8 +572,8 @@ Full news: https://gem-secure.com/news
 Need compliance help? /consult
         """
         self.send_message(chat_id, gdpr_info)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_monitor(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /monitor command"""
         monitor = """
@@ -615,8 +593,8 @@ Real-time alerts to this chat!
 Setup: /monitor [domain/email]
         """
         self.send_message(chat_id, monitor)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_riskcheck(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /riskcheck command"""
         risk_check = """
@@ -637,8 +615,8 @@ Check your security posture:
 Or reply with your domain/email for quick scan.
         """
         self.send_message(chat_id, risk_check)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_assist(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /assist - Redirect to GemCyberAssist"""
         redirect = """
@@ -656,8 +634,8 @@ For recovery and personal support:
 Start now: @GemCyberAssist_bot
         """
         self.send_message(chat_id, redirect)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_tools(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /tools command"""
         tools = """
@@ -681,8 +659,8 @@ Start now: @GemCyberAssist_bot
 Upgrade: /services
         """
         self.send_message(chat_id, tools)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_library(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /library command"""
         library = """
@@ -708,8 +686,8 @@ Upgrade: /services
 New content weekly!
         """
         self.send_message(chat_id, library)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_train(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /train command"""
         training = """
@@ -733,8 +711,8 @@ New content weekly!
 Group discounts available!
         """
         self.send_message(chat_id, training)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_privacy(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /privacy command"""
         privacy = """
@@ -759,8 +737,8 @@ Group discounts available!
 Protect your digital footprint!
         """
         self.send_message(chat_id, privacy)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_about(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /about command"""
         about = """
@@ -786,8 +764,8 @@ Empowering organizations with security knowledge and tools.
 Learn more: https://gem-secure.com
         """
         self.send_message(chat_id, about)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_services(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /services command"""
         services = """
@@ -809,8 +787,8 @@ Book consultation: /consult
 Contact sales: /contact
         """
         self.send_message(chat_id, services)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_consult(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /consult command"""
         consult = """
@@ -834,8 +812,8 @@ Contact sales: /contact
 Reply with preferred date/time.
         """
         self.send_message(chat_id, consult)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_contact(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /contact command"""
         contact = """
@@ -858,8 +836,8 @@ Mon-Fri: 8 AM - 8 PM EST
 Emergency: 24/7/365
         """
         self.send_message(chat_id, contact)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_help(self, chat_id: str, text: str, user: Dict) -> Dict:
         """CyberGEMSecure /help command"""
         help_text = """
@@ -889,41 +867,39 @@ Emergency: 24/7/365
 /contact - Contact info
         """
         self.send_message(chat_id, help_text)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def secure_default(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Default handler for CyberGEMSecure"""
-        self.send_message(
-            chat_id, "Thanks for your message. Use /help for available commands."
-        )
-        return {"status": "success"}
-
+        self.send_message(chat_id, "Thanks for your message. Use /help for available commands.")
+        return {'status': 'success'}
+    
     # @GemCyberAssist_bot Handlers
     def handle_cyberassist(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Handle GemCyberAssist bot - Mirrors GEMAssist with focus on recovery"""
         # Uses same commands as GEMAssist but with recovery focus
         return self.handle_gemassist(chat_id, text, user)
-
-    # @realestatechannel_bot Handlers
+    
+    # @realestatechannel_bot Handlers  
     def handle_realestate(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Handle Real Estate bot commands"""
         commands = {
-            "/start": self.realestate_start,
-            "/help": self.realestate_help,
-            "/updates": self.realestate_updates,
-            "/services": self.realestate_services,
-            "/contact": self.realestate_contact,
-            "/book": self.realestate_book,
-            "/submitcase": self.realestate_submitcase,
-            "/dashboard": self.realestate_dashboard,
-            "/refer": self.realestate_refer,
-            "/terms": self.realestate_terms,
+            '/start': self.realestate_start,
+            '/help': self.realestate_help,
+            '/updates': self.realestate_updates,
+            '/services': self.realestate_services,
+            '/contact': self.realestate_contact,
+            '/book': self.realestate_book,
+            '/submitcase': self.realestate_submitcase,
+            '/dashboard': self.realestate_dashboard,
+            '/refer': self.realestate_refer,
+            '/terms': self.realestate_terms,
         }
-
-        command = text.split()[0] if text else ""
+        
+        command = text.split()[0] if text else ''
         handler = commands.get(command, self.realestate_default)
         return handler(chat_id, text, user)
-
+    
     def realestate_start(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /start command"""
         welcome = """
@@ -940,8 +916,8 @@ Use /services for our offerings
 Use /help for all commands
         """
         self.send_message(chat_id, welcome)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_updates(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /updates command"""
         updates = """
@@ -967,8 +943,8 @@ Use /help for all commands
 Full report: https://gem-realty.com/market
         """
         self.send_message(chat_id, updates)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_services(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /services command"""
         services = """
@@ -995,8 +971,8 @@ Full report: https://gem-realty.com/market
 Contact us: /book
         """
         self.send_message(chat_id, services)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_book(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /book command"""
         booking = """
@@ -1016,8 +992,8 @@ Or call: +1 (555) REALTY-1
 Reply with property address for quick evaluation.
         """
         self.send_message(chat_id, booking)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_submitcase(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /submitcase command"""
         submit = """
@@ -1036,8 +1012,8 @@ Reply with property address for quick evaluation.
 Or reply with details.
         """
         self.send_message(chat_id, submit)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_dashboard(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /dashboard command"""
         dashboard = """
@@ -1056,8 +1032,8 @@ Access your real estate portal:
 Need help? /contact
         """
         self.send_message(chat_id, dashboard)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_contact(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /contact command"""
         contact = """
@@ -1080,8 +1056,8 @@ Mon-Sat: 9 AM - 7 PM
 Sunday: 11 AM - 5 PM
         """
         self.send_message(chat_id, contact)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_refer(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /refer command"""
         refer = """
@@ -1100,13 +1076,11 @@ Earn commission on referrals!
 Share link: https://gem-realty.com/ref/{}
 
 Track earnings: /dashboard
-        """.format(
-            user.get("id", "0000")[:4], user.get("id", "0000")[:4]
-        )
-
+        """.format(user.get('id', '0000')[:4], user.get('id', '0000')[:4])
+        
         self.send_message(chat_id, refer)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_terms(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /terms command"""
         terms = """
@@ -1128,8 +1102,8 @@ View complete terms:
 Questions? /contact
         """
         self.send_message(chat_id, terms)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_help(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Real Estate /help command"""
         help_text = """
@@ -1150,32 +1124,26 @@ Questions? /contact
 /terms - Terms of service
         """
         self.send_message(chat_id, help_text)
-        return {"status": "success"}
-
+        return {'status': 'success'}
+    
     def realestate_default(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Default handler for Real Estate bot"""
-        self.send_message(
-            chat_id, "Thank you for your interest. Use /help for available commands."
-        )
-        return {"status": "success"}
-
+        self.send_message(chat_id, "Thank you for your interest. Use /help for available commands.")
+        return {'status': 'success'}
+    
     # Default handler for unknown bots
     def handle_default(self, chat_id: str, text: str, user: Dict) -> Dict:
         """Default handler for unidentified bots"""
-        self.send_message(
-            chat_id,
-            "Welcome to GEM Enterprise. Please use /help for available commands.",
-        )
-        return {"status": "success"}
+        self.send_message(chat_id, "Welcome to GEM Enterprise. Please use /help for available commands.")
+        return {'status': 'success'}
 
     # RSS Feed Integration
     def process_rss_feed(self, feed_url: str, bot_name: str, channel: str) -> bool:
         """Process RSS feed and broadcast to channel"""
         try:
             import feedparser
-
             feed = feedparser.parse(feed_url)
-
+            
             for entry in feed.entries[:5]:  # Latest 5 entries
                 # AI summarization would happen here
                 summary = f"""
@@ -1185,23 +1153,23 @@ Questions? /contact
 
 Read more: {entry.link}
                 """
-
+                
                 # Broadcast to appropriate channel
                 channel_id = self.channels.get(channel)
                 if channel_id:
-                    bot_token = self.bot_configs.get(bot_name, {}).get("token")
+                    bot_token = self.bot_configs.get(bot_name, {}).get('token')
                     self.send_message(channel_id, summary, bot_token)
-
+            
             return True
         except Exception as e:
             logger.error(f"RSS feed error: {e}")
             return False
-
+    
     # Scheduled Posts
     def send_scheduled_post(self, bot_name: str, post_type: str) -> bool:
         """Send scheduled motivational or educational posts"""
         posts = {
-            "motivation": """
+            'motivation': """
 💎 <b>Daily Motivation</b>
 
 "Security is not a product, but a process."
@@ -1209,104 +1177,102 @@ Read more: {entry.link}
 
 Stay vigilant, stay secure! 🛡️
             """,
-            "tip": """
+            'tip': """
 🔐 <b>Security Tip</b>
 
 Remember to update your passwords regularly and never reuse them across services!
 
 #CyberSecurity #StaySafe
             """,
-            "market": """
+            'market': """
 📈 <b>Market Insight</b>
 
 Real estate continues to show resilience despite rate changes. 
 Time to explore investment opportunities!
 
 #RealEstate #Investment
-            """,
+            """
         }
-
+        
         post = posts.get(post_type)
         if post:
             # Send to appropriate channel
-            channel = "security" if bot_name in ["CyberGEMSecure"] else "realestate"
+            channel = 'security' if bot_name in ['CyberGEMSecure'] else 'realestate'
             channel_id = self.channels.get(channel)
-            bot_token = self.bot_configs.get(bot_name, {}).get("token")
-
+            bot_token = self.bot_configs.get(bot_name, {}).get('token')
+            
             if channel_id and bot_token:
                 return self.send_message(channel_id, post, bot_token)
-
+        
         return False
-
 
 # Workflow automation classes
 class GEMAutomationWorkflows:
     """Predefined automation workflows for GEM bots"""
-
+    
     @staticmethod
     def intake_workflow():
         """Client intake automation workflow"""
         return {
-            "name": "Client Intake",
-            "triggers": ["form_submission", "bot_command", "email_received"],
-            "actions": [
-                "create_notion_entry",
-                "create_trello_card",
-                "send_confirmation",
-                "assign_team_member",
-                "schedule_followup",
+            'name': 'Client Intake',
+            'triggers': ['form_submission', 'bot_command', 'email_received'],
+            'actions': [
+                'create_notion_entry',
+                'create_trello_card',
+                'send_confirmation',
+                'assign_team_member',
+                'schedule_followup'
             ],
-            "integrations": ["Notion", "Trello", "Calendar", "Email"],
+            'integrations': ['Notion', 'Trello', 'Calendar', 'Email']
         }
-
+    
     @staticmethod
     def kyc_workflow():
         """KYC verification workflow"""
         return {
-            "name": "KYC Verification",
-            "triggers": ["kyc_initiated", "documents_uploaded"],
-            "actions": [
-                "verify_documents",
-                "background_check",
-                "compliance_review",
-                "update_status",
-                "grant_access",
+            'name': 'KYC Verification',
+            'triggers': ['kyc_initiated', 'documents_uploaded'],
+            'actions': [
+                'verify_documents',
+                'background_check',
+                'compliance_review',
+                'update_status',
+                'grant_access'
             ],
-            "integrations": ["Typeform", "Notion", "Compliance_API"],
+            'integrations': ['Typeform', 'Notion', 'Compliance_API']
         }
-
+    
     @staticmethod
     def recovery_workflow():
         """Asset recovery workflow"""
         return {
-            "name": "Asset Recovery",
-            "triggers": ["case_submitted", "evidence_received"],
-            "actions": [
-                "analyze_blockchain",
-                "trace_funds",
-                "generate_report",
-                "contact_exchanges",
-                "update_client",
+            'name': 'Asset Recovery',
+            'triggers': ['case_submitted', 'evidence_received'],
+            'actions': [
+                'analyze_blockchain',
+                'trace_funds',
+                'generate_report',
+                'contact_exchanges',
+                'update_client'
             ],
-            "integrations": ["Blockchain_APIs", "Exchange_APIs", "Notion"],
+            'integrations': ['Blockchain_APIs', 'Exchange_APIs', 'Notion']
         }
-
-    @staticmethod
+    
+    @staticmethod 
     def rss_broadcast_workflow():
         """RSS to channel broadcast workflow"""
         return {
-            "name": "RSS Broadcast",
-            "triggers": ["rss_update", "scheduled_time"],
-            "actions": [
-                "fetch_rss",
-                "ai_summarize",
-                "format_message",
-                "broadcast_channel",
-                "log_activity",
+            'name': 'RSS Broadcast',
+            'triggers': ['rss_update', 'scheduled_time'],
+            'actions': [
+                'fetch_rss',
+                'ai_summarize',
+                'format_message',
+                'broadcast_channel',
+                'log_activity'
             ],
-            "integrations": ["RSS_Feeds", "AI_API", "Telegram", "Notion"],
+            'integrations': ['RSS_Feeds', 'AI_API', 'Telegram', 'Notion']
         }
-
 
 # Keep compatibility with original name
 TelegramBotHandler = GEMWorkflowBots
