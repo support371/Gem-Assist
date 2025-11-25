@@ -236,8 +236,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Add CSS for notifications
-const style = document.createElement('style');
-style.textContent = `
+const notionStyle = document.createElement('style');
+notionStyle.textContent = `
 .notion-notification {
     position: fixed;
     top: 80px;
@@ -258,4 +258,4 @@ style.textContent = `
     }
 }
 `;
-document.head.appendChild(style);
+document.head.appendChild(notionStyle);

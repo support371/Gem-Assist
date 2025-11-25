@@ -509,9 +509,9 @@ const rippleCSS = `
 `;
 
 // Inject CSS
-const style = document.createElement('style');
-style.textContent = rippleCSS;
-document.head.appendChild(style);
+const rippleStyle = document.createElement('style');
+rippleStyle.textContent = rippleCSS;
+document.head.appendChild(rippleStyle);
 
 // Multimedia Gallery Enhancements for Enterprise Services
 class MultimediaGalleryManager {
