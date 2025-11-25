@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Trustees & Fiduciaries - Gem Assist Enterprise{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1><i class="fas fa-gavel me-3"></i>Trustees & Fiduciaries</h1>
+                <p class="lead">Professional trust and asset management services</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <h2 class="mb-4">Professional Trust Management</h2>
+                <p class="lead">GEM Enterprise provides comprehensive trustee and fiduciary services, working in conjunction with Alliance Trust Realty LLC to manage assets, protect interests, and ensure compliance with all legal requirements.</p>
+                
+                <div class="row mt-5">
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-dark border-success h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-success">
+                                    <i class="fas fa-building me-2"></i>Estate Administration
+                                </h5>
+                                <p class="card-text">Complete management of estate assets, property distribution, and legal compliance with transparent reporting and professional handling of all fiduciary responsibilities.</p>
+                                <ul class="list-unstyled small text-muted">
+                                    <li><i class="fas fa-check-circle me-2"></i>Asset inventory & valuation</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Debt settlement</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Beneficiary distributions</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Tax filings</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-dark border-info h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-info">
+                                    <i class="fas fa-lock me-2"></i>Asset Protection
+                                </h5>
+                                <p class="card-text">Secure management and protection of valuable assets including real property, investments, and personal valuables through our integrated real estate partnership.</p>
+                                <ul class="list-unstyled small text-muted">
+                                    <li><i class="fas fa-check-circle me-2"></i>Portfolio management</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Security & monitoring</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Compliance oversight</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Risk mitigation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-dark border-warning h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-warning">
+                                    <i class="fas fa-scale-balanced me-2"></i>Legal Compliance
+                                </h5>
+                                <p class="card-text">Full compliance with trust laws, tax regulations, and fiduciary standards ensuring all legal obligations are met and documented properly.</p>
+                                <ul class="list-unstyled small text-muted">
+                                    <li><i class="fas fa-check-circle me-2"></i>Legal documentation</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Regulatory compliance</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Audit preparation</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Tax optimization</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-dark border-danger h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-danger">
+                                    <i class="fas fa-heartbeat me-2"></i>Ongoing Management
+                                </h5>
+                                <p class="card-text">Continuous oversight and active management of all trust assets with regular reporting, performance monitoring, and proactive adjustments.</p>
+                                <ul class="list-unstyled small text-muted">
+                                    <li><i class="fas fa-check-circle me-2"></i>Regular reporting</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Performance review</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Annual accounting</li>
+                                    <li><i class="fas fa-check-circle me-2"></i>Beneficiary support</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="sticky-top" style="top: 100px;">
+                    <div class="card bg-dark border-primary mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-phone me-2"></i>Contact Our Trustees
+                            </h5>
+                            <p class="card-text text-muted">Schedule a consultation with our experienced trustee professionals.</p>
+                            <a href="{{ url_for('contact') }}" class="btn btn-primary w-100 mb-2">
+                                <i class="fas fa-envelope me-2"></i>Send Inquiry
+                            </a>
+                            <a href="tel:+1-800-GEM-TRUST" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-phone me-2"></i>Call Now
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body">
+                            <h6 class="card-title">Key Qualifications</h6>
+                            <ul class="list-unstyled small">
+                                <li class="mb-2">
+                                    <i class="fas fa-star text-warning me-2"></i>
+                                    <strong>Professional</strong><br>
+                                    <small class="text-muted">Certified Trust & Estate Professionals</small>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-star text-warning me-2"></i>
+                                    <strong>Experienced</strong><br>
+                                    <small class="text-muted">20+ years in trust administration</small>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-star text-warning me-2"></i>
+                                    <strong>Bonded</strong><br>
+                                    <small class="text-muted">Full fiduciary liability insurance</small>
+                                </li>
+                                <li>
+                                    <i class="fas fa-star text-warning me-2"></i>
+                                    <strong>Transparent</strong><br>
+                                    <small class="text-muted">Regular reporting & communication</small>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5 pt-5 border-top">
+            <div class="col-12">
+                <h3 class="mb-4">Our Fiduciary Standards</h3>
+                <p class="text-muted mb-4">We adhere to the highest standards of fiduciary duty, acting always in the best interest of our clients:</p>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-check-double text-success me-3 mt-1 flex-shrink-0"></i>
+                            <div>
+                                <h6>Loyalty</h6>
+                                <small class="text-muted">Acting exclusively for your benefit</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-check-double text-success me-3 mt-1 flex-shrink-0"></i>
+                            <div>
+                                <h6>Prudence</h6>
+                                <small class="text-muted">Careful, skilled management of assets</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-check-double text-success me-3 mt-1 flex-shrink-0"></i>
+                            <div>
+                                <h6>Transparency</h6>
+                                <small class="text-muted">Full disclosure and regular reporting</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
