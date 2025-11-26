@@ -1,0 +1,15 @@
+boto3>=1.40.38
+botocore>=1.40.38
+email-validator>=2.2.0
+feedparser>=6.0.12
+flask>=3.1.1
+flask-sqlalchemy>=3.1.1
+gunicorn>=23.0.0
+notion-client>=2.4.0
+openai>=1.109.1
+psycopg2-binary>=2.9.10
+requests>=2.32.5
+sqlalchemy>=2.0.42
+trafilatura>=2.0.0
+twilio>=9.8.1
+werkzeug>=3.1.3
