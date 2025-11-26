@@ -64,6 +64,27 @@ node_modules/
 
 # dotenv environment variables file
 .env
+.env.example
 
 # dataconnect generated files
 .dataconnect
+
+# Sensitive files with real keys
+attached_assets/Pasted*
+attached_assets/**/Pasted*
+
+# Python libraries
+.pythonlibs/
+__pycache__/
+*.pyc
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads and media
+static/uploads/
+media/
+tmp/
+temp/
