@@ -51,3 +51,9 @@ externalPort = 3000
 
 [agent]
 integrations = ["web_scraper:1.0.0", "perplexity_v0:1.0.0", "python_notion:1.0.0", "github:1.0.0"]
+
+[userenv]
+
+[userenv.shared]
+FLASK_ENV = "production"
+FLASK_DEBUG = "0"
