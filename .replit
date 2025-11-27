@@ -2,7 +2,7 @@ modules = ["nodejs-20", "python-3.11"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["driversi686Linux.mesa-demos", "google-cloud-sdk-gce", "openssl", "postgresql", "see-cat", "systemdUkify", "unzip", "wget"]
+packages = ["driversi686Linux.mesa-demos", "freetype", "google-cloud-sdk-gce", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "openssl", "postgresql", "see-cat", "systemdUkify", "tcl", "tk", "unzip", "wget", "zlib"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -31,11 +31,15 @@ args = "Start application"
 [[workflows.workflow]]
 name = "Start Flask App"
 author = 46920073
-mode = "sequential"
+mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python main.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /home/runner/workspace && node push_to_github.js"
 
 [[ports]]
 localPort = 5000
