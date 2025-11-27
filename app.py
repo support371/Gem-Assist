@@ -6,6 +6,14 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 
+# Import GitHub OAuth authentication
+try:
+    from github_auth import github_auth
+    GITHUB_AUTH_AVAILABLE = True
+except ImportError:
+    GITHUB_AUTH_AVAILABLE = False
+    logging.warning("GitHub OAuth not available")
+
 # Try to import the original notion client for existing functionality
 try:
     from notion_client import Client as NotionClient
@@ -218,6 +226,62 @@ def allowed_file(filename, file_type='any'):
 def health():
     """Health check endpoint for deployment monitoring"""
     return {'status': 'healthy', 'timestamp': datetime.datetime.now().isoformat()}, 200
+
+# GitHub OAuth Routes
+@app.route('/auth/github')
+def github_login():
+    """Redirect user to GitHub for OAuth authentication"""
+    if not GITHUB_AUTH_AVAILABLE or not github_auth.is_configured():
+        flash('GitHub authentication is not configured', 'error')
+        return redirect(url_for('index'))
+    
+    callback_url = url_for('github_callback', _external=True)
+    auth_url, state = github_auth.get_authorize_url(callback_url)
+    session['github_oauth_state'] = state
+    
+    return redirect(auth_url)
+
+@app.route('/auth/github/callback')
+def github_callback():
+    """Handle GitHub OAuth callback"""
+    if not GITHUB_AUTH_AVAILABLE or not github_auth.is_configured():
+        flash('GitHub authentication is not configured', 'error')
+        return redirect(url_for('index'))
+    
+    code = request.args.get('code')
+    state = request.args.get('state')
+    
+    if not code or not state:
+        flash('Missing authorization code or state', 'error')
+        return redirect(url_for('index'))
+    
+    if state != session.get('github_oauth_state'):
+        flash('Invalid state parameter - possible CSRF attack', 'error')
+        return redirect(url_for('index'))
+    
+    access_token = github_auth.exchange_code_for_token(code)
+    if not access_token:
+        flash('Failed to obtain access token from GitHub', 'error')
+        return redirect(url_for('index'))
+    
+    user_info = github_auth.get_user_info(access_token)
+    if not user_info:
+        flash('Failed to fetch user information from GitHub', 'error')
+        return redirect(url_for('index'))
+    
+    session['github_user'] = user_info
+    session['github_token'] = access_token
+    session.permanent = True
+    
+    flash(f"Welcome, {user_info.get('name', user_info.get('login'))}!", 'success')
+    return redirect(url_for('index'))
+
+@app.route('/auth/logout')
+def logout():
+    """Logout user and clear session"""
+    session.clear()
+    flash('You have been logged out', 'info')
+    return redirect(url_for('index'))
 
 # Routes
 @app.route('/')
