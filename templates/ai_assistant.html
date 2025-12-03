@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gem AI Cybersecurity Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='ai_style.css') }}">
+</head>
+<body>
+
+  <!-- HERO SECTION -->
+  <header class="hero">
+    <h1>Talk to Your AI Cybersecurity Assistant Anytime</h1>
+    <p class="hero-subtitle">
+      Instant answers. Real-time protection guidance. Smart security support powered by AI.
+    </p>
+    <div class="hero-actions">
+      <a href="#chat-section" class="btn btn-primary">Start Chat Now</a>
+      <a href="#how-it-works" class="btn btn-secondary">Learn How It Works</a>
+    </div>
+    <p class="hero-trust">Secure • Private • Available 24/7</p>
+  </header>
+
+  <!-- VALUE / FEATURES SECTION -->
+  <section class="section" id="features">
+    <h2>What Your AI Cybersecurity Assistant Can Do</h2>
+    <p class="section-intro">
+      Powerful security intelligence designed to protect, guide, and respond in real time.
+    </p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>Real-Time Threat Support</h3>
+        <p>
+          Get instant advice when you suspect phishing, malware, scams, or unauthorized access.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3>Instant Cybersecurity Answers</h3>
+        <p>
+          Ask anything about cybersecurity best practices, tools, breaches, or online safety.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3>Risk Awareness &amp; Prevention</h3>
+        <p>
+          Learn how to protect your systems before damage happens with proactive AI guidance.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3>Always-On Support</h3>
+        <p>
+          Your AI assistant never sleeps — support is available anytime, anywhere.
+        </p>
+      </div>
+    </div>
+
+    <div class="section-cta">
+      <a href="#chat-section" class="btn btn-primary">Start Chatting Securely Now</a>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS SECTION -->
+  <section class="section" id="how-it-works">
+    <h2>How the AI Cybersecurity Assistant Works</h2>
+    <p class="section-intro">
+      Get expert-level cybersecurity guidance in just a few simple steps.
+    </p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <h3>Step 1 — Ask Your Question</h3>
+        <p>
+          Start with any security concern. Type your question or describe the situation in the chat box.
+          Examples: "Is this email a phishing attempt?" or "How do I secure my Wi‑Fi network?".
+        </p>
+      </div>
+      <div class="step-card">
+        <h3>Step 2 — Intelligent Threat Analysis</h3>
+        <p>
+          The AI analyzes your message using cybersecurity knowledge, patterns, and best practices to
+          identify possible risks.
+        </p>
+      </div>
+      <div class="step-card">
+        <h3>Step 3 — Immediate Actionable Advice</h3>
+        <p>
+          You receive clear, step‑by‑step guidance, recommendations, and prevention strategies in real time.
+        </p>
+      </div>
+      <div class="step-card">
+        <h3>Step 4 — Long‑Term Protection Awareness</h3>
+        <p>
+          The assistant helps you build safer habits and stronger security over time through guidance and education.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACCESS SECTION -->
+  <section class="section" id="access">
+    <h2>Access to the AI Cybersecurity Assistant</h2>
+
+    <p class="section-intro">
+      Access the Gem AI Cybersecurity Assistant directly through your browser. No software installation
+      or special configuration is required.
+    </p>
+
+    <div class="access-layout">
+      <div class="access-block">
+        <h3>How to Access the Assistant</h3>
+        <ol>
+          <li><strong>Open the AI Assistant page</strong> from any modern browser on desktop, laptop, tablet, or mobile.</li>
+          <li>
+            <strong>Review the security &amp; privacy notice</strong> to understand how the assistant should be used
+            and what kind of information is safe to share.
+          </li>
+          <li>
+            <strong>Type your question</strong> into the chat box in plain language.
+            Examples:
+            <ul>
+              <li>"I received this email and I'm not sure if it's a scam."</li>
+              <li>"What should I do after a password leak?"</li>
+              <li>"How can I improve my small business security?"</li>
+            </ul>
+          </li>
+          <li><strong>Send your message</strong> and wait for the reply inside the chat window.</li>
+          <li><strong>Ask follow‑up questions</strong> in the same session as needed.</li>
+          <li><strong>End the session</strong> any time by closing the page or clearing the chat.</li>
+        </ol>
+      </div>
+
+      <div class="access-block">
+        <h3>Who Can Use It?</h3>
+        <p>
+          The assistant is designed for:
+        </p>
+        <ul>
+          <li>Individuals who want to stay safer online</li>
+          <li>Small teams and organizations needing fast security advice</li>
+          <li>Anyone who wants clear guidance without being a cybersecurity expert</li>
+        </ul>
+
+        <h3>Responsible Use Notice</h3>
+        <p class="notice-text">
+          The Gem Cybersecurity AI Assistant provides educational guidance and best‑practice recommendations.
+          It does not replace a professional security audit, emergency incident response, or legal advice.
+          Never paste highly sensitive information such as full passwords, full credit card numbers,
+          private encryption keys, or other extremely sensitive data into the chat.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAT SECTION -->
+  <section class="section section-chat" id="chat-section">
+    <h2>Chat with the Gem AI Cybersecurity Assistant</h2>
+    <p class="section-intro">
+      Ask your question below to begin a live, AI‑powered cybersecurity conversation.
+    </p>
+
+    <div class="chatbox" id="chatbox"></div>
+
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="Type your cybersecurity question..." />
+      <button id="sendButton" onclick="sendMessage()">Send</button>
+    </div>
+
+    <p class="small-notice">
+      This AI provides educational cybersecurity guidance only. Do not enter sensitive credentials
+      or confidential financial information.
+    </p>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; Gem Cybersecurity Assist &mdash; AI‑powered security guidance.</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='ai_script.js') }}"></script>
+</body>
+</html>
