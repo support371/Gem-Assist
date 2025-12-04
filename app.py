@@ -666,6 +666,12 @@ def market_insights():
     """Active Market Insights and Trends"""
     return render_template('market_insights.html')
 
+@app.route('/quantum-financial-system')
+@app.route('/qfs')
+def quantum_financial_system():
+    """Quantum Financial System (QFS) - Next-generation financial infrastructure"""
+    return render_template('qfs.html')
+
 @app.route('/power_of_attorney')
 def power_of_attorney():
     """Power of Attorney services"""
