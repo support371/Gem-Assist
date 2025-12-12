@@ -12,6 +12,7 @@
   "dependencies": {
     "@dataconnect/generated": "file:src/dataconnect-generated",
     "@octokit/rest": "^22.0.0",
+    "@vercel/analytics": "^1.6.1",
     "aws-sdk": "^2.1692.0",
     "axios": "^1.12.2",
     "body-parser": "^2.2.0",
