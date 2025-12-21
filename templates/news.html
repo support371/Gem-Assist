@@ -1,284 +1,490 @@
 {% extends "base.html" %}
 
-{% block title %}News & Newsletter - Gem Assist Enterprise{% endblock %}
+{% block title %}News & Newsletter - GEM Enterprise{% endblock %}
 
 {% block content %}
-<section class="page-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h1><i class="fas fa-newspaper me-3"></i>GEM News & Newsletter</h1>
-                <p class="lead">Stay informed about security trends and company updates</p>
-            </div>
-        </div>
+<style>
+.news-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.news-hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+}
+
+.news-hero p {
+    font-size: 1.25rem;
+    color: #cbd5e1;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.category-tabs {
+    background: #0f172a;
+    border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    overflow-x: auto;
+    justify-content: center;
+    gap: 15px;
+}
+
+.category-btn {
+    background: transparent;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #cbd5e1;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 0.95rem;
+}
+
+.category-btn:hover {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.category-btn.active {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.news-container {
+    background: #020617;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.search-bar {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    position: relative;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    background: #1e293b;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 8px;
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    background: #0f172a;
+}
+
+.search-bar input::placeholder {
+    color: #64748b;
+}
+
+.search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+}
+
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.article-card {
+    background: #1e293b;
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    hover\:shadow-2xl;
+}
+
+.article-card:hover {
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+    transform: translateY(-4px);
+}
+
+.article-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.article-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.category-badge {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.article-time {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.article-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.article-excerpt {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    flex: 1;
+}
+
+.article-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.article-source {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.read-more-btn {
+    background: transparent;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #10b981;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.read-more-btn:hover {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.newsletter-section {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 60px auto;
+}
+
+.newsletter-section h2 {
+    color: #e2e8f0;
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.newsletter-section p {
+    color: #cbd5e1;
+    margin-bottom: 24px;
+}
+
+.newsletter-form {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.newsletter-form input {
+    flex: 1;
+    padding: 12px 16px;
+    background: #1e293b;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 6px;
+    color: #e2e8f0;
+    font-size: 0.95rem;
+}
+
+.newsletter-form input::placeholder {
+    color: #64748b;
+}
+
+.newsletter-form button {
+    padding: 12px 24px;
+    background: #10b981;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.newsletter-form button:hover {
+    background: #059669;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.no-articles {
+    text-align: center;
+    color: #cbd5e1;
+    padding: 60px 20px;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .news-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .category-tabs {
+        justify-content: flex-start;
+        padding: 15px;
+    }
+}
+</style>
+
+<!-- Hero Section -->
+<section class="news-hero">
+    <h1><i class="fas fa-newspaper me-3"></i>GEM News & Insights</h1>
+    <p>Stay informed about security trends, technology breakthroughs, and industry insights</p>
+</section>
+
+<!-- Category Filters -->
+<div class="category-tabs" id="categoryTabs">
+    <button class="category-btn active" data-category="all">All Stories</button>
+    <button class="category-btn" data-category="tech">Tech</button>
+    <button class="category-btn" data-category="finance">Finance</button>
+    <button class="category-btn" data-category="business">Business</button>
+    <button class="category-btn" data-category="cybersecurity">Cybersecurity</button>
+</div>
+
+<!-- News Content -->
+<section class="news-container">
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search articles by title or keyword..."
+            autocomplete="off"
+        >
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+        </svg>
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="articles-grid" id="articlesGrid">
+        <!-- Articles will be loaded here by JavaScript -->
+    </div>
+
+    <!-- No Results -->
+    <div class="no-articles" id="noArticles" style="display: none;">
+        <p>No articles found matching your criteria.</p>
     </div>
 </section>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="container mt-3">
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        </div>
+<!-- Newsletter Subscription -->
+<section class="newsletter-section">
+    <h2><i class="fas fa-envelope me-2"></i>Subscribe to GEM Newsletter</h2>
+    <p>Get the latest security insights, technology trends, and business news delivered to your inbox.</p>
+    <form action="{{ url_for('subscribe_newsletter') }}" method="POST" class="newsletter-form">
+        <input type="email" name="email" placeholder="your@email.com" required>
+        <button type="submit">Subscribe</button>
+    </form>
+    {% if session.get('newsletter_message') %}
+    <p style="color: #10b981; margin-top: 12px;">✓ {{ session.pop('newsletter_message') }}</p>
     {% endif %}
-{% endwith %}
-
-<section class="py-5">
-    <div class="container">
-        <!-- Display Notion News if Available -->
-        {% if notion_news %}
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="alert alert-info">
-                    <i class="fas fa-database me-2"></i>Content from Notion CMS - {{ notion_news|length }} articles
-                </div>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="news-articles">
-                    {% for article in notion_news %}
-                    <article class="news-article">
-                        <div class="article-header">
-                            <div class="article-meta">
-                                {% if article.category %}
-                                    {% for cat in article.category %}
-                                    <span class="badge bg-info">{{ cat }}</span>
-                                    {% endfor %}
-                                {% endif %}
-                                {% if article.publish_date %}
-                                <span class="text-muted">{{ article.publish_date }}</span>
-                                {% endif %}
-                            </div>
-                            <h3>{{ article.title }}</h3>
-                        </div>
-                        <div class="article-content">
-                            <p>{{ article.content[:500] }}...</p>
-                        </div>
-                        <div class="article-footer">
-                            {% if article.author %}
-                            <span class="text-muted">By {{ article.author }}</span>
-                            {% endif %}
-                            {% if article.external_link %}
-                            <a href="{{ article.external_link }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
-                                Read More <i class="fas fa-external-link-alt ms-1"></i>
-                            </a>
-                            {% endif %}
-                        </div>
-                    </article>
-                    {% endfor %}
-                </div>
-            </div>
-            
-        </div>
-        {% else %}
-        <!-- Default Static News Content -->
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="news-articles">
-                    <article class="news-article">
-                        <div class="article-header">
-                            <div class="article-meta">
-                                <span class="badge bg-danger">Security Alert</span>
-                                <span class="text-muted">January 15, 2025</span>
-                            </div>
-                            <h3>Enhanced Threat Detection Capabilities Deployed</h3>
-                        </div>
-                        <div class="article-content">
-                            <p>GEM Enterprise has successfully deployed advanced AI-powered threat detection systems across all monitoring services. This enhancement provides 40% faster threat identification and automated response capabilities.</p>
-                            <p>Key improvements include:</p>
-                            <ul>
-                                <li>Machine learning-based anomaly detection</li>
-                                <li>Automated incident response protocols</li>
-                                <li>Enhanced threat intelligence integration</li>
-                                <li>Improved false positive reduction</li>
-                            </ul>
-                        </div>
-                        <div class="article-footer">
-                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
-                        </div>
-                    </article>
-                    
-                    <article class="news-article">
-                        <div class="article-header">
-                            <div class="article-meta">
-                                <span class="badge bg-success">Partnership</span>
-                                <span class="text-muted">January 10, 2025</span>
-                            </div>
-                            <h3>Alliance Trust Realty Expands Real Estate Portfolio</h3>
-                        </div>
-                        <div class="article-content">
-                            <p>Our strategic partnership with Alliance Trust Realty LLC has resulted in significant portfolio expansion, adding premium commercial and residential properties across key markets.</p>
-                            <p>This expansion includes:</p>
-                            <ul>
-                                <li>Commercial office complexes in major metropolitan areas</li>
-                                <li>Residential investment properties</li>
-                                <li>Mixed-use development opportunities</li>
-                                <li>Secured asset recovery real estate</li>
-                            </ul>
-                        </div>
-                        <div class="article-footer">
-                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
-                        </div>
-                    </article>
-                    
-                    <article class="news-article">
-                        <div class="article-header">
-                            <div class="article-meta">
-                                <span class="badge bg-info">Technology</span>
-                                <span class="text-muted">January 5, 2025</span>
-                            </div>
-                            <h3>Telegram Automation Platform Upgrade</h3>
-                        </div>
-                        <div class="article-content">
-                            <p>Our Telegram automation services have received major upgrades with enhanced security features, improved API integration, and expanded customization options for business clients.</p>
-                            <p>New features include:</p>
-                            <ul>
-                                <li>Advanced encryption for all bot communications</li>
-                                <li>Custom workflow builder interface</li>
-                                <li>Multi-platform integration capabilities</li>
-                                <li>Enhanced analytics and reporting</li>
-                            </ul>
-                        </div>
-                        <div class="article-footer">
-                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
-                        </div>
-                    </article>
-                    
-                    <article class="news-article">
-                        <div class="article-header">
-                            <div class="article-meta">
-                                <span class="badge bg-warning">Industry Insight</span>
-                                <span class="text-muted">December 28, 2024</span>
-                            </div>
-                            <h3>Cybersecurity Trends for 2025: What to Expect</h3>
-                        </div>
-                        <div class="article-content">
-                            <p>As we enter 2025, cybersecurity landscapes continue to evolve rapidly. Our security experts analyze the top trends and threats businesses should prepare for in the coming year.</p>
-                            <p>Key trends to watch:</p>
-                            <ul>
-                                <li>AI-powered cyber attacks and defenses</li>
-                                <li>Quantum computing security implications</li>
-                                <li>Zero-trust architecture adoption</li>
-                                <li>Supply chain security focus</li>
-                            </ul>
-                        </div>
-                        <div class="article-footer">
-                            <a href="#" class="btn btn-sm btn-outline-primary">Read More</a>
-                        </div>
-                    </article>
-                </div>
-                
-                <div class="pagination-section mt-5">
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                                <span class="page-link">Previous</span>
-                            </li>
-                            <li class="page-item active">
-                                <span class="page-link">1</span>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">2</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">3</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-            
-            <div class="col-lg-4">
-                <div class="sidebar">
-                    <div class="newsletter-signup">
-                        <h4><i class="fas fa-envelope me-2"></i>Subscribe to Newsletter</h4>
-                        <p>Stay updated with the latest security insights and company news.</p>
-                        <form action="{{ url_for('subscribe_newsletter') }}" method="POST" id="newsletterForm">
-                            <div class="mb-3">
-                                <input type="text" name="name" class="form-control" placeholder="Your name (optional)">
-                            </div>
-                            <div class="mb-3">
-                                <input type="email" name="email" class="form-control" placeholder="Your email address" required>
-                            </div>
-                            <div class="mb-3">
-                                <select name="interests" class="form-select">
-                                    <option value="all">All Updates</option>
-                                    <option value="security">Security Updates</option>
-                                    <option value="realestate">Real Estate News</option>
-                                    <option value="technology">Technology Insights</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-bell me-2"></i>Subscribe
-                            </button>
-                        </form>
-                    </div>
-                    
-                    <div class="recent-updates">
-                        <h5>Recent Updates</h5>
-                        <div class="update-item">
-                            <i class="fas fa-shield-check text-success me-2"></i>
-                            <div>
-                                <small class="text-muted">System Status</small>
-                                <p class="mb-0">All monitoring systems operational</p>
-                            </div>
-                        </div>
-                        <div class="update-item">
-                            <i class="fas fa-chart-up text-info me-2"></i>
-                            <div>
-                                <small class="text-muted">Performance</small>
-                                <p class="mb-0">Response time improved by 25%</p>
-                            </div>
-                        </div>
-                        <div class="update-item">
-                            <i class="fas fa-users text-primary me-2"></i>
-                            <div>
-                                <small class="text-muted">Team</small>
-                                <p class="mb-0">New security specialists joined</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="quick-links">
-                        <h5>Quick Links</h5>
-                        <ul class="list-unstyled">
-                            <li><a href="{{ url_for('services') }}"><i class="fas fa-cogs me-2"></i>Our Services</a></li>
-                            <li><a href="{{ url_for('client_access') }}"><i class="fas fa-user me-2"></i>Client Portal</a></li>
-                            <li><a href="{{ url_for('contact') }}"><i class="fas fa-envelope me-2"></i>Contact Support</a></li>
-                            <li><a href="{{ url_for('testimonials') }}"><i class="fas fa-star me-2"></i>Testimonials</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="security-status">
-                        <h5>Security Status</h5>
-                        <div class="status-dashboard">
-                            <div class="status-item">
-                                <span class="status-dot status-active"></span>
-                                <span>Threat Monitoring: Active</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-dot status-active"></span>
-                                <span>System Security: Optimal</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-dot status-active"></span>
-                                <span>Response Team: Ready</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-    </div>
 </section>
+
+<script>
+const newsData = [
+    // TECH
+    {
+        id: 1,
+        title: "Gartner Warnings: Organizations urged to block 'Agentic' AI Browsers immediately",
+        source: "TechNewsWorld",
+        time: "2h ago",
+        category: "tech",
+        imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800",
+        excerpt: "New report highlights security risks as AI-driven browsers can expose sensitive enterprise data."
+    },
+    {
+        id: 2,
+        title: "Samsung Galaxy Z TriFold Debuts: A new era for foldable devices",
+        source: "Gadget Weekly",
+        time: "4h ago",
+        category: "tech",
+        imageUrl: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&q=80&w=800",
+        excerpt: "The dual-hinge system promises a tablet-sized experience that fits in your pocket."
+    },
+    {
+        id: 3,
+        title: "Nvidia vs. Spectral: The $5 Trillion Battle for Compute Supremacy",
+        source: "Silicon Valley Journal",
+        time: "6h ago",
+        category: "tech",
+        imageUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800",
+        excerpt: "New compiler technology could open the door to broader hardware adoption in AI training."
+    },
+    // FINANCE
+    {
+        id: 4,
+        title: "Market Rally: S&P 500 hits new record as inflation data cools",
+        source: "Fox Business",
+        time: "1h ago",
+        category: "finance",
+        imageUrl: "https://images.unsplash.com/photo-1611974765270-ca1258634369?auto=format&fit=crop&q=80&w=800",
+        excerpt: "Fed policymaker floats further rate cuts as economy stays on the 'golden path'."
+    },
+    // BUSINESS
+    {
+        id: 5,
+        title: "Elon Musk's Tesla Pay Package Restored by Delaware Court",
+        source: "CNBC",
+        time: "3h ago",
+        category: "business",
+        imageUrl: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=800",
+        excerpt: "The controversial compensation package is back in play following a supreme court ruling."
+    },
+    // CYBERSECURITY
+    {
+        id: 11,
+        title: "Critical UEFI Flaw: Millions of Motherboards at Risk",
+        source: "The Hacker News",
+        time: "1h ago",
+        category: "cybersecurity",
+        imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
+        excerpt: "ASRock, ASUS, and MSI boards vulnerable to early-boot DMA attacks."
+    },
+    {
+        id: 12,
+        title: "North Korea's Digital Heist: $2B Stolen in Crypto in 2025",
+        source: "SecurityWeek",
+        time: "3h ago",
+        category: "cybersecurity",
+        imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800",
+        excerpt: "Report links fake IT workers and sophisticated phishing campaigns to massive state-sponsored theft."
+    }
+];
+
+let currentCategory = 'all';
+let searchQuery = '';
+
+function renderArticles() {
+    const grid = document.getElementById('articlesGrid');
+    const noArticles = document.getElementById('noArticles');
+    
+    const filtered = newsData.filter(article => {
+        const categoryMatch = currentCategory === 'all' || article.category === currentCategory;
+        const searchMatch = searchQuery === '' || 
+            article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+        return categoryMatch && searchMatch;
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = '';
+        noArticles.style.display = 'block';
+        return;
+    }
+
+    noArticles.style.display = 'none';
+    grid.innerHTML = filtered.map(article => `
+        <div class="article-card">
+            <img src="${article.imageUrl}" alt="${article.title}" class="article-image" onerror="this.style.backgroundColor='#1e293b'">
+            <div class="article-content">
+                <div class="article-meta">
+                    <span class="category-badge">${article.category}</span>
+                    <span class="article-time">${article.time}</span>
+                </div>
+                <h3 class="article-title">${article.title}</h3>
+                <p class="article-excerpt">${article.excerpt}</p>
+                <div class="article-footer">
+                    <span class="article-source">${article.source}</span>
+                    <a href="#" class="read-more-btn">Read More →</a>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Category filtering
+document.getElementById('categoryTabs').addEventListener('click', (e) => {
+    if (e.target.classList.contains('category-btn')) {
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+        currentCategory = e.target.dataset.category;
+        renderArticles();
+    }
+});
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderArticles();
+});
+
+// Initial render
+renderArticles();
+</script>
+
 {% endblock %}
