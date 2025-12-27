@@ -299,6 +299,26 @@ def index():
     """Home page with main services overview"""
     return render_template('index.html')
 
+@app.route('/notion')
+def raw_notion():
+    """Query the Notion database and return entries as JSON (from server.py)"""
+    if not NOTION_LIBRARY_AVAILABLE or not NotionClient:
+        return jsonify({"error": "Notion library not available"}), 503
+    
+    try:
+        notion_secret = os.environ.get('NOTION_INTEGRATION_SECRET')
+        database_id = os.environ.get('NOTION_DATABASE_ID')
+        
+        if not notion_secret or not database_id:
+            return jsonify({"error": "Notion configuration missing"}), 400
+            
+        notion = NotionClient(auth=notion_secret)
+        response = notion.databases.query(database_id=database_id)
+        return jsonify(response)
+    except Exception as e:
+        logging.error(f"Error in raw notion route: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/about')
 def about():
     """About Gem Assist Enterprise"""
