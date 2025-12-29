@@ -319,6 +319,17 @@ def raw_notion():
         logging.error(f"Error in raw notion route: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/cyber-portal')
+def cyber_portal():
+    """Cybersecurity Portal Landing Page"""
+    return render_template('cyber_portal.html')
+
+@app.route('/enterprise/security/<path:service>')
+def security_service_detail(service):
+    """Dynamic security service detail redirect or placeholder"""
+    # This acts as the destination for portal links
+    return render_template('services.html', active_service=service)
+
 @app.route('/about')
 def about():
     """About Gem Assist Enterprise"""
