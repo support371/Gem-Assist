@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}GEM Cybersecurity Portal{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+    --brand-dark: #0f172a;
+    --brand-primary: #10b981;
+    --brand-secondary: #334155;
+    --brand-text: #e2e8f0;
+    --brand-muted: #94a3b8;
+  }
+
+  .portal-body {
+    background-color: #020617;
+    color: var(--brand-text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  .hero-portal {
+    padding: 100px 0 60px;
+    background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+    text-align: center;
+  }
+
+  .hero-portal h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-portal p {
+    font-size: 1.25rem;
+    color: var(--brand-muted);
+    max-width: 800px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+
+  .btn-portal {
+    padding: 14px 28px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-portal-primary {
+    background-color: var(--brand-primary);
+    color: white;
+  }
+
+  .btn-portal-primary:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+  }
+
+  .btn-portal-secondary {
+    background-color: transparent;
+    border: 1px solid var(--brand-muted);
+    color: white;
+    margin-left: 16px;
+  }
+
+  .btn-portal-secondary:hover {
+    border-color: white;
+    background-color: rgba(255,255,255,0.05);
+  }
+
+  .metrics-portal {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 60px;
+  }
+
+  .metric-portal {
+    text-align: center;
+  }
+
+  .metric-title-portal {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .metric-sub-portal {
+    font-size: 0.875rem;
+    color: var(--brand-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .section-portal {
+    padding: 80px 0;
+  }
+
+  .section-portal h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .section-subtitle-portal {
+    text-align: center;
+    color: var(--brand-muted);
+    margin-bottom: 60px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .grid-portal {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .card-portal {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    padding: 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    display: block;
+  }
+
+  .card-portal:hover {
+    border-color: var(--brand-primary);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-portal h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: white;
+  }
+
+  .card-portal p {
+    color: var(--brand-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .card-portal .link {
+    color: var(--brand-primary);
+    font-weight: 600;
+  }
+
+  .featured-portal {
+    border-left: 4px solid var(--brand-primary);
+  }
+
+  .subhead-portal {
+    font-size: 0.875rem;
+    color: var(--brand-primary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin: 60px 0 24px;
+  }
+
+  .split-portal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    background-color: #0f172a;
+    padding: 48px;
+    border-radius: 16px;
+    border: 1px solid #1e293b;
+  }
+
+  .panel-portal h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: white;
+  }
+
+  .panel-portal ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .panel-portal li {
+    margin-bottom: 12px;
+    padding-left: 24px;
+    position: relative;
+    color: var(--brand-muted);
+  }
+
+  .panel-portal li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--brand-primary);
+  }
+
+  .contact-grid-portal {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .hero-portal h1 { font-size: 2.5rem; }
+    .split-portal { grid-template-columns: 1fr; }
+    .metrics-portal { flex-direction: column; gap: 24px; }
+  }
+</style>
+
+<div class="portal-body">
+  <section class="hero-portal" id="home">
+    <div class="container">
+      <h1>Cybersecurity products and services built for real enterprise risk.</h1>
+      <p>
+        Decision-grade assessments, monitoring, and security operations designed to protect
+        enterprise environments across finance, real estate operations, marketing systems, and business-critical platforms.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn-portal btn-portal-primary" href="#services">Explore Offerings</a>
+        <a class="btn-portal btn-portal-secondary" href="#sentinelx">Download Sentinel-X</a>
+      </div>
+
+      <div class="metrics-portal">
+        <div class="metric-portal">
+          <div class="metric-title-portal">Risk-first</div>
+          <div class="metric-sub-portal">Not compliance theater</div>
+        </div>
+        <div class="metric-portal">
+          <div class="metric-title-portal">Explainable</div>
+          <div class="metric-sub-portal">Traceable decisions</div>
+        </div>
+        <div class="metric-portal">
+          <div class="metric-title-portal">Enterprise-ready</div>
+          <div class="metric-sub-portal">Governance built-in</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="section-portal">
+    <div class="container">
+      <h2>Services and Solutions</h2>
+      <p class="section-subtitle-portal">
+        This platform is the dedicated cybersecurity portal. Each offering may redirect to the enterprise website for full detail pages.
+      </p>
+
+      <h3 class="subhead-portal">Flagship</h3>
+      <div class="grid-portal">
+        <a class="card-portal featured-portal" href="/enterprise/security/sentinelx-risk-assessment">
+          <h4>Sentinel-X Cybersecurity Assessment</h4>
+          <p>Powered by the Sentinel-X Risk Intelligence Framework. Executive-grade cyber risk clarity, prioritization, and remediation direction.</p>
+          <span class="link">View →</span>
+        </a>
+      </div>
+
+      <h3 class="subhead-portal">Products</h3>
+      <div class="grid-portal">
+        <a class="card-portal" href="/enterprise/security/mdr">
+          <h4>Managed Detection & Response (MDR)</h4>
+          <p>Continuous detection and response with operational accountability.</p>
+          <span class="link">View →</span>
+        </a>
+
+        <a class="card-portal" href="/enterprise/security/threat-intel">
+          <h4>Threat Intelligence</h4>
+          <p>Realism-weighted intelligence aligned to enterprise threat actors.</p>
+          <span class="link">View →</span>
+        </a>
+
+        <a class="card-portal" href="/enterprise/security/attack-surface">
+          <h4>Attack Surface Management</h4>
+          <p>External exposure discovery, monitoring, and prioritization.</p>
+          <span class="link">View →</span>
+        </a>
+
+        <a class="card-portal" href="/enterprise/security/vuln-mgmt">
+          <h4>Vulnerability Management</h4>
+          <p>Risk-based remediation focus that cuts noise and accelerates impact.</p>
+          <span class="link">View →</span>
+        </a>
+
+        <a class="card-portal" href="/enterprise/security/iam-pam">
+          <h4>Identity & Privileged Access (IAM / PAM)</h4>
+          <p>Reduce implicit trust. Limit blast radius. Strengthen access governance.</p>
+          <span class="link">View →</span>
+        </a>
+
+        <a class="card-portal" href="/enterprise/security/cloud-security">
+          <h4>Cloud Security & Posture Management</h4>
+          <p>Posture management with accountable owners and actionable controls.</p>
+          <span class="link">View →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="sentinelx" class="section-portal" style="background-color: #020617;">
+    <div class="container">
+      <h2>Sentinel-X</h2>
+      <p class="section-subtitle-portal">
+        Sentinel-X is GEM Cybersecurity Assist’s proprietary cyber risk intelligence framework.
+        The Sentinel-X Cybersecurity Assessment is delivered using this framework.
+      </p>
+
+      <div class="split-portal">
+        <div class="panel-portal">
+          <h3>What it delivers</h3>
+          <ul>
+            <li>Threat realism modeling aligned to enterprise and financial environments</li>
+            <li>Control effectiveness analysis under operational stress</li>
+            <li>Explainable scoring and remediation prioritization</li>
+            <li>Executive-ready reporting and AI governance boundaries</li>
+          </ul>
+        </div>
+
+        <div class="panel-portal">
+          <h3>Download Framework (PDF)</h3>
+          <p>Use as an internal methodology, proof artifact, or assessment foundation.</p>
+          <a class="btn-portal btn-portal-primary" href="/assets/Sentinel-X_Final_Project.pdf" target="_blank" rel="noopener">Download Sentinel-X PDF</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section-portal">
+    <div class="container">
+      <h2>Contact</h2>
+      <p class="section-subtitle-portal">Route inquiries to the right team immediately using role-based contacts.</p>
+
+      <div class="contact-grid-portal">
+        <div class="card-portal">
+          <h4>General</h4>
+          <p><a href="mailto:Assist@gemcybersecurityassist.com" style="color: var(--brand-primary);">Assist@gemcybersecurityassist.com</a></p>
+        </div>
+        <div class="card-portal">
+          <h4>Administration</h4>
+          <p><a href="mailto:Admin@gemcybersecurityassist.com" style="color: var(--brand-primary);">Admin@gemcybersecurityassist.com</a></p>
+        </div>
+        <div class="card-portal">
+          <h4>Analysis / Sentinel-X</h4>
+          <p><a href="mailto:Analyzer@gemcybersecurityassist.com" style="color: var(--brand-primary);">Analyzer@gemcybersecurityassist.com</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
