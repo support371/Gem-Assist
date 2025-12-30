@@ -16,6 +16,34 @@
   ],
   "routes": [
     {
+      "src": "/enterprise/security/sentinelx-risk-assessment",
+      "dest": "/cyber-portal#sentinelx"
+    },
+    {
+      "src": "/enterprise/security/mdr",
+      "dest": "/cyber-portal#services"
+    },
+    {
+      "src": "/enterprise/security/threat-intel",
+      "dest": "/cyber-portal#services"
+    },
+    {
+      "src": "/enterprise/security/attack-surface",
+      "dest": "/cyber-portal#services"
+    },
+    {
+      "src": "/enterprise/security/vuln-mgmt",
+      "dest": "/cyber-portal#services"
+    },
+    {
+      "src": "/enterprise/security/iam-pam",
+      "dest": "/cyber-portal#services"
+    },
+    {
+      "src": "/enterprise/security/cloud-security",
+      "dest": "/cyber-portal#services"
+    },
+    {
       "src": "/(.*)",
       "dest": "api/index.py"
     }
