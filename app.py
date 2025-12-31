@@ -211,8 +211,14 @@ if USE_DATABASE:
 
     # Create tables
     with app.app_context():
-        from models import PasswordReset, User, Organization, UserRole
+        from models import PasswordReset, User, Organization, UserRole, AuditLog, Team, Grant, PortfolioItem, Investment
         db.create_all()
+        
+        # Seed default org
+        if not Organization.query.filter_by(name="GEM & ATR").first():
+            default_org = Organization(name="GEM & ATR")
+            db.session.add(default_org)
+            db.session.commit()
 else:
     db = None
     Testimonial = None
@@ -227,6 +233,11 @@ else:
     User = None
     Organization = None
     UserRole = None
+    AuditLog = None
+    Team = None
+    Grant = None
+    PortfolioItem = None
+    Investment = None
 
 def allowed_file(filename, file_type='any'):
     if file_type == 'video':
@@ -343,6 +354,29 @@ def client_portal():
         return render_template('client.html')
     flash('Please log in', 'info')
     return redirect(url_for('index'))
+
+def require_role(roles):
+    from functools import wraps
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if 'user_role' not in session or session['user_role'] not in roles:
+                return jsonify({'error': 'Forbidden'}), 403
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+@app.route('/api/admin/audit-logs')
+@require_role(['ADMIN', 'OWNER'])
+def get_audit_logs():
+    logs = AuditLog.query.order_by(AuditLog.created_at.desc()).limit(100).all()
+    return jsonify([{'action': l.action, 'created_at': l.created_at.isoformat()} for l in logs])
+
+@app.route('/api/admin/users')
+@require_role(['ADMIN', 'OWNER'])
+def get_users():
+    users = User.query.all()
+    return jsonify([{'username': u.username, 'role': u.role.value if u.role else 'VIEWER'} for u in users])
 
 # GitHub OAuth Routes
 @app.route('/auth/github')
