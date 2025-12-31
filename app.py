@@ -211,6 +211,7 @@ if USE_DATABASE:
 
     # Create tables
     with app.app_context():
+        from models import PasswordReset, User, Organization, UserRole
         db.create_all()
 else:
     db = None
@@ -222,6 +223,10 @@ else:
     VIPBoardMember = None
     BoardMember = None
     Membership = None
+    PasswordReset = None
+    User = None
+    Organization = None
+    UserRole = None
 
 def allowed_file(filename, file_type='any'):
     if file_type == 'video':
@@ -231,11 +236,92 @@ def allowed_file(filename, file_type='any'):
     else:
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/api/auth/password/forgot', methods=['POST'])
+def forgot_password():
+    """Request a password reset token"""
+    email = request.json.get('email')
+    if not email:
+        return jsonify({'error': 'Email is required'}), 400
+    
+    # In a real app, we'd check if user exists and send email
+    # For now, we just return success to avoid leaking emails
+    import secrets
+    import hashlib
+    token = secrets.token_urlsafe(32)
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    expiry = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+    
+    if USE_DATABASE:
+        reset = PasswordReset(email=email, token_hash=token_hash, expiry=expiry)
+        db.session.add(reset)
+        db.session.commit()
+        
+    logging.info(f"DEBUG: Password reset token for {email}: {token}")
+    return jsonify({'ok': True, 'message': 'If an account exists, a reset link has been sent.'}), 200
+
+@app.route('/api/auth/password/reset', methods=['POST'])
+def reset_password():
+    """Reset password using a token"""
+    data = request.json
+    token = data.get('token')
+    new_password = data.get('newPassword')
+    
+    if not token or not new_password:
+        return jsonify({'error': 'Token and new password are required'}), 400
+        
+    import hashlib
+    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    
+    if USE_DATABASE:
+        reset = PasswordReset.query.filter_by(token_hash=token_hash).first()
+        if not reset or reset.expiry < datetime.datetime.utcnow():
+            return jsonify({'error': 'Invalid or expired token'}), 400
+            
+        from werkzeug.security import generate_password_hash
+        user = User.query.filter_by(email=reset.email).first()
+        if user:
+            user.password_hash = generate_password_hash(new_password)
+            db.session.delete(reset)
+            db.session.commit()
+            return jsonify({'ok': True}), 200
+            
+    return jsonify({'error': 'User not found'}), 404
+
 # Health check endpoint
+@app.route('/api/health')
+def api_health():
+    """API health check endpoint"""
+    return jsonify({
+        'ok': True,
+        'version': '1.0.0',
+        'env': os.environ.get('FLASK_ENV', 'development'),
+        'timestamp': datetime.datetime.now().isoformat()
+    }), 200
+
+@app.route('/api/auth/me')
+def auth_me():
+    """Protected whoami endpoint for debugging auth"""
+    if 'github_user' in session:
+        return jsonify({
+            'user': session['github_user'],
+            'roles': session.get('user_roles', ['VIEWER']),
+            'org': session.get('user_org', 'Default Org')
+        }), 200
+    return jsonify({'error': 'Unauthorized'}), 401
+
+# Health check endpoint (legacy)
 @app.route('/health')
 def health():
     """Health check endpoint for deployment monitoring"""
     return {'status': 'healthy', 'timestamp': datetime.datetime.now().isoformat()}, 200
+
+@app.route('/forgot-password')
+def forgot_password_page():
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password')
+def reset_password_page():
+    return render_template('reset_password.html')
 
 # GitHub OAuth Routes
 @app.route('/auth/github')
