@@ -206,7 +206,7 @@ ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Initialize database if available
 if USE_DATABASE:
-    from models import db, Testimonial, ContactSubmission, NewsletterSubscriber, ServiceType, TestimonialStatus, VIPBoardMember, BoardMember, Membership
+    from models import db, Testimonial, ContactSubmission, NewsletterSubscriber, ServiceType, TestimonialStatus, VIPBoardMember, BoardMember
     db.init_app(app)
 
     # Create tables
@@ -219,6 +219,19 @@ if USE_DATABASE:
             default_org = Organization(name="GEM & ATR")
             db.session.add(default_org)
             db.session.commit()
+
+        # Seed test users
+        try:
+            from werkzeug.security import generate_password_hash
+            if not User.query.filter_by(username='admin').first():
+                admin = User(username='admin', email='admin@example.com', password_hash=generate_password_hash('admin123'), role=UserRole.ADMIN)
+                db.session.add(admin)
+            if not User.query.filter_by(username='client').first():
+                client = User(username='client', email='client@example.com', password_hash=generate_password_hash('client123'), role=UserRole.CLIENT)
+                db.session.add(client)
+            db.session.commit()
+        except Exception as e:
+            logging.error(f"Seeding error: {e}")
 else:
     db = None
     Testimonial = None
@@ -228,7 +241,6 @@ else:
     TestimonialStatus = None
     VIPBoardMember = None
     BoardMember = None
-    Membership = None
     PasswordReset = None
     User = None
     Organization = None
@@ -336,24 +348,21 @@ def reset_password_page():
 
 @app.route('/admin')
 def admin_dashboard():
-    if 'user_role' in session and session['user_role'] in ['ADMIN', 'OWNER']:
+    if 'user_role' in session and session['user_role'] == 'admin':
         return render_template('admin.html')
-    flash('Access denied', 'error')
-    return redirect(url_for('index'))
+    return jsonify({'error': 'Forbidden'}), 403
 
-@app.route('/team')
+@app.route('/dashboard')
 def team_dashboard():
-    if 'user_role' in session and session['user_role'] in ['ADMIN', 'OWNER', 'OPERATOR']:
+    if 'user_role' in session and session['user_role'] in ['admin', 'team']:
         return render_template('teams.html')
-    flash('Access denied', 'error')
-    return redirect(url_for('index'))
+    return jsonify({'error': 'Forbidden'}), 403
 
 @app.route('/portal')
 def client_portal():
-    if 'github_user' in session:
+    if 'user_role' in session and session['user_role'] in ['admin', 'team', 'client']:
         return render_template('client.html')
-    flash('Please log in', 'info')
-    return redirect(url_for('index'))
+    return jsonify({'error': 'Forbidden'}), 403
 
 def require_role(roles):
     from functools import wraps

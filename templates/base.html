@@ -139,12 +139,19 @@
                             <i class="fas fa-user-circle me-1"></i>Access
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="{{ url_for('client_access') }}">
-                                <i class="fas fa-user me-2"></i>Client Portal
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('admin_panel') }}">
+                            {% if session.get('user_role') == 'admin' %}
+                            <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}">
                                 <i class="fas fa-cog me-2"></i>Admin Panel
                             </a></li>
+                            {% elif session.get('user_role') == 'team' %}
+                            <li><a class="dropdown-item" href="{{ url_for('team_dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Team Dashboard
+                            </a></li>
+                            {% else %}
+                            <li><a class="dropdown-item" href="{{ url_for('client_portal') }}">
+                                <i class="fas fa-user me-2"></i>Client Portal
+                            </a></li>
+                            {% endif %}
                         </ul>
                     </li>
                     <li class="nav-item ms-2">

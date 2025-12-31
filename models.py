@@ -147,12 +147,9 @@ class PasswordReset(db.Model):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class UserRole(enum.Enum):
-    OWNER = "OWNER"
-    ADMIN = "ADMIN"
-    OPERATOR = "OPERATOR"
-    TRUSTEE = "TRUSTEE"
-    PARTNER = "PARTNER"
-    VIEWER = "VIEWER"
+    ADMIN = "admin"
+    TEAM = "team"
+    CLIENT = "client"
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -160,8 +157,7 @@ class User(db.Model):
     username = Column(String(80), unique=True, nullable=False)
     email = Column(String(120), unique=True, nullable=False)
     password_hash = Column(String(256), nullable=False)
-    role = Column(Enum(UserRole), default=UserRole.VIEWER)
-    org_id = Column(Integer, db.ForeignKey('organizations.id'))
+    role = Column(Enum(UserRole), default=UserRole.CLIENT)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class AuditLog(db.Model):
