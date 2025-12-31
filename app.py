@@ -378,6 +378,23 @@ def get_users():
     users = User.query.all()
     return jsonify([{'username': u.username, 'role': u.role.value if u.role else 'VIEWER'} for u in users])
 
+@app.route('/grants')
+def grants_page():
+    if 'user_role' in session:
+        return render_template('grants.html')
+    return redirect(url_for('index'))
+
+@app.route('/api/grants', methods=['GET', 'POST'])
+def handle_grants():
+    if request.method == 'POST':
+        data = request.json
+        new_grant = Grant(name=data['name'], amount=data['amount'], org_id=session.get('org_id', 1))
+        db.session.add(new_grant)
+        db.session.commit()
+        return jsonify({'ok': True}), 201
+    grants = Grant.query.filter_by(org_id=session.get('org_id', 1)).all()
+    return jsonify([{'name': g.name, 'amount': g.amount, 'status': g.status} for g in grants])
+
 # GitHub OAuth Routes
 @app.route('/auth/github')
 def github_login():
