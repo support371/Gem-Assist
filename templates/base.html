@@ -140,8 +140,8 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark">
                             {% if session.get('user_role') == 'admin' %}
-                            <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}">
-                                <i class="fas fa-cog me-2"></i>Admin Panel
+                            <li><a class="dropdown-item" href="{{ url_for('admin_center') }}">
+                                <i class="fas fa-cog me-2"></i>Admin Center
                             </a></li>
                             {% elif session.get('user_role') == 'team' %}
                             <li><a class="dropdown-item" href="{{ url_for('team_dashboard') }}">
