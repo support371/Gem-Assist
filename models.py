@@ -164,8 +164,44 @@ class User(db.Model):
     org_id = Column(Integer, db.ForeignKey('organizations.id'))
     created_at = Column(DateTime, default=datetime.utcnow)
 
-class Organization(db.Model):
-    __tablename__ = 'organizations'
+class AuditLog(db.Model):
+    __tablename__ = 'audit_logs'
     id = Column(Integer, primary_key=True)
-    name = Column(String(100), unique=True, nullable=False)
+    actor_id = Column(Integer, db.ForeignKey('users.id'))
+    org_id = Column(Integer, db.ForeignKey('organizations.id'))
+    action = Column(String(100), nullable=False)
+    target_type = Column(String(50))
+    target_id = Column(Integer)
+    metadata_json = Column(Text)  # JSON string
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class Team(db.Model):
+    __tablename__ = 'teams'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    org_id = Column(Integer, db.ForeignKey('organizations.id'), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class Grant(db.Model):
+    __tablename__ = 'grants'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    amount = Column(Float, default=0.0)
+    status = Column(String(50), default='pending')
+    org_id = Column(Integer, db.ForeignKey('organizations.id'), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class PortfolioItem(db.Model):
+    __tablename__ = 'portfolio_items'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    org_id = Column(Integer, db.ForeignKey('organizations.id'), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class Investment(db.Model):
+    __tablename__ = 'investments'
+    id = Column(Integer, primary_key=True)
+    portfolio_item_id = Column(Integer, db.ForeignKey('portfolio_items.id'))
+    amount = Column(Float, default=0.0)
+    org_id = Column(Integer, db.ForeignKey('organizations.id'), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
