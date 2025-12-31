@@ -138,25 +138,34 @@ class BoardMember(db.Model):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-class Membership(db.Model):
-    __tablename__ = 'memberships'
-    
+class PasswordReset(db.Model):
+    __tablename__ = 'password_resets'
     id = Column(Integer, primary_key=True)
-    member_id = Column(String(50), unique=True, nullable=False)  # Unique membership ID
-    full_name = Column(String(100), nullable=False)
-    email = Column(String(120), unique=True, nullable=False)
-    phone = Column(String(20))
-    company = Column(String(200))
-    position = Column(String(100))
-    membership_type = Column(String(50))  # Gold, Silver, Bronze, Basic
-    status = Column(String(20), default='pending')  # pending, active, suspended, expired
-    join_date = Column(DateTime, default=datetime.utcnow)
-    expiry_date = Column(DateTime)
-    last_payment_date = Column(DateTime)
-    benefits = Column(Text)  # JSON string of benefits
-    notes = Column(Text)
-    referred_by = Column(String(100))
-    photo_url = Column(String(500))
-    is_verified = Column(Boolean, default=False)
+    email = Column(String(120), nullable=False)
+    token_hash = Column(String(128), nullable=False)
+    expiry = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class UserRole(enum.Enum):
+    OWNER = "OWNER"
+    ADMIN = "ADMIN"
+    OPERATOR = "OPERATOR"
+    TRUSTEE = "TRUSTEE"
+    PARTNER = "PARTNER"
+    VIEWER = "VIEWER"
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    username = Column(String(80), unique=True, nullable=False)
+    email = Column(String(120), unique=True, nullable=False)
+    password_hash = Column(String(256), nullable=False)
+    role = Column(Enum(UserRole), default=UserRole.VIEWER)
+    org_id = Column(Integer, db.ForeignKey('organizations.id'))
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class Organization(db.Model):
+    __tablename__ = 'organizations'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), unique=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
