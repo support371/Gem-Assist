@@ -2,25 +2,49 @@
 {% block content %}
 <div class="container mt-5 pt-5">
     <h2><i class="fas fa-microscope me-2"></i>System Diagnostics</h2>
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card bg-dark border-secondary p-4 text-center">
-                <h3>99.9%</h3>
-                <p class="text-muted">System Uptime</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-dark border-secondary p-4 text-center">
-                <h3>< 50ms</h3>
-                <p class="text-muted">API Latency</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-dark border-secondary p-4 text-center">
-                <h3 class="text-success">Healthy</h3>
-                <p class="text-muted">DB Connection</p>
-            </div>
-        </div>
+    <div id="diag-summary" class="row mt-4">
+        <!-- Loaded via API -->
+    </div>
+    <div class="card bg-dark border-secondary p-4 mt-4">
+        <h5>Statistics Breakdown</h5>
+        <ul id="diag-counts" class="list-group list-group-flush">
+            <!-- Loaded via API -->
+        </ul>
     </div>
 </div>
+<script>
+async function loadDiagnostics() {
+    const res = await fetch('/api/admin/diagnostics');
+    const data = await res.json();
+    
+    document.getElementById('diag-summary').innerHTML = `
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary p-4 text-center h-100">
+                <h3 class="${data.db_connected ? 'text-success' : 'text-danger'}">${data.db_connected ? 'Connected' : 'Offline'}</h3>
+                <p class="text-muted">Database Status</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary p-4 text-center h-100">
+                <h3>${data.version}</h3>
+                <p class="text-muted">App Version</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary p-4 text-center h-100">
+                <h6 class="text-info">${new Date(data.server_time).toLocaleString()}</h6>
+                <p class="text-muted">Server Time</p>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('diag-counts').innerHTML = Object.entries(data.counts).map(([key, val]) => `
+        <li class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between">
+            <span class="text-capitalize">${key}</span>
+            <span class="badge bg-primary">${val}</span>
+        </li>
+    `).join('');
+}
+loadDiagnostics();
+</script>
 {% endblock %}
