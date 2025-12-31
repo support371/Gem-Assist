@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 pt-5">
+    <h2><i class="fas fa-building me-2"></i>Organization Settings</h2>
+    <div class="card bg-dark border-secondary p-4 mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Organization Name</label>
+                    <input type="text" class="form-control bg-dark text-white border-secondary" value="GEM & ATR" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Plan Level</label>
+                    <span class="badge bg-primary">Enterprise</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">Primary Admin</label>
+                    <input type="text" class="form-control bg-dark text-white border-secondary" value="admin@gemcybersecurityassist.com" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

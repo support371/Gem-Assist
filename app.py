@@ -475,6 +475,21 @@ def update_admin_contact(msg_id):
 def admin_inbox_page():
     return render_template('admin_inbox.html')
 
+@app.route('/admin/team')
+@require_role(['admin'])
+def admin_team_page():
+    return render_template('admin_team.html')
+
+@app.route('/admin/org')
+@require_role(['admin'])
+def admin_org_page():
+    return render_template('admin_org.html')
+
+@app.route('/admin/diagnostics')
+@require_role(['admin'])
+def admin_diagnostics_page():
+    return render_template('admin_diagnostics.html')
+
 # GitHub OAuth Routes
 @app.route('/auth/github')
 def github_login():
