@@ -9,11 +9,21 @@
     <div class="row">
         <div class="col-md-3">
             <div class="list-group shadow">
-                <a href="#users" class="list-group-item list-group-item-action active">Users & Roles</a>
-                <a href="#teams" class="list-group-item list-group-item-action">Teams</a>
-                <a href="#orgs" class="list-group-item list-group-item-action">Organizations</a>
-                <a href="#grants" class="list-group-item list-group-item-action">Grants</a>
-                <a href="#diagnostics" class="list-group-item list-group-item-action">Diagnostics</a>
+                <a href="{{ url_for('admin_inbox_page') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-inbox me-2"></i>Communications
+                </a>
+                <a href="{{ url_for('admin_team_page') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-users-cog me-2"></i>Teams
+                </a>
+                <a href="{{ url_for('admin_org_page') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-building me-2"></i>Organizations
+                </a>
+                <a href="{{ url_for('grants_page') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-hand-holding-usd me-2"></i>Grants
+                </a>
+                <a href="{{ url_for('admin_diagnostics_page') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-microscope me-2"></i>Diagnostics
+                </a>
             </div>
         </div>
         <div class="col-md-9">
