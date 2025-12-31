@@ -211,7 +211,7 @@ if USE_DATABASE:
 
     # Create tables
     with app.app_context():
-        from models import PasswordReset, User, Organization, UserRole, AuditLog, Team, Grant, PortfolioItem, Investment
+        from models import PasswordReset, User, Organization, UserRole, AuditLog, Team, Grant, PortfolioItem, Investment, ContactMessage
         db.create_all()
         
         # Seed default org
@@ -403,6 +403,77 @@ def handle_grants():
         return jsonify({'ok': True}), 201
     grants = Grant.query.filter_by(org_id=session.get('org_id', 1)).all()
     return jsonify([{'name': g.name, 'amount': g.amount, 'status': g.status} for g in grants])
+
+@app.route('/api/contact', methods=['POST'])
+@limiter.limit("5 per minute")
+def submit_contact_form():
+    try:
+        data = request.json
+        # Basic validation
+        required_fields = ['first_name', 'last_name', 'email', 'message']
+        if not all(k in data for k in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        new_msg = ContactMessage(
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            email=data['email'],
+            phone=data.get('phone'),
+            service_interest=data.get('service_interest'),
+            message=data['message'],
+            consent_ack=data.get('consent_ack', False),
+            org_id=session.get('org_id', 1)
+        )
+        db.session.add(new_msg)
+        db.session.commit()
+        
+        logging.info(f"New contact message received from {data['email']}")
+        # Notification placeholder
+        print(f"NOTIFICATION: New contact message from {data['email']} - ID: {new_msg.id}")
+        
+        return jsonify({'ok': True, 'id': new_msg.id}), 201
+    except Exception as e:
+        logging.error(f"Contact form error: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+@app.route('/api/admin/contact', methods=['GET'])
+@require_role(['admin'])
+def get_admin_contacts():
+    status_filter = request.args.get('status')
+    query = ContactMessage.query
+    if status_filter:
+        query = query.filter_by(status=status_filter)
+    
+    messages = query.order_by(ContactMessage.created_at.desc()).all()
+    return jsonify([{
+        'id': m.id,
+        'created_at': m.created_at.isoformat(),
+        'first_name': m.first_name,
+        'last_name': m.last_name,
+        'email': m.email,
+        'status': m.status.value,
+        'message': m.message
+    } for m in messages])
+
+@app.route('/api/admin/contact/<int:msg_id>', methods=['PATCH'])
+@require_role(['admin'])
+def update_admin_contact(msg_id):
+    msg = ContactMessage.query.get_or_404(msg_id)
+    data = request.json
+    
+    if 'status' in data:
+        msg.status = data['status']
+    if 'assigned_to_user_id' in data:
+        msg.assigned_to_user_id = data['assigned_to_user_id']
+    
+    msg.last_activity_at = datetime.utcnow()
+    db.session.commit()
+    return jsonify({'ok': True})
+
+@app.route('/admin/inbox')
+@require_role(['admin'])
+def admin_inbox_page():
+    return render_template('admin_inbox.html')
 
 # GitHub OAuth Routes
 @app.route('/auth/github')

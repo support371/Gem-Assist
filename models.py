@@ -146,6 +146,29 @@ class PasswordReset(db.Model):
     expiry = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+class ContactStatus(enum.Enum):
+    NEW = "NEW"
+    OPEN = "OPEN"
+    IN_PROGRESS = "IN_PROGRESS"
+    RESOLVED = "RESOLVED"
+    ARCHIVED = "ARCHIVED"
+
+class ContactMessage(db.Model):
+    __tablename__ = 'contact_messages'
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), nullable=False)
+    email = Column(String(120), nullable=False)
+    phone = Column(String(20))
+    service_interest = Column(String(100))
+    message = Column(Text, nullable=False)
+    consent_ack = Column(Boolean, default=False)
+    status = Column(Enum(ContactStatus), default=ContactStatus.NEW)
+    assigned_to_user_id = Column(Integer, db.ForeignKey('users.id'), nullable=True)
+    org_id = Column(Integer, db.ForeignKey('organizations.id'), nullable=True)
+    last_activity_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 class UserRole(enum.Enum):
     ADMIN = "admin"
     TEAM = "team"

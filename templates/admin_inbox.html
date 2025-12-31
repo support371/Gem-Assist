@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-inbox me-2 text-primary"></i>Communications Inbox</h2>
+        <div class="filter-group">
+            <select id="statusFilter" class="form-select bg-dark text-white border-secondary" onchange="loadInbox()">
+                <option value="">All Statuses</option>
+                <option value="NEW">New</option>
+                <option value="OPEN">Open</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="RESOLVED">Resolved</option>
+                <option value="ARCHIVED">Archived</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="card bg-dark border-secondary">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+                <thead>
+                    <tr class="border-secondary">
+                        <th>Date</th>
+                        <th>Sender</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="inboxTable">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="msgModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Message Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer border-secondary">
+                <select id="updateStatus" class="form-select bg-dark text-white border-secondary w-auto">
+                    <option value="NEW">New</option>
+                    <option value="OPEN">Open</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="RESOLVED">Resolved</option>
+                    <option value="ARCHIVED">Archived</option>
+                </select>
+                <button class="btn btn-primary" onclick="saveStatus()">Update Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentMsgId = null;
+
+async function loadInbox() {
+    const status = document.getElementById('statusFilter').value;
+    const res = await fetch(`/api/admin/contact?status=${status}`);
+    const data = await res.json();
+    const table = document.getElementById('inboxTable');
+    table.innerHTML = data.map(m => `
+        <tr class="border-secondary align-middle">
+            <td class="small">${new Date(m.created_at).toLocaleString()}</td>
+            <td>${m.first_name} ${m.last_name}</td>
+            <td>${m.email}</td>
+            <td><span class="badge bg-${getStatusColor(m.status)}">${m.status}</span></td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewDetails(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function getStatusColor(status) {
+    const colors = { NEW: 'primary', OPEN: 'info', IN_PROGRESS: 'warning', RESOLVED: 'success', ARCHIVED: 'secondary' };
+    return colors[status] || 'secondary';
+}
+
+function viewDetails(m) {
+    currentMsgId = m.id;
+    document.getElementById('modalContent').innerHTML = `
+        <div class="mb-3"><strong>From:</strong> ${m.first_name} ${m.last_name} (${m.email})</div>
+        <div class="mb-3"><strong>Received:</strong> ${new Date(m.created_at).toLocaleString()}</div>
+        <div class="mb-3"><strong>Message:</strong><br><p class="mt-2 p-3 bg-secondary bg-opacity-10 rounded">${m.message}</p></div>
+    `;
+    document.getElementById('updateStatus').value = m.status;
+    new bootstrap.Modal(document.getElementById('msgModal')).show();
+}
+
+async function saveStatus() {
+    const status = document.getElementById('updateStatus').value;
+    await fetch(`/api/admin/contact/${currentMsgId}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({status})
+    });
+    bootstrap.Modal.getInstance(document.getElementById('msgModal')).hide();
+    loadInbox();
+}
+
+document.addEventListener('DOMContentLoaded', loadInbox);
+</script>
+{% endblock %}
