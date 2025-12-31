@@ -323,6 +323,27 @@ def forgot_password_page():
 def reset_password_page():
     return render_template('reset_password.html')
 
+@app.route('/admin')
+def admin_dashboard():
+    if 'user_role' in session and session['user_role'] in ['ADMIN', 'OWNER']:
+        return render_template('admin.html')
+    flash('Access denied', 'error')
+    return redirect(url_for('index'))
+
+@app.route('/team')
+def team_dashboard():
+    if 'user_role' in session and session['user_role'] in ['ADMIN', 'OWNER', 'OPERATOR']:
+        return render_template('teams.html')
+    flash('Access denied', 'error')
+    return redirect(url_for('index'))
+
+@app.route('/portal')
+def client_portal():
+    if 'github_user' in session:
+        return render_template('client.html')
+    flash('Please log in', 'info')
+    return redirect(url_for('index'))
+
 # GitHub OAuth Routes
 @app.route('/auth/github')
 def github_login():
