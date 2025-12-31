@@ -346,8 +346,9 @@ def forgot_password_page():
 def reset_password_page():
     return render_template('reset_password.html')
 
+@app.route('/admin-panel')
 @app.route('/admin')
-def admin_dashboard():
+def admin_center():
     if 'user_role' in session and session['user_role'] == 'admin':
         return render_template('admin.html')
     return jsonify({'error': 'Forbidden'}), 403
