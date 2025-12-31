@@ -7,19 +7,43 @@
             <div class="card bg-dark border-secondary p-4">
                 <h5>Add Team Member</h5>
                 <form id="team-form">
-                    <input type="text" id="team_name" placeholder="Member Name" class="form-control mb-2 bg-dark text-white border-secondary">
-                    <button class="btn btn-primary w-100">Invite</button>
+                    <input type="text" id="team_name" placeholder="Team Name" class="form-control mb-2 bg-dark text-white border-secondary" required>
+                    <button class="btn btn-primary w-100">Create Team</button>
                 </form>
             </div>
         </div>
         <div class="col-md-8">
             <div class="card bg-dark border-secondary">
                 <table class="table table-dark">
-                    <thead><tr><th>Name</th><th>Role</th><th>Status</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Name</th><th>Created At</th></tr></thead>
                     <tbody id="team-list"></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+<script>
+async function loadTeams() {
+    const res = await fetch('/api/admin/teams');
+    const data = await res.json();
+    document.getElementById('team-list').innerHTML = data.map(t => `
+        <tr>
+            <td>${t.id}</td>
+            <td>${t.name}</td>
+            <td class="small">${new Date(t.created_at).toLocaleString()}</td>
+        </tr>
+    `).join('');
+}
+document.getElementById('team-form').onsubmit = async (e) => {
+    e.preventDefault();
+    await fetch('/api/admin/teams', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name: document.getElementById('team_name').value})
+    });
+    document.getElementById('team_name').value = '';
+    loadTeams();
+};
+loadTeams();
+</script>
 {% endblock %}

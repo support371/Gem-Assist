@@ -490,6 +490,73 @@ def admin_org_page():
 def admin_diagnostics_page():
     return render_template('admin_diagnostics.html')
 
+@app.route('/api/admin/teams', methods=['GET', 'POST'])
+@require_role(['admin'])
+def admin_teams_api():
+    if request.method == 'POST':
+        data = request.json
+        new_team = Team(name=data['name'], org_id=session.get('org_id', 1))
+        db.session.add(new_team)
+        db.session.commit()
+        # Audit log
+        log = AuditLog(actor_id=session.get('user_id'), action="CREATE_TEAM", target_type="team", target_id=new_team.id)
+        db.session.add(log)
+        db.session.commit()
+        return jsonify({'ok': True, 'id': new_team.id}), 201
+    teams = Team.query.all()
+    return jsonify([{'id': t.id, 'name': t.name, 'created_at': t.created_at.isoformat()} for t in teams])
+
+@app.route('/api/admin/orgs', methods=['GET', 'POST'])
+@require_role(['admin'])
+def admin_orgs_api():
+    if request.method == 'POST':
+        data = request.json
+        new_org = Organization(name=data['name'])
+        db.session.add(new_org)
+        db.session.commit()
+        return jsonify({'ok': True, 'id': new_org.id}), 201
+    orgs = Organization.query.all()
+    return jsonify([{'id': o.id, 'name': o.name, 'created_at': o.created_at.isoformat()} for o in orgs])
+
+@app.route('/api/admin/diagnostics')
+@require_role(['admin'])
+def get_diagnostics_data():
+    from datetime import datetime
+    return jsonify({
+        'version': '1.0.0-enterprise',
+        'db_connected': True,
+        'server_time': datetime.utcnow().isoformat(),
+        'counts': {
+            'users': User.query.count(),
+            'orgs': Organization.query.count(),
+            'teams': Team.query.count(),
+            'grants': Grant.query.count(),
+            'messages': ContactMessage.query.count()
+        }
+    })
+
+@app.route('/api/admin/messages-export.csv')
+@require_role(['admin'])
+def export_messages_csv():
+    import csv
+    import io
+    from flask import Response
+    
+    messages = ContactMessage.query.all()
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['ID', 'Date', 'First Name', 'Last Name', 'Email', 'Service', 'Status', 'Message'])
+    
+    for m in messages:
+        writer.writerow([m.id, m.created_at, m.first_name, m.last_name, m.email, m.service_interest, m.status.value, m.message])
+    
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=contact_messages.csv"}
+    )
+
 # GitHub OAuth Routes
 @app.route('/auth/github')
 def github_login():
