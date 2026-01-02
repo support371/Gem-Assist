@@ -1,0 +1,185 @@
+Do **not** share that long Google `SetSID` URL with any agent. It contains sensitive session parameters and can expose your account. Delete it from anywhere you pasted it.
+
+Below is a **single-page, paste-ready instruction** for the Replit agent that is explicitly scoped to **Fast Mode** (small, incremental, multi-file changes), and designed to get you to an enterprise-usable SaaS baseline without requiring “Autonomous Grid.”
+
+---
+
+### ONE-PAGE COPY TO PASTE TO REPLIT AGENT (FAST MODE)
+
+You are working in **Fast Mode**. Do **not** propose large rewrites, do **not** require “Autonomous Agent.” Execute **small, verifiable commits** only. Goal: convert the current GEM & ATR Command Center into a functional **multi-tenant SaaS** with **Admin + Team + Client Portal** foundations, plus performance/accessibility hardening.
+
+## 0) Operating Rules (Fast Mode Success Criteria)
+
+* Work in **phases** with checkpoints after each phase.
+* Each phase must produce a working build with no broken routes.
+* Keep scope minimal: implement **MVP enterprise primitives** (auth, orgs, roles, basic modules) before advanced features.
+* Prefer adding new files rather than refactoring everything at once.
+
+## 1) Confirm Stack + Entry Points
+
+* Identify whether this is (A) FastAPI backend + React frontend, or (B) Python server templates, or (C) Node/Express.
+* Print the project tree and confirm where:
+
+  * backend app entry is (e.g., `server/main.py`, `main.py`, `app.py`, `backend/`)
+  * frontend routes are (e.g., `client/src`, `pages`, `routes`)
+  * auth logic lives (e.g., `server/auth`, `routes/auth`, `middleware`)
+* Ensure environment variables exist (DB URL, JWT secret, email provider placeholder).
+
+## 2) Database Initialization (Fix “nothing configured yet”)
+
+Implement **idempotent** schema creation & seed data on server start:
+
+* Tables (minimum):
+
+  * `organizations`
+  * `users`
+  * `memberships` (user ↔ org)
+  * `roles` (Admin, Operator, Manager, Partner, Trustee)
+  * `role_assignments` (membership ↔ role)
+  * `password_resets` (token, expires_at, used_at)
+  * `audit_logs` (actor_user_id, org_id, action, target_type, target_id, metadata_json, created_at)
+  * Modules: `teams`, `grants`, `portfolios`, `investments`, `newsletter_subscribers`
+* Add seed:
+
+  * 1 default org (“GEM & ATR”)
+  * 1 admin user (only if none exists)
+  * baseline roles
+
+Acceptance:
+
+* App starts cleanly with an empty DB and creates tables without crashing.
+* Re-running startup does not duplicate tables or seed rows.
+
+## 3) Authentication + Password Reset (You requested “add password reset navigation”)
+
+Add full “Forgot Password” flow end-to-end:
+Frontend:
+
+* Add route/link on login page: **Forgot password?**
+* Add pages:
+
+  * `/forgot-password` (email input)
+  * `/reset-password?token=...` (new password + confirm)
+    Backend:
+* Endpoints:
+
+  * `POST /api/auth/forgot-password` -> create token, store hashed token, expiry (e.g., 30 min)
+  * `POST /api/auth/reset-password` -> validate token, set new password hash, mark token used
+    Email:
+* If no email provider configured, log the reset link to server console for now (FAST MODE friendly).
+  Security:
+* Never reveal whether an email exists.
+* Rate-limit basic attempts (simple in-memory limiter is ok for MVP).
+
+Acceptance:
+
+* I can request reset, copy link from logs, set new password, and login.
+
+## 4) Multi-Tenant RBAC (Minimum Enterprise Version)
+
+Implement org-scoped RBAC without a massive rewrite:
+
+* Every protected API call must resolve:
+
+  * authenticated user
+  * active org (from session or `X-Org-Id`)
+  * role(s) for that user in that org
+* Enforce:
+
+  * **Admin**: full access
+  * **Operator (Blue Team)**: read/write for Security/Operations modules; read-only for Finance/Trust modules
+  * **Manager (Amber Team)**: read/write for Finance/Trust modules; read-only for Security status
+  * **Partner/Trustee**: read-only to their scoped portfolio + reports
+* Add a simple middleware/decorator: `require_role([...])`.
+
+Acceptance:
+
+* Admin can see everything.
+* Non-admin gets blocked (403) from disallowed routes.
+
+## 5) Build the “Enterprise Modules” as Simple CRUD (No heavy UI yet)
+
+Create minimal working pages + API for each module (list/create/edit/delete):
+A) Admin Console
+
+* `/admin/users` (org users + role assignment)
+* `/admin/org-settings`
+* `/admin/audit-logs` (read-only)
+
+B) Teams
+
+* `/teams` (create team, add members)
+
+C) Grants
+
+* `/grants` (name, amount, status, owner, notes)
+
+D) Portfolio + Investments
+
+* `/portfolio` (portfolio items)
+* `/investments` (investment entries linked to portfolio)
+
+E) Client Portal (Read-only)
+
+* `/client` landing page
+* `/client/reports` (placeholder table)
+* Must enforce tenant scoping (partner/trustee sees only assigned portfolio)
+
+F) Newsletter
+
+* Public endpoint: `POST /api/newsletter/subscribe`
+* Admin page: `/admin/newsletter` (export list)
+
+Acceptance:
+
+* Each module has at least a list page + create form + API wired to DB.
+
+## 6) Dashboard Wiring (Stop showing empty content)
+
+Your dashboard tabs exist (Overview, Briefing, Financials, Evidence, Source). Populate them from DB:
+
+* Overview: show org status, uptime placeholder, latest audit events
+* Briefing: pull latest “briefing notes” from a table or a JSON seed
+* Financials: show computed totals from investments/grants
+* Evidence: show evidence entries from DB (don’t hardcode)
+* Source: show source materials entries from DB
+
+Acceptance:
+
+* Dashboard loads meaningful data and no blank panels.
+
+## 7) Performance + Accessibility Hardening (Fast Wins)
+
+Performance:
+
+* Enable HTTP caching headers for static assets.
+* Ensure frontend builds with minification.
+* Avoid “select *”; fetch only required fields.
+* Add DB indexes for:
+
+  * `memberships(org_id, user_id)`
+  * `role_assignments(membership_id, role_id)`
+  * `audit_logs(org_id, created_at)`
+  * module foreign keys (org_id, owner_id)
+    Accessibility:
+* Ensure semantic headings (h1/h2 order), button elements, focus states.
+* Alt text for images and evidence thumbnails.
+* Keyboard navigation for menu + tabs.
+
+Acceptance:
+
+* Lighthouse accessibility baseline improves; no obvious keyboard traps.
+
+## 8) Delivery Format
+
+After each phase:
+
+* List files changed.
+* Provide the exact routes/endpoints added.
+* Provide test credentials and “how to verify” steps.
+
+Start with Phases 2–3 first (DB init + password reset), then proceed sequentially.
+
+---
+
+If you want, paste back (1) your repo’s file tree (top-level) and (2) what runtime you’re using (FastAPI? Flask? Node?), and I’ll tailor that one-page instruction to your exact codebase naming so the agent stops error-looping.

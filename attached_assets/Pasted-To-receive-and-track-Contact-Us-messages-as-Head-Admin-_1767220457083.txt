@@ -1,0 +1,75 @@
+To receive and track “Contact Us” messages as Head Admin, you need a **single source of truth** for inbound communications. Right now your form is just a UI unless it is wired to a backend store + admin inbox. Here’s the enterprise-grade pattern you should implement.
+
+## Where you should track message history (enterprise-standard)
+
+### 1) Admin Inbox (in-app, authoritative)
+
+Create an **Admin → Communications → Inbox** module that reads from a database table and supports:
+
+* Ticket-style lifecycle: `New → Open → In Progress → Resolved → Archived`
+* Assignment: `assigned_to`, `team`, `priority`, `tags`
+* Audit trail: who changed status, when, what notes were added
+* Search + filters: date range, service interest, status, org/team, sender email
+  This becomes your operational command center, not email threads.
+
+### 2) Database as the system of record
+
+All form submissions must be written to a table like:
+
+**contact_messages**
+
+* `id (uuid)`
+* `created_at`
+* `first_name`, `last_name`, `email`, `phone`
+* `service_interest` (enum)
+* `message` (text)
+* `status` (enum)
+* `assigned_to_user_id` (nullable)
+* `org_id / tenant_id` (if multi-tenant)
+* `source_page`, `utm_source`, `ip_hash` (optional, for attribution and security)
+* `consent_ack` (bool)
+* `last_activity_at`
+
+### 3) Notifications (fast response without losing governance)
+
+On insert:
+
+* Send an email to your support distribution (or Slack/Telegram webhook if you use it)
+* Also create an “unread count” badge in the admin UI
+  Email becomes a *notification channel*, not the record.
+
+---
+
+## One-page instruction to paste to the Replit Agent (Fast Mode-friendly)
+
+Copy/paste this exactly:
+
+**TASK: Implement Contact Form Message History + Admin Inbox (System of Record)**
+
+1. Backend: create a DB table `contact_messages` with fields: id(uuid), created_at, first_name, last_name, email, phone, service_interest, message, consent_ack, status(enum: NEW, OPEN, IN_PROGRESS, RESOLVED, ARCHIVED default NEW), assigned_to_user_id(nullable), org_id/tenant_id(if available), last_activity_at.
+2. API routes:
+
+* `POST /api/contact` to validate input and insert into `contact_messages`. Return `{ok:true, id}`.
+* Admin-only: `GET /api/admin/contact?status=&q=&from=&to=&page=` (paginated, searchable).
+* Admin-only: `PATCH /api/admin/contact/:id` to update status, assignment, internal notes, last_activity_at.
+
+3. Frontend:
+
+* Ensure the public Contact Us form submits to `POST /api/contact` and shows success/error states.
+* Add Admin UI page: `Admin → Communications → Inbox` with table/list view, search, filters, status chips, detail drawer, assignment + status controls.
+
+4. RBAC: only Admin (and optionally Support role) can access admin routes/pages.
+5. Notifications: on new message insert, trigger an email (or log placeholder if email not configured) and set the record status to NEW.
+6. Quality: basic server-side validation, rate limit `POST /api/contact`, and store only what you need (no plaintext secrets).
+
+**Acceptance Criteria:** I can submit the contact form, then log in as admin and see the message appear in the Inbox, update status/assignment, and search/filter history.
+
+---
+
+## What this solves immediately
+
+* You stop “losing” messages in the UI layer.
+* You get a traceable pipeline (new → handled → resolved) that’s enterprise-ready.
+* You create a scalable pattern that later extends to **Client Portal tickets, Trustees requests, Investment onboarding, and SOC escalations**.
+
+If you paste the instruction above to the Replit Agent, you’ll force the build toward the correct architecture: **database-backed inbox + RBAC + admin workflows**.

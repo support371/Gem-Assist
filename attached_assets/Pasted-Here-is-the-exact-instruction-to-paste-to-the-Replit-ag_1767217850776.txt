@@ -1,0 +1,237 @@
+Here is the **exact instruction** to paste to the **Replit agent in charge of your website build**. It is scoped, enterprise-focused, and Fast Mode-compatible.
+
+---
+
+## REPLIT AGENT — ENTERPRISE UPGRADE MANDATE (SSA WEBSITE)
+
+You are the Replit agent responsible for upgrading my existing SSA website into a **higher-quality, enterprise-grade SaaS platform**.
+Do **not** create a new repository or a parallel build. Modify the current project in-place. Use **Fast Mode** only. Do not ask for Autonomous Mode or upgrades.
+
+### Primary Outcome
+
+Deliver an enterprise-grade SaaS with full support for:
+
+* Teams
+* Users
+* RBAC (role-based access control)
+* Grants
+* Dashboard + Portfolio
+* Investments + Portfolio Management
+* Admin access
+* Team access
+* Newsletter + announcements
+* Client Portal (external users)
+* Audit logging + diagnostics (enterprise credibility)
+
+---
+
+# PHASE 1 — FOUNDATION (Non-Negotiable)
+
+## 1) Recon & Stack Confirmation
+
+Run and report:
+
+* `ls -la`
+* detect stack (frontend, backend, DB)
+* identify auth flow and dashboard entry route
+* list top 8 files to be edited first
+
+**Acceptance:** You can clearly identify where auth, routing, and data storage live.
+
+## 2) Enterprise Navigation (High Quality UX)
+
+Implement consistent navigation structure (no redesign required):
+
+* Dashboard
+* Portfolio
+* Investments
+* Grants
+* Evidence/Docs
+* Reports
+* Newsletter
+* Client Portal (role-gated)
+* Admin (role-gated)
+
+**Acceptance:** App looks organized and enterprise-ready immediately; no blank pages.
+
+## 3) RBAC Core (Must Ship Early)
+
+Implement roles:
+
+* Super Admin
+* Admin
+* Team Member
+* Client/Investor
+* Partner/Trustee
+* Subscriber
+
+Rules:
+
+* Enforce role checks on both frontend and backend
+* Block URL access if role lacks permissions
+
+**Acceptance:** No user can reach Admin routes or other tenant data by guessing URLs.
+
+---
+
+# PHASE 2 — MULTI-TENANT + TEAMS
+
+## 4) Org/Tenant + Teams Model
+
+Implement:
+
+* Organization (tenant)
+* Teams within org
+* User-team assignment
+* Team-scoped data visibility
+
+Add Admin screens:
+
+* Admin > Organizations
+* Admin > Teams
+* Admin > Users + Role assignment
+
+**Acceptance:** Team A cannot see Team B’s data unless explicitly allowed.
+
+---
+
+# PHASE 3 — DASHBOARD FRAMEWORK (CONFIGURABLE MODULES)
+
+## 5) Modular Dashboard System
+
+Create configurable modules:
+
+* Overview
+* Briefing/Updates
+* Financials
+* Portfolio
+* Investments
+* Grants
+* Evidence/Docs
+* Source Material
+* Activity/Audit Logs
+
+Requirements:
+
+* Modules can be enabled/disabled per org (Admin control)
+* No blank dashboard: show setup wizard or demo seed content if empty
+* Load modules independently (code splitting/lazy loading)
+
+**Acceptance:** Every org can configure its dashboard; content persists.
+
+---
+
+# PHASE 4 — BUSINESS FEATURES (ENTERPRISE CORE)
+
+## 6) Portfolio
+
+CRUD + list + pagination:
+
+* assets, valuations, notes, attachments
+
+## 7) Investments
+
+CRUD + list + status tracking:
+
+* investment entries, outcomes/returns, reporting exports
+
+## 8) Grants
+
+Lifecycle:
+
+* created → reviewed → approved → allocated → closed
+  Include:
+* allocations, beneficiaries, compliance notes, attachments
+
+**Acceptance:** Portfolio/Investments/Grants are usable, stable, and role/team scoped.
+
+---
+
+# PHASE 5 — EXTERNAL EXPERIENCE
+
+## 9) Client Portal (External Users)
+
+Create `/portal/*` routes with strict scoping:
+
+* portfolio summary
+* investment snapshot
+* downloadable reports/documents
+* announcements
+* limited contact/messaging
+
+**Acceptance:** External users see only their permitted data; no internal ops exposure.
+
+---
+
+# PHASE 6 — COMMUNICATIONS
+
+## 10) Newsletter + Announcements
+
+Implement:
+
+* public newsletter subscribe
+* admin campaign editor (internal)
+* announcements pushed into dashboard + client portal
+* role-based visibility
+
+**Acceptance:** Admin can publish updates; subscribers have limited access only.
+
+---
+
+# PHASE 7 — ENTERPRISE CREDIBILITY (OBSERVABILITY + SECURITY)
+
+## 11) Health, Diagnostics, Graded Performance
+
+Implement:
+
+* `/health` and `/ready`
+* Admin > Diagnostics page showing:
+
+  * uptime, version, db status, error rate
+  * performance grade (A/B/C based on p95 latency + error rate)
+
+Add Admin-only **Safe Mode**:
+
+* disables heavy modules if degraded while keeping core nav/auth stable
+
+## 12) Audit Logging (Must Have)
+
+Log sensitive actions:
+
+* role changes, team changes
+* grant approvals
+* investment updates
+* document access
+  Capture:
+* actor, action, timestamp, target, metadata
+
+**Acceptance:** Audit logs exist and are viewable by Admin.
+
+---
+
+# DELIVERY RULES
+
+* Work in small commits and verify after each phase:
+
+  * login still works
+  * dashboard loads
+  * role gating works
+  * no blank states
+* Prefer configuration and modularization over big rewrites.
+* If backend access is constrained, implement frontend-first persistence (localStorage/org scoped), but design provider layer so it can switch to backend endpoints later without rewriting UI.
+
+---
+
+# DEFINITION OF DONE
+
+1. Admin can create orgs/teams/users and assign roles
+2. Team/tenant scoping prevents leakage
+3. Dashboard modules configurable per org
+4. Portfolio/Investments/Grants fully functional
+5. Client portal operational for external roles
+6. Newsletter + announcements working
+7. Health + diagnostics + safe mode present
+8. Audit logs capture sensitive actions
+9. Enterprise-grade navigation and UX consistency achieved
+
+---

@@ -1,0 +1,118 @@
+You are a Replit coding agent. Create a Node.js + TypeScript Fastify backend scaffold under a folder named `backend/` (create it if missing). Do NOT change the architecture. Do NOT add extra frameworks. Do NOT omit any file.
+
+1) Create folders:
+backend/
+  src/
+    config/
+    plugins/
+
+2) Create these files with EXACT contents:
+
+A) backend/package.json
+{
+  "name": "gem-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.0",
+    "@fastify/helmet": "^12.0.0",
+    "@fastify/rate-limit": "^10.0.0",
+    "fastify": "^4.0.0",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+
+B) backend/tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true
+  }
+}
+
+C) backend/.env.example
+NODE_ENV=development
+PORT=3000
+RATE_LIMIT_MAX=120
+
+D) backend/.env
+NODE_ENV=development
+PORT=3000
+RATE_LIMIT_MAX=120
+
+E) backend/src/config/env.ts
+import { z } from "zod";
+
+const schema = z.object({
+  NODE_ENV: z.string().default("development"),
+  PORT: z.coerce.number().default(3000),
+  RATE_LIMIT_MAX: z.coerce.number().default(120)
+});
+
+export const env = schema.parse(process.env);
+
+F) backend/src/plugins/routes.ts
+import { FastifyInstance } from "fastify";
+
+export async function registerRoutes(app: FastifyInstance) {
+  app.get("/", async () => ({ ok: true, service: "GEM Backend", status: "running" }));
+  app.get("/health", async () => ({ ok: true }));
+  app.get("/ready", async () => ({ ok: true }));
+}
+
+G) backend/src/server.ts
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
+import rateLimit from "@fastify/rate-limit";
+
+import { env } from "./config/env.js";
+import { registerRoutes } from "./plugins/routes.js";
+
+const app = Fastify({ logger: true });
+
+await app.register(helmet);
+await app.register(cors, { origin: true, credentials: true });
+
+await app.register(rateLimit, {
+  max: env.RATE_LIMIT_MAX,
+  timeWindow: "1 minute"
+});
+
+await registerRoutes(app);
+
+await app.listen({ port: env.PORT, host: "0.0.0.0" });
+
+3) After creating files, run these commands in the Replit shell:
+cd backend
+npm install
+
+4) Confirm success by starting the server:
+npm run dev
+
+5) Validate endpoints return JSON:
+GET /       -> { ok: true, service: "GEM Backend", status: "running" }
+GET /health -> { ok: true }
+GET /ready  -> { ok: true }
+
+Finally, report back with:
+- the backend/ folder tree
+- the server run log line(s)
+- the response bodies from /, /health, /ready

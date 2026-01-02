@@ -1,0 +1,147 @@
+Understood. Below is a single “one-page” instruction you can paste to the Replit Agent (Fast Mode) that (a) avoids anything that requires Autonomous Agent / long multi-file planning, and (b) focuses on **small, verifiable, low-risk increments** to unlock backend access, finish password reset navigation, and begin enterprise-grade SaaS foundations (RBAC-lite, orgs/teams, admin vs team vs client portal separation) without triggering the upgrade wall.
+
+Also: do **not** paste or use login/session links like the Google `SetSID` URL anywhere (that is effectively a session credential). If you already shared it with any agent/tool, revoke sessions in your Google account security page and rotate credentials.
+
+---
+
+## COPY-PASTE TO REPLIT AGENT (FAST MODE)
+
+You are operating in FAST MODE. Do not propose a large “enterprise rebuild.” Do not require Autonomous Agent. Deliver changes in SMALL PATCHES with clear verification after each patch.
+
+TARGET APP: Existing GEM & ATR Command Center SaaS already deployed. Goal: unlock backend access + complete password reset navigation + begin SaaS admin foundations (org/team separation, RBAC-lite) using minimal files and minimal risk.
+
+RULES OF ENGAGEMENT
+
+1. Work in micro-commits: each change set should touch no more than 3–6 files.
+2. After each change set: provide exact verification steps and expected outcome.
+3. No big refactors, no migrations to new cloud, no new frameworks. Use what’s already in repo.
+4. Prefer server-side changes that are additive (new endpoints, new routes) and safe.
+5. If any feature requires more than 30 minutes, STOP and propose a smaller slice.
+
+PHASE 0 — BASELINE & BACKEND ACCESS (Must complete first)
+A) Identify stack by inspecting repo:
+
+* List top-level folders and key entrypoints (client/, server/, api/, app/, routes, main).
+* Identify auth implementation files (e.g., server/auth.*, server/routes/auth.*, client/pages/Login/Signup).
+* Identify database layer (Prisma/Drizzle/SQLAlchemy) and env vars usage.
+
+B) Ensure backend is reachable in dev:
+
+* Add/confirm a health endpoint: GET /api/health returning {ok:true, version, env} and log server start.
+* Confirm API base path used by frontend (e.g., /api).
+* Fix CORS only if needed for same-origin Replit preview.
+
+C) Add a protected “whoami” endpoint for debugging auth:
+
+* GET /api/auth/me returns current user + org/team + roles if logged in; otherwise 401.
+
+Verification:
+
+* From browser console or curl: fetch('/api/health') returns ok:true.
+* fetch('/api/auth/me') returns 401 when logged out; returns user object when logged in.
+
+PHASE 1 — PASSWORD RESET NAVIGATION (Frontend + Backend minimal)
+Goal: Add “Forgot password?” link on login, request reset, reset via token link.
+
+Backend (minimal endpoints):
+
+1. POST /api/auth/password/forgot  {email}
+
+* Always return 200 (do not leak whether email exists)
+* If user exists: create token, store hashed token + expiry in DB table (password_resets)
+* Log token to server console ONLY in dev (so we can test without email service)
+
+2. POST /api/auth/password/reset  {token, newPassword}
+
+* Validate token hash + expiry, set new password (hashed), delete token row, return ok:true
+
+Frontend:
+
+* Login page: add “Forgot password?” link to /forgot-password
+* Create /forgot-password page: input email, submit to forgot endpoint, show success state
+* Create /reset-password page: reads token from querystring (?token=...), lets user set new password, calls reset endpoint, then routes to login
+
+Verification:
+
+* From dev logs, copy reset link token, open reset page, set new password, login succeeds.
+
+PHASE 2 — ENTERPRISE “RBAC-LITE” WITHOUT AUTONOMOUS MODE
+Goal: Implement the minimum viable role system to separate Admin / Team / Client.
+
+Data model (keep simple):
+
+* roles: 'OWNER','ADMIN','OPERATOR','TRUSTEE','PARTNER','VIEWER'
+* user belongs to one org; optionally belongs to teams.
+* Add columns or a join table ONLY if already using migrations; otherwise keep in-memory mapping until migrations are confirmed.
+
+Backend:
+
+* Add middleware requireAuth, requireRole(['ADMIN', 'OWNER']) etc.
+* Add endpoints:
+
+  * GET /api/admin/overview (ADMIN+)
+  * GET /api/portal/overview (PARTNER/TRUSTEE/VIEWER)
+  * GET /api/team/overview (OPERATOR+)
+
+Frontend routing:
+
+* After login, route user to correct landing:
+
+  * ADMIN/OWNER -> /admin
+  * OPERATOR -> /team
+  * TRUSTEE/PARTNER/VIEWER -> /portal
+* Add nav gating: show tabs only if role allowed.
+
+Verification:
+
+* Log in with test roles; each role sees correct navigation and cannot access forbidden routes (403).
+
+PHASE 3 — SAAS MODULES (SKELETON ONLY, DATA LATER)
+Goal: Create the enterprise-grade “slots” without building everything at once.
+
+Create empty modules with safe placeholder data + API stubs:
+
+* Teams & Users:
+
+  * GET/POST /api/admin/users
+  * GET/POST /api/admin/teams
+* Grants:
+
+  * GET/POST /api/admin/grants
+* Portfolio / Investments:
+
+  * GET /api/portal/portfolio
+  * GET /api/portal/investments
+* Newsletter:
+
+  * POST /api/portal/newsletter/subscribe (store email + consent timestamp)
+
+Front-end pages:
+
+* /admin/users, /admin/teams, /admin/grants
+* /portal/portfolio, /portal/investments
+* /portal/newsletter
+
+Verification:
+
+* Each page loads fast, shows empty states, and creates list items with basic validation.
+
+PHASE 4 — PERFORMANCE + RELIABILITY QUICK WINS (FAST MODE SAFE)
+
+* Add server request logging with timing (basic middleware).
+* Ensure DB queries fetch only needed fields.
+* Add browser cache headers for static assets (if server handles them).
+* Add basic error boundary in React and show “System Status: Online” using /api/health.
+
+DELIVERABLE FORMAT (for each phase)
+
+1. Exactly what files changed (paths).
+2. What code was added (snippets ok).
+3. How to test (3–5 steps).
+4. Expected result and what “done” looks like.
+
+Start with PHASE 0 only. Do not jump ahead until verification passes.
+
+---
+
+If you want, I can also compress this further into an even shorter “Fast Mode prompt” (10–15 lines) optimized to avoid triggering Replit’s “upgrade” response—but the above is already structured to keep the agent in a constrained execution lane.
