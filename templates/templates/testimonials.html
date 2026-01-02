@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}Client Testimonials - Gem Assist Enterprise{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1><i class="fas fa-star me-3"></i>Client Testimonials</h1>
+                <p class="lead">What our clients say about our services</p>
+                <a href="{{ url_for('submit_testimonial') }}" class="btn btn-primary btn-lg mt-3">
+                    <i class="fas fa-plus-circle me-2"></i>Share Your Experience
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        {% if featured_testimonials %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-trophy text-warning me-2"></i>Featured Testimonials
+                </h2>
+                <div class="testimonials-grid featured">
+                    {% for testimonial in featured_testimonials %}
+                    <div class="testimonial-card featured-card">
+                        <div class="featured-badge">
+                            <i class="fas fa-star"></i> Featured
+                        </div>
+                        <div class="testimonial-header">
+                            <div class="client-info">
+                                {% if testimonial.image_url %}
+                                <img src="{{ testimonial.image_url }}" alt="{{ testimonial.client_name }}" class="client-photo">
+                                {% else %}
+                                <div class="client-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                {% endif %}
+                                <div class="testimonial-meta">
+                                    <h5>{{ testimonial.client_name }}</h5>
+                                    {% if testimonial.company_name %}
+                                    <p class="text-muted mb-1">{{ testimonial.company_position or 'Client' }}</p>
+                                    <p class="text-info small">{{ testimonial.company_name }}</p>
+                                    {% else %}
+                                    <p class="text-muted">{{ testimonial.company_position or 'Valued Client' }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="stars">
+                                {% for i in range(testimonial.rating|int) %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% endfor %}
+                                {% for i in range(5 - testimonial.rating|int) %}
+                                <i class="far fa-star text-warning"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if testimonial.title %}
+                        <h6 class="testimonial-title">"{{ testimonial.title }}"</h6>
+                        {% endif %}
+                        <blockquote>
+                            {{ testimonial.testimonial_text }}
+                        </blockquote>
+                        {% if testimonial.video_url %}
+                        <div class="testimonial-video mb-3">
+                            <video controls class="w-100" style="max-height: 300px;">
+                                <source src="{{ testimonial.video_url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        {% endif %}
+                        <div class="testimonial-footer">
+                            <i class="fas fa-shield-check text-success me-2"></i>
+                            <small>Verified Client - {{ testimonial.service_type.value|replace('_', ' ')|title }}</small>
+                        </div>
+                        {% if testimonial.company_logo_url %}
+                        <div class="company-logo mt-3">
+                            <img src="{{ testimonial.company_logo_url }}" alt="{{ testimonial.company_name }} Logo">
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                {% if regular_testimonials %}
+                <h2 class="text-center mb-4">Client Reviews</h2>
+                <div class="testimonials-grid">
+                    {% for testimonial in regular_testimonials %}
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="client-info">
+                                {% if testimonial.image_url %}
+                                <img src="{{ testimonial.image_url }}" alt="{{ testimonial.client_name }}" class="client-photo">
+                                {% else %}
+                                <div class="client-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                {% endif %}
+                                <div class="testimonial-meta">
+                                    <h5>{{ testimonial.client_name }}</h5>
+                                    {% if testimonial.company_name %}
+                                    <p class="text-muted mb-0">{{ testimonial.company_position or 'Client' }}</p>
+                                    <p class="text-info small">{{ testimonial.company_name }}</p>
+                                    {% else %}
+                                    <p class="text-muted">{{ testimonial.company_position or 'Valued Client' }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="stars">
+                                {% for i in range(testimonial.rating|int) %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% endfor %}
+                                {% for i in range(5 - testimonial.rating|int) %}
+                                <i class="far fa-star text-warning"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if testimonial.title %}
+                        <h6 class="testimonial-title">"{{ testimonial.title }}"</h6>
+                        {% endif %}
+                        <blockquote>
+                            {{ testimonial.testimonial_text }}
+                        </blockquote>
+                        {% if testimonial.video_url %}
+                        <div class="testimonial-video mb-3">
+                            <video controls class="w-100" style="max-height: 250px;">
+                                <source src="{{ testimonial.video_url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        {% endif %}
+                        <div class="testimonial-footer">
+                            <i class="fas fa-shield-check text-success me-2"></i>
+                            <small>Verified Client - {{ testimonial.service_type.value|replace('_', ' ')|title }}</small>
+                        </div>
+                        {% if testimonial.company_logo_url %}
+                        <div class="company-logo mt-3">
+                            <img src="{{ testimonial.company_logo_url }}" alt="{{ testimonial.company_name }} Logo">
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {% if not featured_testimonials %}
+                <div class="text-center py-5">
+                    <i class="fas fa-comments fa-4x text-muted mb-4"></i>
+                    <h3 class="text-muted">Be the First to Share Your Experience!</h3>
+                    <p class="lead">We're collecting testimonials from our valued clients.</p>
+                    <a href="{{ url_for('submit_testimonial') }}" class="btn btn-primary btn-lg mt-3">
+                        <i class="fas fa-plus-circle me-2"></i>Submit Your Testimonial
+                    </a>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, rgba(34, 193, 195, 0.1) 0%, rgba(253, 187, 45, 0.1) 100%);
+    padding: 5rem 0 3rem;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.testimonials-grid.featured {
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+}
+
+.testimonial-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: var(--primary-color);
+}
+
+.featured-card {
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(59, 130, 246, 0.1) 100%);
+    border: 2px solid var(--primary-color);
+}
+
+.featured-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.testimonial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.client-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.client-photo, .client-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.client-photo {
+    object-fit: cover;
+}
+
+.client-avatar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.testimonial-meta h5 {
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+}
+
+.testimonial-meta p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.testimonial-title {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.stars {
+    display: flex;
+    gap: 0.25rem;
+}
+
+blockquote {
+    margin: 1.5rem 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--primary-color);
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.testimonial-video {
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000;
+}
+
+.testimonial-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.company-logo {
+    text-align: center;
+    padding-top: 1rem;
+}
+
+.company-logo img {
+    max-height: 40px;
+    max-width: 120px;
+    opacity: 0.8;
+    filter: grayscale(100%);
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover .company-logo img {
+    opacity: 1;
+    filter: grayscale(0%);
+}
+
+@media (max-width: 768px) {
+    .testimonials-grid,
+    .testimonials-grid.featured {
+        grid-template-columns: 1fr;
+    }
+    
+    .testimonial-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
+{% endblock %}

@@ -1,15 +1,15 @@
-modules = ["python-3.11", "nodejs-20"]
+modules = ["nodejs-20", "python-3.11"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["openssl", "postgresql", "unzip", "mailutils"]
+packages = ["driversi686Linux.mesa-demos", "freetype", "google-cloud-sdk-gce", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "openssl", "postgresql", "see-cat", "systemdUkify", "tcl", "tk", "unzip", "wget", "zlib"]
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+run = ["sh", "-c", "gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 main:app"]
 
 [workflows]
-runButton = "Project"
+runButton = "Start Flask App"
 
 [[workflows.workflow]]
 name = "Project"
@@ -25,13 +25,38 @@ name = "Start application"
 author = "agent"
 
 [[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start Flask App"
+author = 46920073
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
-waitForPort = 5000
+args = "python main.py"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd /home/runner/workspace && node push_to_github.js"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
+<<<<<<< HEAD
+=======
+[[ports]]
+localPort = 9005
+externalPort = 3000
+
+>>>>>>> b244332bb7c3d424633d3dbf9c7da0f89dc52746
 [agent]
-integrations = ["python_openai:1.0.0", "twilio_send_message:1.0.0"]
+integrations = ["web_scraper:1.0.0", "perplexity_v0:1.0.0", "python_notion:1.0.0", "github:1.0.0"]
+
+[userenv]
+
+[userenv.shared]
+FLASK_ENV = "production"
+FLASK_DEBUG = "0"

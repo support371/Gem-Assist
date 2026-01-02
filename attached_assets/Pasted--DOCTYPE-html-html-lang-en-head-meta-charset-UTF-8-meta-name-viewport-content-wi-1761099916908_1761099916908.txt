@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partners & Trustees Slider Preview</title>
+
+  <!-- Swiper CSS CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+    #partners-trustees {
+      padding: 40px 20px;
+      text-align: center;
+      background-color: #fff;
+    }
+    #partners-trustees h2 {
+      margin-bottom: 30px;
+      font-size: 28px;
+      color: #333;
+    }
+    .swiper-slide {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .swiper-slide:hover {
+      transform: translateY(-5px);
+    }
+    .company-logo {
+      max-width: 120px;
+      margin-bottom: 15px;
+    }
+    .company-type {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    .company-description {
+      font-size: 14px;
+      color: #777;
+      max-width: 200px;
+    }
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Partners & Trustees Section -->
+  <section id="partners-trustees">
+    <h2>Our Partners & Trustees</h2>
+    <div class="swiper-container">
+      <div class="swiper-wrapper" id="company-slider">
+        <!-- Slides will be injected dynamically -->
+      </div>
+      <!-- Navigation Arrows -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+      <!-- Pagination -->
+      <div class="swiper-pagination"></div>
+    </div>
+  </section>
+
+  <!-- Swiper JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+  <script>
+    // List of companies
+    const companies = [
+      {name: "AWS", type: "Partner", description: "Cloud infrastructure & enterprise solutions", logo: "https://logos-world.net/wp-content/uploads/2021/04/Amazon-AWS-Logo.png", link: "https://aws.amazon.com"},
+      {name: "Microsoft Azure", type: "Partner", description: "Cloud computing & enterprise services", logo: "https://logos-world.net/wp-content/uploads/2020/04/Microsoft-Azure-Logo.png", link: "https://azure.microsoft.com"},
+      {name: "Google Cloud", type: "Partner", description: "Data, analytics, and AI services", logo: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Cloud_logo.svg", link: "https://cloud.google.com"},
+      {name: "Deloitte Digital", type: "Trustee", description: "Digital advisory & risk management", logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Deloitte.svg", link: "https://www.deloitte.com"},
+      {name: "PwC Advisory", type: "Trustee", description: "Audit, compliance, and trust assurance", logo: "https://upload.wikimedia.org/wikipedia/commons/5/5e/PwC_logo.svg", link: "https://www.pwc.com"}
+    ];
+
+    // Inject slides dynamically
+    const sliderWrapper = document.getElementById("company-slider");
+    companies.forEach(c => {
+      const slide = document.createElement("div");
+      slide.className = "swiper-slide";
+      slide.innerHTML = `
+        <a href="${c.link}" target="_blank">
+          <img src="${c.logo}" alt="${c.name}" class="company-logo">
+          <div class="company-type">${c.type}</div>
+          <div class="company-description">${c.description}</div>
+        </a>
+      `;
+      sliderWrapper.appendChild(slide);
+    });
+
+    // Initialize Swiper
+    const swiper = new Swiper('.swiper-container', {
+      loop: true,
+      slidesPerView: 3,
+      spaceBetween: 30,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      autoplay: {
+        delay: 4000,
+        disableOnInteraction: false,
+      },
+      breakpoints: {
+        640: { slidesPerView: 1 },
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 },
+      }
+    });
+  </script>
+</body>
+</html>

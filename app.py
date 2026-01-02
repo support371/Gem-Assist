@@ -1,9 +1,18 @@
 import os
+import datetime
 import logging
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
+
+# Import GitHub OAuth authentication
+try:
+    from github_auth import github_auth
+    GITHUB_AUTH_AVAILABLE = True
+except ImportError:
+    GITHUB_AUTH_AVAILABLE = False
+    logging.warning("GitHub OAuth not available")
 
 # Try to import the original notion client for existing functionality
 try:
@@ -26,7 +35,7 @@ except ImportError:
 # Import Notion CMS
 try:
     from notion_cms import (
-        notion_cms, 
+        notion_cms,
         get_services_from_notion,
         get_news_from_notion,
         get_testimonials_from_notion,
@@ -57,6 +66,16 @@ except ImportError:
 # Set up logging for debugging
 logging.basicConfig(level=logging.DEBUG)
 
+# Import OpenAI for AI Cybersecurity Assistant
+try:
+    from openai import OpenAI
+    openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    AI_AVAILABLE = True
+except ImportError:
+    AI_AVAILABLE = False
+    openai_client = None
+    logging.warning("OpenAI not available for AI assistant")
+
 # Import GEM Telegram Workflow Bots
 try:
     from gem_telegram_workflows import GEMWorkflowBots, GEMAutomationWorkflows
@@ -71,21 +90,21 @@ def get_notion_team_data():
     """Fetch team member data from Notion database"""
     if not NOTION_LIBRARY_AVAILABLE or not NotionClient:
         return []
-        
+
     try:
         notion = NotionClient(auth=os.environ.get('NOTION_INTEGRATION_SECRET'))
         database_id = os.environ.get('NOTION_DATABASE_ID')
-        
+
         if not notion or not database_id:
             return []
-        
+
         # Query the database
         response = notion.databases.query(database_id=database_id)
-        
+
         team_members = []
         for page in response['results']:
             properties = page['properties']
-            
+
             # Extract member data
             member = {
                 'name': '',
@@ -95,11 +114,11 @@ def get_notion_team_data():
                 'bio': '',
                 'image': ''
             }
-            
+
             # Try common field names for team member data
             for prop_name, prop_data in properties.items():
                 prop_type = prop_data['type']
-                
+
                 if prop_type == 'title' and prop_data['title']:
                     member['name'] = prop_data['title'][0]['plain_text']
                 elif prop_type == 'rich_text' and prop_data['rich_text']:
@@ -117,12 +136,12 @@ def get_notion_team_data():
                         member['department'] = prop_data['select']['name']
                 elif prop_type == 'files' and prop_data['files']:
                     member['image'] = prop_data['files'][0]['file']['url']
-            
+
             if member['name']:  # Only add if we have at least a name
                 team_members.append(member)
-        
+
         return team_members
-    
+
     except Exception as e:
         logging.error(f"Error fetching Notion data: {e}")
         return []
@@ -131,13 +150,13 @@ def categorize_team_members(team_members):
     """Categorize team members into cybersecurity and real estate divisions"""
     cybersecurity_team = []
     real_estate_team = []
-    
+
     cybersecurity_keywords = ['cyber', 'security', 'threat', 'analyst', 'monitoring', 'compliance', 'incident', 'forensic']
     real_estate_keywords = ['real estate', 'property', 'investment', 'mortgage', 'leasing', 'portfolio', 'advisor', 'broker']
-    
+
     for member in team_members:
         member_text = f"{member['position']} {member['department']} {member['bio']}".lower()
-        
+
         if any(keyword in member_text for keyword in cybersecurity_keywords):
             cybersecurity_team.append(member)
         elif any(keyword in member_text for keyword in real_estate_keywords):
@@ -148,7 +167,7 @@ def categorize_team_members(team_members):
                 cybersecurity_team.append(member)
             else:
                 real_estate_team.append(member)
-    
+
     return cybersecurity_team, real_estate_team
 
 # Try to import media blueprint (optional feature)
@@ -162,7 +181,7 @@ except ImportError as e:
 
 # Create the Flask app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET")
+app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 
 # Register media blueprint if available
 if MEDIA_SERVER_AVAILABLE and media_bp:
@@ -189,7 +208,7 @@ ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 if USE_DATABASE:
     from models import db, Testimonial, ContactSubmission, NewsletterSubscriber, ServiceType, TestimonialStatus, VIPBoardMember, BoardMember, Membership
     db.init_app(app)
-    
+
     # Create tables
     with app.app_context():
         db.create_all()
@@ -212,6 +231,68 @@ def allowed_file(filename, file_type='any'):
     else:
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Health check endpoint
+@app.route('/health')
+def health():
+    """Health check endpoint for deployment monitoring"""
+    return {'status': 'healthy', 'timestamp': datetime.datetime.now().isoformat()}, 200
+
+# GitHub OAuth Routes
+@app.route('/auth/github')
+def github_login():
+    """Redirect user to GitHub for OAuth authentication"""
+    if not GITHUB_AUTH_AVAILABLE or not github_auth.is_configured():
+        flash('GitHub authentication is not configured', 'error')
+        return redirect(url_for('index'))
+    
+    callback_url = url_for('github_callback', _external=True)
+    auth_url, state = github_auth.get_authorize_url(callback_url)
+    session['github_oauth_state'] = state
+    
+    return redirect(auth_url)
+
+@app.route('/auth/github/callback')
+def github_callback():
+    """Handle GitHub OAuth callback"""
+    if not GITHUB_AUTH_AVAILABLE or not github_auth.is_configured():
+        flash('GitHub authentication is not configured', 'error')
+        return redirect(url_for('index'))
+    
+    code = request.args.get('code')
+    state = request.args.get('state')
+    
+    if not code or not state:
+        flash('Missing authorization code or state', 'error')
+        return redirect(url_for('index'))
+    
+    if state != session.get('github_oauth_state'):
+        flash('Invalid state parameter - possible CSRF attack', 'error')
+        return redirect(url_for('index'))
+    
+    access_token = github_auth.exchange_code_for_token(code)
+    if not access_token:
+        flash('Failed to obtain access token from GitHub', 'error')
+        return redirect(url_for('index'))
+    
+    user_info = github_auth.get_user_info(access_token)
+    if not user_info:
+        flash('Failed to fetch user information from GitHub', 'error')
+        return redirect(url_for('index'))
+    
+    session['github_user'] = user_info
+    session['github_token'] = access_token
+    session.permanent = True
+    
+    flash(f"Welcome, {user_info.get('name', user_info.get('login'))}!", 'success')
+    return redirect(url_for('index'))
+
+@app.route('/auth/logout')
+def logout():
+    """Logout user and clear session"""
+    session.clear()
+    flash('You have been logged out', 'info')
+    return redirect(url_for('index'))
+
 # Routes
 @app.route('/')
 def index():
@@ -232,12 +313,12 @@ def services():
         # Try to get content from cache first, then sync if needed
         cached = get_cached_content()
         notion_services = cached.get('services', [])
-        
+
         # If no cached content, try to sync
         if not notion_services:
             content = auto_sync_content()
             notion_services = content.get('services', [])
-    
+
     return render_template('services.html', notion_services=notion_services)
 
 @app.route('/contact')
@@ -256,19 +337,19 @@ def telegram_webhook():
     """Handle incoming Telegram bot updates"""
     if not BOT_AVAILABLE:
         return jsonify({'error': 'Bot handler not available'}), 503
-    
+
     try:
         # Get update data
         update = request.get_json()
-        
+
         # Verify webhook signature if needed
         signature = request.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
-        
+
         # Process the update
         result = telegram_bot_instance.process_update(update)
-        
+
         logging.info(f"Telegram webhook processed: {result}")
-        
+
         return jsonify(result), 200
     except Exception as e:
         logging.error(f"Telegram webhook error: {e}")
@@ -281,30 +362,30 @@ def make_webhook():
         # Get webhook data
         data = request.get_json()
         event_type = data.get('event_type', 'unknown')
-        
+
         logging.info(f"Make.com webhook received: {event_type}")
-        
+
         # Process based on event type
         if event_type == 'security_alert':
             # Broadcast security alert to Telegram channel
             if BOT_AVAILABLE and telegram_bot_instance:
                 message = data.get('message', 'Security alert detected')
                 telegram_bot_instance.broadcast_to_channel(message, 'danger')
-        
+
         elif event_type == 'property_update':
             # Handle property updates
             if BOT_AVAILABLE and telegram_bot_instance:
                 message = f"Property Update: {data.get('property', 'Unknown')} - {data.get('status', 'Updated')}"
                 telegram_bot_instance.broadcast_to_channel(message, 'info')
-        
+
         elif event_type == 'recovery_update':
             # Handle recovery case updates
             if BOT_AVAILABLE and telegram_bot_instance:
                 message = f"Recovery Update: Case {data.get('case_id', 'Unknown')} - {data.get('status', 'In Progress')}"
                 telegram_bot_instance.broadcast_to_channel(message, 'warning')
-        
+
         return jsonify({'status': 'success', 'event': event_type}), 200
-        
+
     except Exception as e:
         logging.error(f"Make webhook error: {e}")
         return jsonify({'error': str(e)}), 500
@@ -316,7 +397,7 @@ def telegram_bot_setup():
     bot_token_set = bool(os.environ.get('TELEGRAM_BOT_TOKEN'))
     channel_id_set = bool(os.environ.get('TELEGRAM_CHANNEL_ID'))
     make_webhook_set = bool(os.environ.get('MAKE_WEBHOOK_URL'))
-    
+
     return render_template('telegram_setup.html',
                          bot_token_set=bot_token_set,
                          channel_id_set=channel_id_set,
@@ -327,7 +408,7 @@ def test_bot():
     """Test bot functionality endpoint"""
     if not BOT_AVAILABLE:
         return jsonify({'status': 'error', 'message': 'Bot handler not available'}), 503
-    
+
     # Test bot configuration for GEM workflow bots
     tests = {
         'bot_handler': 'Available' if telegram_bot_instance else 'Not Available',
@@ -337,7 +418,7 @@ def test_bot():
         'channels': list(telegram_bot_instance.channels.keys()) if telegram_bot_instance else [],
         'status': 'Ready' if telegram_bot_instance and telegram_bot_instance.active_bot else 'Needs Configuration'
     }
-    
+
     return jsonify(tests), 200
 
 @app.route('/recovery-service-handbook')
@@ -361,7 +442,7 @@ def leadership():
     executives = {}
     board_members = []
     departments = {}
-    
+
     if USE_DATABASE:
         # Get VIP executives
         executives = {
@@ -370,20 +451,20 @@ def leadership():
             'COO': VIPBoardMember.query.filter_by(position='COO', is_active=True).first(),
             'LEGAL': VIPBoardMember.query.filter_by(position='LEGAL', is_active=True).first()
         }
-        
+
         # Get all board members grouped by department
         all_board_members = BoardMember.query.filter_by(is_active=True).order_by(BoardMember.order_index, BoardMember.name).all()
-        
+
         for member in all_board_members:
             dept = member.department or 'General'
             if dept not in departments:
                 departments[dept] = []
             departments[dept].append(member)
-    
+
     # Try to get data from Notion as fallback
     leadership_data = get_leadership_data_from_notion()
-    
-    return render_template('leadership.html', 
+
+    return render_template('leadership.html',
                          executives=executives,
                          departments=departments,
                          leadership_data=leadership_data)
@@ -432,12 +513,12 @@ def membership():
             ]
         }
     }
-    
+
     members = []
     if USE_DATABASE:
         # Get active members for public display (limited info)
         members = Membership.query.filter_by(status='active', is_verified=True).limit(20).all()
-    
+
     return render_template('membership.html', membership_tiers=membership_tiers, members=members)
 
 @app.route('/apply-membership', methods=['GET', 'POST'])
@@ -447,13 +528,13 @@ def apply_membership():
         if not USE_DATABASE:
             flash('Membership applications are temporarily unavailable.', 'error')
             return redirect(url_for('membership'))
-        
+
         try:
             # Generate unique member ID
             import random
             import string
             member_id = 'GEM' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-            
+
             membership = Membership(
                 member_id=member_id,
                 full_name=request.form.get('full_name'),
@@ -465,17 +546,17 @@ def apply_membership():
                 referred_by=request.form.get('referred_by'),
                 status='pending'
             )
-            
+
             db.session.add(membership)
             db.session.commit()
-            
+
             flash(f'Thank you for applying! Your membership ID is {member_id}. We will contact you soon.', 'success')
             return redirect(url_for('membership'))
-            
+
         except Exception as e:
             flash('Error processing your application. Please try again.', 'error')
             return redirect(url_for('apply_membership'))
-    
+
     return render_template('apply_membership.html')
 
 @app.route('/admin/board-members', methods=['GET', 'POST'])
@@ -484,10 +565,10 @@ def admin_board_members():
     if not USE_DATABASE:
         flash('Database not available', 'error')
         return redirect(url_for('admin_panel'))
-    
+
     if request.method == 'POST':
         action = request.form.get('action')
-        
+
         if action == 'add':
             member = BoardMember(
                 name=request.form.get('name'),
@@ -502,7 +583,7 @@ def admin_board_members():
                 is_executive=request.form.get('is_executive') == 'true',
                 order_index=int(request.form.get('order_index', 0))
             )
-            
+
             # Handle photo upload
             if 'photo' in request.files:
                 file = request.files['photo']
@@ -513,11 +594,11 @@ def admin_board_members():
                     full_path = os.path.join(app.root_path, file_path)
                     file.save(full_path)
                     member.photo_url = '/' + file_path
-            
+
             db.session.add(member)
             db.session.commit()
             flash('Board member added successfully', 'success')
-        
+
         elif action == 'update':
             member_id = request.form.get('member_id')
             member = BoardMember.query.get(member_id)
@@ -533,12 +614,12 @@ def admin_board_members():
                 member.responsibilities = request.form.get('responsibilities')
                 member.is_executive = request.form.get('is_executive') == 'true'
                 member.order_index = int(request.form.get('order_index', 0))
-                
+
                 db.session.commit()
                 flash('Board member updated successfully', 'success')
-        
+
         return redirect(url_for('admin_board_members'))
-    
+
     board_members = BoardMember.query.order_by(BoardMember.department, BoardMember.order_index).all()
     return render_template('admin_board_members.html', board_members=board_members)
 
@@ -548,7 +629,7 @@ def admin_memberships():
     if not USE_DATABASE:
         flash('Database not available', 'error')
         return redirect(url_for('admin_panel'))
-    
+
     memberships = Membership.query.order_by(Membership.created_at.desc()).all()
     return render_template('admin_memberships.html', memberships=memberships)
 
@@ -557,11 +638,11 @@ def approve_membership(id):
     """Approve a membership application"""
     if not USE_DATABASE:
         return jsonify({'error': 'Database not configured'}), 500
-    
+
     membership = Membership.query.get_or_404(id)
     membership.status = 'active'
     membership.is_verified = True
-    
+
     # Set expiry date based on membership type
     from datetime import timedelta
     if membership.membership_type == 'gold':
@@ -570,7 +651,7 @@ def approve_membership(id):
         membership.expiry_date = datetime.utcnow() + timedelta(days=180)
     else:
         membership.expiry_date = datetime.utcnow() + timedelta(days=90)
-    
+
     db.session.commit()
     flash(f'Membership {membership.member_id} approved!', 'success')
     return redirect(url_for('admin_memberships'))
@@ -584,6 +665,12 @@ def media_generator():
 def market_insights():
     """Active Market Insights and Trends"""
     return render_template('market_insights.html')
+
+@app.route('/quantum-financial-system')
+@app.route('/qfs')
+def quantum_financial_system():
+    """Quantum Financial System (QFS) - Next-generation financial infrastructure"""
+    return render_template('qfs.html')
 
 @app.route('/power_of_attorney')
 def power_of_attorney():
@@ -603,12 +690,12 @@ def testimonials():
     if CMS_AVAILABLE:
         cached = get_cached_content()
         notion_testimonials = cached.get('testimonials', [])
-        
+
         # If no cached content, try to sync
         if not notion_testimonials:
             content = auto_sync_content()
             notion_testimonials = content.get('testimonials', [])
-    
+
     # Fallback to database testimonials if available
     featured_testimonials = []
     regular_testimonials = []
@@ -616,8 +703,8 @@ def testimonials():
         approved_testimonials = Testimonial.query.filter_by(status=TestimonialStatus.APPROVED).order_by(Testimonial.display_order, Testimonial.submitted_at.desc()).all()
         featured_testimonials = [t for t in approved_testimonials if t.is_featured]
         regular_testimonials = [t for t in approved_testimonials if not t.is_featured]
-    
-    return render_template('testimonials.html', 
+
+    return render_template('testimonials.html',
                          notion_testimonials=notion_testimonials,
                          featured_testimonials=featured_testimonials,
                          regular_testimonials=regular_testimonials)
@@ -646,13 +733,84 @@ def news():
         # Try to get content from cache first, then sync if needed
         cached = get_cached_content()
         notion_news = cached.get('news', [])
-        
+
         # If no cached content, try to sync
         if not notion_news:
             content = auto_sync_content()
             notion_news = content.get('news', [])
-    
+
     return render_template('news.html', notion_news=notion_news)
+
+@app.route('/subscribe-newsletter', methods=['POST'])
+def subscribe_newsletter():
+    """Handle newsletter subscription"""
+    if not USE_DATABASE:
+        flash('Newsletter subscription is temporarily unavailable.', 'error')
+        return redirect(url_for('news'))
+
+    try:
+        email = request.form.get('email')
+        name = request.form.get('name', '')
+        interests = request.form.get('interests', 'all')
+
+        # Check if email already exists
+        existing = NewsletterSubscriber.query.filter_by(email=email).first()
+        
+        if existing:
+            if existing.is_active:
+                flash('You are already subscribed to our newsletter!', 'info')
+            else:
+                # Reactivate subscription
+                existing.is_active = True
+                existing.unsubscribed_at = None
+                db.session.commit()
+                flash('Welcome back! Your subscription has been reactivated.', 'success')
+        else:
+            # Create new subscription
+            subscriber = NewsletterSubscriber(
+                email=email,
+                name=name,
+                is_active=True
+            )
+            db.session.add(subscriber)
+            db.session.commit()
+            flash('Thank you for subscribing to our newsletter!', 'success')
+
+        return redirect(url_for('news'))
+
+    except Exception as e:
+        logging.error(f"Error subscribing to newsletter: {e}")
+        flash('An error occurred. Please try again.', 'error')
+        return redirect(url_for('news'))
+
+@app.route('/unsubscribe-newsletter', methods=['GET', 'POST'])
+def unsubscribe_newsletter():
+    """Handle newsletter unsubscription"""
+    if not USE_DATABASE:
+        flash('Newsletter management is temporarily unavailable.', 'error')
+        return redirect(url_for('news'))
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        
+        try:
+            subscriber = NewsletterSubscriber.query.filter_by(email=email).first()
+            
+            if subscriber and subscriber.is_active:
+                subscriber.is_active = False
+                subscriber.unsubscribed_at = datetime.utcnow()
+                db.session.commit()
+                flash('You have been unsubscribed from our newsletter.', 'info')
+            else:
+                flash('Email not found in our subscription list.', 'warning')
+                
+        except Exception as e:
+            logging.error(f"Error unsubscribing: {e}")
+            flash('An error occurred. Please try again.', 'error')
+            
+        return redirect(url_for('news'))
+    
+    return render_template('news.html')
 
 @app.route('/teams')
 def teams():
@@ -662,12 +820,12 @@ def teams():
     if CMS_AVAILABLE:
         cached = get_cached_content()
         notion_team = cached.get('team_members', [])
-        
+
         # If no cached content, try to sync
         if not notion_team:
             content = auto_sync_content()
             notion_team = content.get('team_members', [])
-    
+
     # Fallback to custom client if available
     if not notion_team:
         team_data = get_notion_team_data()
@@ -676,8 +834,8 @@ def teams():
         # Categorize Notion team members
         cybersecurity_team = [m for m in notion_team if 'Cybersecurity' in m.get('category', [])]
         real_estate_team = [m for m in notion_team if 'Real Estate' in m.get('category', [])]
-    
-    return render_template('teams.html', 
+
+    return render_template('teams.html',
                          cybersecurity_team=cybersecurity_team,
                          real_estate_team=real_estate_team,
                          notion_team=notion_team)
@@ -697,14 +855,14 @@ def vip_board():
         cfo = VIPBoardMember.query.filter_by(position='CFO', is_active=True).first()
         coo = VIPBoardMember.query.filter_by(position='COO', is_active=True).first()
         legal = VIPBoardMember.query.filter_by(position='LEGAL', is_active=True).first()
-        
+
         executives = {
             'CEO': ceo,
             'CFO': cfo,
             'COO': coo,
             'LEGAL': legal
         }
-    
+
     return render_template('vip_board.html', executives=executives)
 
 @app.route('/submit-testimonial', methods=['GET', 'POST'])
@@ -714,7 +872,7 @@ def submit_testimonial():
         if not USE_DATABASE:
             flash('Database not configured. Testimonial submission is temporarily unavailable.', 'error')
             return redirect(url_for('submit_testimonial'))
-        
+
         try:
             # Get form data
             testimonial = Testimonial(
@@ -730,7 +888,7 @@ def submit_testimonial():
                 consent_to_display=request.form.get('consent_display') == 'on',
                 consent_to_contact=request.form.get('consent_contact') == 'on'
             )
-            
+
             # Handle video upload
             if 'video_file' in request.files:
                 video = request.files['video_file']
@@ -739,7 +897,7 @@ def submit_testimonial():
                     video_path = os.path.join('static/uploads/videos', filename)
                     video.save(video_path)
                     testimonial.video_url = f'/static/uploads/videos/{filename}'
-            
+
             # Handle image upload
             if 'image_file' in request.files:
                 image = request.files['image_file']
@@ -748,7 +906,7 @@ def submit_testimonial():
                     image_path = os.path.join('static/uploads/testimonials', filename)
                     image.save(image_path)
                     testimonial.image_url = f'/static/uploads/testimonials/{filename}'
-            
+
             # Handle company logo upload
             if 'logo_file' in request.files:
                 logo = request.files['logo_file']
@@ -757,19 +915,19 @@ def submit_testimonial():
                     logo_path = os.path.join('static/uploads/logos', filename)
                     logo.save(logo_path)
                     testimonial.company_logo_url = f'/static/uploads/logos/{filename}'
-            
+
             # Save to database
             db.session.add(testimonial)
             db.session.commit()
-            
+
             flash('Thank you for your testimonial! It will be reviewed and published soon.', 'success')
             return redirect(url_for('testimonials'))
-            
+
         except Exception as e:
             logging.error(f"Error submitting testimonial: {e}")
             flash('An error occurred while submitting your testimonial. Please try again.', 'error')
             return redirect(url_for('submit_testimonial'))
-    
+
     return render_template('submit_testimonial.html')
 
 @app.route('/admin/testimonials')
@@ -778,12 +936,12 @@ def admin_testimonials():
     if not USE_DATABASE:
         flash('Database not configured.', 'error')
         return redirect(url_for('admin_panel'))
-    
+
     pending = Testimonial.query.filter_by(status=TestimonialStatus.PENDING).order_by(Testimonial.submitted_at.desc()).all()
     approved = Testimonial.query.filter_by(status=TestimonialStatus.APPROVED).order_by(Testimonial.submitted_at.desc()).all()
     rejected = Testimonial.query.filter_by(status=TestimonialStatus.REJECTED).order_by(Testimonial.submitted_at.desc()).all()
-    
-    return render_template('admin_testimonials.html', 
+
+    return render_template('admin_testimonials.html',
                          pending=pending,
                          approved=approved,
                          rejected=rejected)
@@ -793,12 +951,12 @@ def approve_testimonial(id):
     """Approve a testimonial"""
     if not USE_DATABASE:
         return jsonify({'error': 'Database not configured'}), 500
-    
+
     testimonial = Testimonial.query.get_or_404(id)
     testimonial.status = TestimonialStatus.APPROVED
     testimonial.approved_at = datetime.utcnow()
     testimonial.approved_by = 'Admin'  # You can add authentication later
-    
+
     db.session.commit()
     flash('Testimonial approved successfully!', 'success')
     return redirect(url_for('admin_testimonials'))
@@ -808,10 +966,10 @@ def reject_testimonial(id):
     """Reject a testimonial"""
     if not USE_DATABASE:
         return jsonify({'error': 'Database not configured'}), 500
-    
+
     testimonial = Testimonial.query.get_or_404(id)
     testimonial.status = TestimonialStatus.REJECTED
-    
+
     db.session.commit()
     flash('Testimonial rejected.', 'info')
     return redirect(url_for('admin_testimonials'))
@@ -822,7 +980,7 @@ def admin_vip_board():
     if not USE_DATABASE:
         flash('Database not available', 'error')
         return redirect(url_for('admin_panel'))
-    
+
     if request.method == 'POST':
         position = request.form.get('position')
         name = request.form.get('name')
@@ -833,14 +991,14 @@ def admin_vip_board():
         years_experience = request.form.get('years_experience')
         specialties = request.form.get('specialties')
         achievements = request.form.get('achievements')
-        
+
         # Check if member exists for this position
         member = VIPBoardMember.query.filter_by(position=position).first()
-        
+
         if not member:
             member = VIPBoardMember(position=position)
             db.session.add(member)
-        
+
         # Update member details
         member.name = name
         member.title = title
@@ -851,7 +1009,7 @@ def admin_vip_board():
         member.specialties = specialties
         member.achievements = achievements
         member.is_active = True
-        
+
         # Handle headshot upload
         if 'headshot' in request.files:
             file = request.files['headshot']
@@ -864,18 +1022,18 @@ def admin_vip_board():
                             os.remove(old_path)
                     except:
                         pass
-                
+
                 # Save new headshot
                 filename = secure_filename(f"{position.lower()}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}")
                 file_path = os.path.join('static/uploads/headshots', filename)
                 full_path = os.path.join(app.root_path, file_path)
                 file.save(full_path)
                 member.headshot_url = '/' + file_path
-        
+
         db.session.commit()
         flash(f'{position} profile updated successfully', 'success')
         return redirect(url_for('admin_vip_board'))
-    
+
     # Get all board members
     executives = {
         'CEO': VIPBoardMember.query.filter_by(position='CEO').first(),
@@ -883,7 +1041,7 @@ def admin_vip_board():
         'COO': VIPBoardMember.query.filter_by(position='COO').first(),
         'LEGAL': VIPBoardMember.query.filter_by(position='LEGAL').first()
     }
-    
+
     return render_template('admin_vip_board.html', executives=executives)
 
 @app.route('/admin/testimonial/<int:id>/feature', methods=['POST'])
@@ -891,10 +1049,10 @@ def feature_testimonial(id):
     """Toggle featured status of a testimonial"""
     if not USE_DATABASE:
         return jsonify({'error': 'Database not configured'}), 500
-    
+
     testimonial = Testimonial.query.get_or_404(id)
     testimonial.is_featured = not testimonial.is_featured
-    
+
     db.session.commit()
     status = 'featured' if testimonial.is_featured else 'unfeatured'
     flash(f'Testimonial {status} successfully!', 'success')
@@ -906,7 +1064,7 @@ def api_notion_content(content_type):
     """API endpoint to get content from Notion CMS"""
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
-    
+
     content = []
     if content_type == 'services':
         content = get_services_from_notion()
@@ -918,7 +1076,7 @@ def api_notion_content(content_type):
         content = get_featured_content()
     else:
         return jsonify({'error': 'Invalid content type'}), 400
-    
+
     return jsonify(content)
 
 @app.route('/api/notion/sync', methods=['POST'])
@@ -926,11 +1084,11 @@ def api_notion_sync():
     """Sync content from Notion database"""
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
-    
+
     try:
         # Use the sync service to refresh and cache content
         content = auto_sync_content()
-        
+
         return jsonify({
             'success': True,
             'content_counts': {
@@ -951,10 +1109,10 @@ def notion_setup():
     if not CMS_AVAILABLE:
         flash('Notion CMS is not available. Please check your configuration.', 'error')
         return redirect(url_for('admin_panel'))
-    
+
     # Check if Notion is configured
     notion_configured = notion_cms.client is not None
-    
+
     # Get current content stats if configured
     content_stats = {}
     if notion_configured:
@@ -969,8 +1127,8 @@ def notion_setup():
             }
         except:
             content_stats = {}
-    
-    return render_template('notion_setup.html', 
+
+    return render_template('notion_setup.html',
                          notion_configured=notion_configured,
                          content_stats=content_stats)
 
@@ -979,7 +1137,7 @@ def notion_onboarding():
     """Notion CMS onboarding guide"""
     has_secret = os.environ.get('NOTION_INTEGRATION_SECRET') is not None
     has_database = os.environ.get('NOTION_DATABASE_ID') is not None
-    
+
     return render_template('notion_onboarding.html',
                          has_secret=has_secret,
                          has_database=has_database)
@@ -989,7 +1147,7 @@ def notion_initialize():
     """Initialize Notion database with sample content"""
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
-    
+
     try:
         success = initialize_default_content()
         if success:
@@ -1000,7 +1158,7 @@ def notion_initialize():
             flash('Failed to create sample content. Please check your Notion configuration.', 'error')
     except Exception as e:
         flash(f'Error: {str(e)}', 'error')
-    
+
     return redirect(url_for('notion_setup'))
 
 @app.route('/service/<slug>')
@@ -1009,10 +1167,10 @@ def service_detail(slug):
     if CMS_AVAILABLE and content_sync:
         service = content_sync.get_service_by_slug(slug)
         if service:
-            return render_template('notion_content_display.html', 
-                                 content=service, 
+            return render_template('notion_content_display.html',
+                                 content=service,
                                  page_title=service.get('title', 'Service'))
-    
+
     # Fallback to 404 if not found
     return render_template('index.html'), 404
 
@@ -1021,7 +1179,7 @@ def api_clear_cache():
     """Clear the Notion content cache"""
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
-    
+
     try:
         success = content_sync.clear_cache()
         if success:
@@ -1036,12 +1194,52 @@ def api_cached_content():
     """Get cached content without syncing"""
     if not CMS_AVAILABLE:
         return jsonify({'error': 'Notion CMS not available'}), 503
-    
+
     try:
         cached = get_cached_content()
         return jsonify(cached)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/ai-assistant')
+def ai_assistant():
+    """Load the Gem AI Cybersecurity Assistant page"""
+    return render_template('ai_assistant.html')
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    """AI Chat endpoint - connects to OpenAI for cybersecurity guidance"""
+    if not AI_AVAILABLE or not openai_client:
+        return jsonify({"reply": "AI assistant is not available. Please check configuration."}), 503
+
+    data = request.json
+    user_message = data.get("message", "")
+
+    if not user_message.strip():
+        return jsonify({"reply": "Please type a message so I can help you."})
+
+    try:
+        completion = openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are the Gem AI Cybersecurity Assistant. "
+                        "You provide safe, educational cybersecurity guidance in clear steps. "
+                        "You do NOT ask for or process passwords, full credit card numbers, "
+                        "private keys, or any extremely sensitive data. "
+                        "You help users understand threats, phishing, scams, and good practice."
+                    )
+                },
+                {"role": "user", "content": user_message}
+            ]
+        )
+        reply = completion.choices[0].message.content
+        return jsonify({"reply": reply})
+    except Exception as e:
+        logging.error(f"OpenAI API error: {str(e)}")
+        return jsonify({"reply": f"I encountered an error: {str(e)}"}), 500
 
 @app.errorhandler(404)
 def not_found_error(error):
