@@ -66,16 +66,6 @@ except ImportError:
 # Set up logging for debugging
 logging.basicConfig(level=logging.DEBUG)
 
-# Import OpenAI for AI Cybersecurity Assistant
-try:
-    from openai import OpenAI
-    openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    AI_AVAILABLE = True
-except ImportError:
-    AI_AVAILABLE = False
-    openai_client = None
-    logging.warning("OpenAI not available for AI assistant")
-
 # Import GEM Telegram Workflow Bots
 try:
     from gem_telegram_workflows import GEMWorkflowBots, GEMAutomationWorkflows
@@ -666,12 +656,6 @@ def market_insights():
     """Active Market Insights and Trends"""
     return render_template('market_insights.html')
 
-@app.route('/quantum-financial-system')
-@app.route('/qfs')
-def quantum_financial_system():
-    """Quantum Financial System (QFS) - Next-generation financial infrastructure"""
-    return render_template('qfs.html')
-
 @app.route('/power_of_attorney')
 def power_of_attorney():
     """Power of Attorney services"""
@@ -1200,46 +1184,6 @@ def api_cached_content():
         return jsonify(cached)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-@app.route('/ai-assistant')
-def ai_assistant():
-    """Load the Gem AI Cybersecurity Assistant page"""
-    return render_template('ai_assistant.html')
-
-@app.route('/chat', methods=['POST'])
-def chat():
-    """AI Chat endpoint - connects to OpenAI for cybersecurity guidance"""
-    if not AI_AVAILABLE or not openai_client:
-        return jsonify({"reply": "AI assistant is not available. Please check configuration."}), 503
-
-    data = request.json
-    user_message = data.get("message", "")
-
-    if not user_message.strip():
-        return jsonify({"reply": "Please type a message so I can help you."})
-
-    try:
-        completion = openai_client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are the Gem AI Cybersecurity Assistant. "
-                        "You provide safe, educational cybersecurity guidance in clear steps. "
-                        "You do NOT ask for or process passwords, full credit card numbers, "
-                        "private keys, or any extremely sensitive data. "
-                        "You help users understand threats, phishing, scams, and good practice."
-                    )
-                },
-                {"role": "user", "content": user_message}
-            ]
-        )
-        reply = completion.choices[0].message.content
-        return jsonify({"reply": reply})
-    except Exception as e:
-        logging.error(f"OpenAI API error: {str(e)}")
-        return jsonify({"reply": f"I encountered an error: {str(e)}"}), 500
 
 @app.errorhandler(404)
 def not_found_error(error):
