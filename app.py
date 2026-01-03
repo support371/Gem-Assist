@@ -169,9 +169,12 @@ except ImportError as e:
     media_bp = None
     logging.warning(f"Media server not available: {e}")
 
+from flask_wtf.csrf import CSRFProtect
+
 # Create the Flask app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
+csrf = CSRFProtect(app)
 
 # Register media blueprint if available
 if MEDIA_SERVER_AVAILABLE and media_bp:
@@ -196,7 +199,7 @@ ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Initialize database if available
 if USE_DATABASE:
-    from models import db, Testimonial, ContactSubmission, NewsletterSubscriber, ServiceType, TestimonialStatus, VIPBoardMember, BoardMember, Membership
+    from models import db, Testimonial, ContactSubmission, NewsletterSubscriber, ServiceType, TestimonialStatus, VIPBoardMember, BoardMember, Membership, Redirect
     db.init_app(app)
 
     # Create tables
@@ -282,6 +285,72 @@ def logout():
     session.clear()
     flash('You have been logged out', 'info')
     return redirect(url_for('index'))
+
+@app.route('/r/<short_code>')
+def handle_redirect(short_code):
+    """Handle URL redirection"""
+    if not USE_DATABASE:
+        return "URL redirection is not available.", 404
+
+    link = Redirect.query.filter_by(short_code=short_code, is_active=True).first()
+
+    if link:
+        # Track the click
+        link.clicks += 1
+        db.session.commit()
+
+        # Redirect to the destination URL
+        return redirect(link.destination_url)
+
+    # If the link is not found or inactive, return a 404 error
+    return render_template('404.html'), 404
+
+@app.route('/admin/redirects', methods=['GET', 'POST'])
+@admin_required
+def admin_redirects():
+    """Admin interface for managing URL redirects"""
+    if not USE_DATABASE:
+        flash('Database not available', 'error')
+        return redirect(url_for('admin_panel'))
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+
+        if action == 'add':
+            short_code = request.form.get('short_code')
+            destination_url = request.form.get('destination_url')
+
+            if not short_code or not destination_url:
+                flash('Short code and destination URL are required.', 'error')
+                return redirect(url_for('admin_redirects'))
+
+            # Check if the short code already exists
+            existing = Redirect.query.filter_by(short_code=short_code).first()
+            if existing:
+                flash(f"Short code '{short_code}' already exists.", 'error')
+                return redirect(url_for('admin_redirects'))
+
+            new_redirect = Redirect(
+                short_code=short_code,
+                destination_url=destination_url
+            )
+
+            db.session.add(new_redirect)
+            db.session.commit()
+            flash('Redirect created successfully!', 'success')
+
+        elif action == 'delete':
+            redirect_id = request.form.get('redirect_id')
+            link = Redirect.query.get(redirect_id)
+            if link:
+                db.session.delete(link)
+                db.session.commit()
+                flash('Redirect deleted successfully.', 'success')
+
+        return redirect(url_for('admin_redirects'))
+
+    redirects = Redirect.query.order_by(Redirect.created_at.desc()).all()
+    return render_template('admin_redirects.html', redirects=redirects)
 
 # Routes
 @app.route('/')
@@ -1184,6 +1253,33 @@ def api_cached_content():
         return jsonify(cached)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/all-pages')
+def all_pages():
+    """Display a sitemap of all public-facing pages."""
+    pages = []
+    # Exclude routes that are internal, admin-related, or have parameters
+    excluded_routes = [
+        'static', 'admin', 'api', 'auth', 'r', 'service_detail',
+        'handle_redirect', 'approve_membership', 'reject_testimonial',
+        'approve_testimonial', 'feature_testimonial'
+    ]
+
+    for rule in app.url_map.iter_rules():
+        # Filter out routes with parameters and excluded routes
+        if not rule.arguments and all(exclude not in rule.endpoint for exclude in excluded_routes):
+            # Ensure it supports GET method
+            if 'GET' in rule.methods:
+                url = url_for(rule.endpoint, _external=False)
+                # Use endpoint name as a readable title
+                name = rule.endpoint.replace('.', ' ').replace('_', ' ').title()
+                pages.append((name, url))
+
+    # Sort pages alphabetically by name
+    pages.sort(key=lambda x: x[0])
+
+    return render_template('all_pages.html', pages=pages)
+
 
 @app.errorhandler(404)
 def not_found_error(error):

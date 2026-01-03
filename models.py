@@ -160,3 +160,16 @@ class Membership(db.Model):
     is_verified = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class Redirect(db.Model):
+    __tablename__ = 'redirects'
+
+    id = Column(Integer, primary_key=True)
+    short_code = Column(String(50), unique=True, nullable=False, index=True)
+    destination_url = Column(String(2048), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    is_active = Column(Boolean, default=True)
+    clicks = Column(Integer, default=0)
+
+    def __repr__(self):
+        return f'<Redirect {self.short_code} -> {self.destination_url}>'

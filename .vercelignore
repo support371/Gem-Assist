@@ -1,11 +1,25 @@
+# Git / Version Control
 .git
 .gitignore
+.github
+
+# Environment
 .env
 .env.local
 .env.*.local
+.replit
+
+# Node.js / JS
 node_modules/
 npm-debug.log
-.DS_Store
+package.json
+package-lock.json
+index.js
+server-media.js
+push_github_simple.js
+push_to_github.js
+
+# Python Caches & Artifacts
 __pycache__/
 *.pyc
 *.pyo
@@ -17,9 +31,31 @@ dist/
 build/
 venv/
 .venv/
+instance/
+uv.lock
+
+# Logs
+*.log
+app.log
+
+# Local Config / Assets
+.DS_Store
 attached_assets/
 .cache/
 .config/
 dataconnect/
 functions/
 gem-assist-core/
+
+# Firebase (unused by Vercel build)
+.firebaserc
+firebase.json
+firestore.indexes.json
+firestore.rules
+
+# Other (unused by Vercel build)
+Dockerfile
+*.md
+autodebug.sh
+deploy.sh
+diagnose.sh
