@@ -5,11 +5,11 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
     logger.info(f"Starting Flask app on port {port}")
     try:
-        app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
+        app.run(host="0.0.0.0", port=port, debug=False, threaded=True)
     except Exception as e:
         logger.error(f"Failed to start app: {e}")
         raise

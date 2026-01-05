@@ -265,18 +265,22 @@
 
 <script>
 function joinTelegramBot(botType) {
-    const botUrls = {
-        'cybersecurity': 'https://t.me/CyberSecurityBot',
-        'asset': 'https://t.me/AssetRecoveryBot',
-        'finance': 'https://t.me/FinanceMonitorBot',
-        'realestate': 'https://t.me/RealEstateBot',
-        'trading': 'https://t.me/TradingSignalsBot',
-        'wallet': 'https://t.me/WalletSecurityBot'
-    };
-    
-    const botUrl = botUrls[botType] || 'https://t.me/CyberWealthBot';
-    window.open(botUrl, '_blank');
-    showAlert('info', `Redirecting to ${botType} bot setup...`);
+    fetch(`/telegram/join/${botType}`, { method: 'GET', redirect: 'follow' })
+      .then(resp => {
+          // if server responds with redirect -> browser will follow automatically if redirect=follow,
+          // but many browsers won't change window.location when fetch returns with 302.
+          // Check if the response was a direct OK with an absolute URL in the body:
+          if (resp.redirected) {
+              window.location = resp.url;
+              return;
+          }
+          // fallback: request server to return destination JSON instead:
+          return resp.json().then(j => {
+             if (j && j.destination) window.location = j.destination;
+          }).catch(() => {
+             console.warn('join failed', resp);
+          });
+      }).catch(err => { console.error('joinTelegramBot error', err); });
 }
 
 function startMainBot() {
