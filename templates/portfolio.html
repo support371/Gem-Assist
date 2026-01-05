@@ -49,110 +49,38 @@
                         </div>
                     </div>
                     
-                    <h3 class="mt-5">Investment Categories</h3>
-                    <div class="investment-categories">
-                        <div class="category-card">
-                            <div class="category-header">
-                                <i class="fas fa-building text-primary fa-2x mb-3"></i>
-                                <h4>Real Estate Investments</h4>
-                            </div>
-                            <div class="category-content">
-                                <p>Diversified real estate portfolio including commercial, residential, and mixed-use properties.</p>
-                                <ul class="investment-features">
-                                    <li><i class="fas fa-check text-success me-2"></i>Commercial office buildings</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Residential rental properties</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Mixed-use developments</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>REITs and real estate funds</li>
-                                </ul>
-                                <div class="category-stats">
-                                    <div class="stat">
-                                        <strong>45%</strong>
-                                        <small>Portfolio Allocation</small>
+                    <h3 class="mt-5">Our Portfolio</h3>
+                    <p>Explore our diverse range of investment opportunities, categorized for your convenience.</p>
+
+                    <!-- Filtering Controls -->
+                    <div class="filtering-controls text-center my-4">
+                        <a href="{{ url_for('investment_portfolio', category='all') }}" class="btn btn-{{ 'primary' if selected_category == 'all' else 'outline-primary' }} mx-1">All</a>
+                        {% for category in categories %}
+                        <a href="{{ url_for('investment_portfolio', category=category) }}" class="btn btn-{{ 'primary' if selected_category == category else 'outline-primary' }} mx-1">{{ category }}</a>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Portfolio Items Grid -->
+                    <div class="portfolio-items-grid">
+                        <div class="row">
+                            {% for item in portfolio_items %}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ item.name }}</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">{{ item.category }}</h6>
+                                        <p class="card-text">{{ item.description }}</p>
                                     </div>
-                                    <div class="stat">
-                                        <strong>$25M+</strong>
-                                        <small>Assets Under Management</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="category-card">
-                            <div class="category-header">
-                                <i class="fas fa-shield-alt text-info fa-2x mb-3"></i>
-                                <h4>Secured Asset Recovery</h4>
-                            </div>
-                            <div class="category-content">
-                                <p>Specialized investments in asset recovery and distressed property rehabilitation.</p>
-                                <ul class="investment-features">
-                                    <li><i class="fas fa-check text-success me-2"></i>Distressed property acquisition</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Asset rehabilitation projects</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Legal recovery proceedings</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Value restoration strategies</li>
-                                </ul>
-                                <div class="category-stats">
-                                    <div class="stat">
-                                        <strong>25%</strong>
-                                        <small>Portfolio Allocation</small>
-                                    </div>
-                                    <div class="stat">
-                                        <strong>85%</strong>
-                                        <small>Success Rate</small>
+                                    <div class="card-footer">
+                                        <a href="#" class="btn btn-sm btn-outline-secondary">Learn More</a>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="category-card">
-                            <div class="category-header">
-                                <i class="fas fa-laptop-code text-success fa-2x mb-3"></i>
-                                <h4>Technology Investments</h4>
+                            {% else %}
+                            <div class="col-12">
+                                <p class="text-center">No items found for this category.</p>
                             </div>
-                            <div class="category-content">
-                                <p>Strategic investments in cybersecurity, automation, and technology infrastructure.</p>
-                                <ul class="investment-features">
-                                    <li><i class="fas fa-check text-success me-2"></i>Cybersecurity companies</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Automation platforms</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>AI and machine learning</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Blockchain technologies</li>
-                                </ul>
-                                <div class="category-stats">
-                                    <div class="stat">
-                                        <strong>20%</strong>
-                                        <small>Portfolio Allocation</small>
-                                    </div>
-                                    <div class="stat">
-                                        <strong>18%</strong>
-                                        <small>Average Return</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="category-card">
-                            <div class="category-header">
-                                <i class="fas fa-coins text-warning fa-2x mb-3"></i>
-                                <h4>Conservative Investments</h4>
-                            </div>
-                            <div class="category-content">
-                                <p>Low-risk, stable investments for capital preservation and steady income generation.</p>
-                                <ul class="investment-features">
-                                    <li><i class="fas fa-check text-success me-2"></i>Government bonds</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Corporate bonds</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>High-yield savings</li>
-                                    <li><i class="fas fa-check text-success me-2"></i>Money market funds</li>
-                                </ul>
-                                <div class="category-stats">
-                                    <div class="stat">
-                                        <strong>10%</strong>
-                                        <small>Portfolio Allocation</small>
-                                    </div>
-                                    <div class="stat">
-                                        <strong>4.5%</strong>
-                                        <small>Stable Return</small>
-                                    </div>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                     

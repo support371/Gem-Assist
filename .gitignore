@@ -88,3 +88,4 @@ static/uploads/
 media/
 tmp/
 temp/
+.mypy_cache/
