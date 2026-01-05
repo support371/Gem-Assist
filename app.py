@@ -90,6 +90,12 @@ except ImportError as e:
     telegram_bot_instance = None
     logging.warning(f"GEM Telegram workflow bots not available: {e}")
 
+try:
+    # attach to flask app so blueprints can access it via current_app
+    app.telegram_bot_instance = telegram_bot_instance
+except Exception:
+    logging.warning("Unable to attach telegram_bot_instance on app")
+
 
 def get_notion_team_data():
     """Fetch team member data from Notion database"""
@@ -225,9 +231,21 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 csrf = CSRFProtect(app)
 
+# example defaults (override with env vars)
+app.config.setdefault('TELEGRAM_BOT_TOKEN', os.environ.get('TELEGRAM_BOT_TOKEN', ''))
+app.config.setdefault('MAKE_WEBHOOK_URL', os.environ.get('MAKE_WEBHOOK_URL', 'https://hook.integromat.com/your-webhook-id'))
+app.config.setdefault('NOTION_WEBHOOK_URL', os.environ.get('NOTION_WEBHOOK_URL', 'https://api.notion.com/v1/your-integration-secret'))
+app.config.setdefault('DASHBOARD_URL', 'https://gem-enterprise.com/dashboard')
+app.config.setdefault('KYC_URL', 'https://gem-enterprise.com/kyc')
+
 # Register media blueprint if available
 if MEDIA_SERVER_AVAILABLE and media_bp:
     app.register_blueprint(media_bp)
+
+# Register Telegram blueprint
+from telegram_routes import telegram_bp
+csrf.exempt(telegram_bp)
+app.register_blueprint(telegram_bp, url_prefix='/telegram')
 
 # Database configuration
 database_url = os.environ.get("DATABASE_URL")
