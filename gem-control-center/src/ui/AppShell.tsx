@@ -29,9 +29,22 @@ const NavItem: React.FC<{ to: string; label: string }> = ({ to, label }) => {
 export const AppShell: React.FC = () => {
   return (
     <ThemeProvider theme="dark">
-      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", height: "100vh" }}>
-        <aside style={{ padding: 14, borderRight: "1px solid rgba(255,255,255,0.08)" }}>
-          <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 12 }}>GEM Control Center</div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "280px 1fr",
+          height: "100vh",
+        }}
+      >
+        <aside
+          style={{
+            padding: 14,
+            borderRight: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 12 }}>
+            GEM Control Center
+          </div>
 
           <nav style={{ display: "grid", gap: 8 }}>
             <NavItem to="/app" label="Dashboard" />
@@ -41,8 +54,12 @@ export const AppShell: React.FC = () => {
           </nav>
 
           <div style={{ marginTop: 18, display: "flex", gap: 8 }}>
-            <Button styleType="borderless" onClick={() => void signIn()}>Sign in</Button>
-            <Button styleType="borderless" onClick={() => void signOut()}>Sign out</Button>
+            <Button styleType="borderless" onClick={() => void signIn()}>
+              Sign in
+            </Button>
+            <Button styleType="borderless" onClick={() => void signOut()}>
+              Sign out
+            </Button>
           </div>
 
           <div style={{ marginTop: 16, opacity: 0.7, fontSize: 12 }}>

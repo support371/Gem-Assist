@@ -1,235 +1,341 @@
-{% extends "base.html" %}
-
-{% block title %}Submit Your Testimonial - Gem Assist Enterprise{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Submit Your Testimonial - Gem Assist
+Enterprise{% endblock %} {% block content %}
 <div class="page-header">
-    <div class="container">
-        <h1 class="display-4 text-center mb-3 animate-fade-in">Share Your Experience</h1>
-        <p class="lead text-center">We value your feedback and would love to hear about your experience with our services</p>
-    </div>
+  <div class="container">
+    <h1 class="display-4 text-center mb-3 animate-fade-in">
+      Share Your Experience
+    </h1>
+    <p class="lead text-center">
+      We value your feedback and would love to hear about your experience with
+      our services
+    </p>
+  </div>
 </div>
 
 <div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card bg-dark border-secondary">
-                <div class="card-body p-4 p-md-5">
-                    <form method="POST" action="{{ url_for('submit_testimonial') }}" enctype="multipart/form-data">
-                        <!-- Client Information -->
-                        <h4 class="mb-4 text-primary">Your Information</h4>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="client_name" class="form-label">Full Name *</label>
-                                <input type="text" class="form-control bg-dark text-light" id="client_name" name="client_name" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="client_email" class="form-label">Email Address *</label>
-                                <input type="email" class="form-control bg-dark text-light" id="client_email" name="client_email" required>
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="client_phone" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control bg-dark text-light" id="client_phone" name="client_phone">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="company_name" class="form-label">Company Name</label>
-                                <input type="text" class="form-control bg-dark text-light" id="company_name" name="company_name">
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="company_position" class="form-label">Your Position</label>
-                            <input type="text" class="form-control bg-dark text-light" id="company_position" name="company_position" placeholder="e.g., CEO, Manager, Client">
-                        </div>
-                        
-                        <!-- Service Information -->
-                        <h4 class="mb-4 text-primary">Service Details</h4>
-                        <div class="row mb-3">
-                            <div class="col-md-8">
-                                <label for="service_type" class="form-label">Which service did you use? *</label>
-                                <select class="form-select bg-dark text-light" id="service_type" name="service_type" required>
-                                    <option value="">Select a service...</option>
-                                    <option value="cybersecurity">Cybersecurity & Threat Monitoring</option>
-                                    <option value="real_estate">Real Estate Services</option>
-                                    <option value="telegram_bot">Telegram Bot Automation</option>
-                                    <option value="recovery_service">Asset Recovery Service</option>
-                                    <option value="power_of_attorney">Power of Attorney</option>
-                                    <option value="investment">Investment Portfolio</option>
-                                    <option value="business_analysis">Business Analysis & Integration</option>
-                                    <option value="other">Other Services</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="rating" class="form-label">Rating *</label>
-                                <div class="star-rating-input">
-                                    <input type="hidden" id="rating" name="rating" value="5">
-                                    <div class="stars">
-                                        <i class="fas fa-star star-button" data-rating="1"></i>
-                                        <i class="fas fa-star star-button" data-rating="2"></i>
-                                        <i class="fas fa-star star-button" data-rating="3"></i>
-                                        <i class="fas fa-star star-button" data-rating="4"></i>
-                                        <i class="fas fa-star star-button selected" data-rating="5"></i>
-                                    </div>
-                                    <span class="rating-text">5 stars</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Testimonial Content -->
-                        <h4 class="mb-4 text-primary">Your Testimonial</h4>
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Testimonial Title</label>
-                            <input type="text" class="form-control bg-dark text-light" id="title" name="title" placeholder="e.g., Excellent Service and Support">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="testimonial_text" class="form-label">Your Experience *</label>
-                            <textarea class="form-control bg-dark text-light" id="testimonial_text" name="testimonial_text" rows="6" required placeholder="Please share your experience with our services..."></textarea>
-                        </div>
-                        
-                        <!-- Media Upload -->
-                        <h4 class="mb-4 text-primary">Media (Optional)</h4>
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <label for="video_file" class="form-label">Video Testimonial</label>
-                                <input type="file" class="form-control bg-dark text-light" id="video_file" name="video_file" accept="video/*">
-                                <small class="text-muted">Max 100MB (MP4, AVI, MOV)</small>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="image_file" class="form-label">Your Photo</label>
-                                <input type="file" class="form-control bg-dark text-light" id="image_file" name="image_file" accept="image/*">
-                                <small class="text-muted">JPG, PNG, GIF</small>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="logo_file" class="form-label">Company Logo</label>
-                                <input type="file" class="form-control bg-dark text-light" id="logo_file" name="logo_file" accept="image/*">
-                                <small class="text-muted">JPG, PNG, GIF</small>
-                            </div>
-                        </div>
-                        
-                        <!-- Consent -->
-                        <h4 class="mb-4 text-primary">Consent</h4>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="consent_display" name="consent_display" required>
-                            <label class="form-check-label" for="consent_display">
-                                I consent to having my testimonial displayed on the Gem Assist Enterprise website *
-                            </label>
-                        </div>
-                        
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="consent_contact" name="consent_contact">
-                            <label class="form-check-label" for="consent_contact">
-                                I consent to being contacted for follow-up questions about my testimonial
-                            </label>
-                        </div>
-                        
-                        <!-- Submit Button -->
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-paper-plane me-2"></i>Submit Testimonial
-                            </button>
-                            <a href="{{ url_for('testimonials') }}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Back to Testimonials
-                            </a>
-                        </div>
-                    </form>
-                </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card bg-dark border-secondary">
+        <div class="card-body p-4 p-md-5">
+          <form
+            method="POST"
+            action="{{ url_for('submit_testimonial') }}"
+            enctype="multipart/form-data"
+          >
+            <!-- Client Information -->
+            <h4 class="mb-4 text-primary">Your Information</h4>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="client_name" class="form-label">Full Name *</label>
+                <input
+                  type="text"
+                  class="form-control bg-dark text-light"
+                  id="client_name"
+                  name="client_name"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="client_email" class="form-label"
+                  >Email Address *</label
+                >
+                <input
+                  type="email"
+                  class="form-control bg-dark text-light"
+                  id="client_email"
+                  name="client_email"
+                  required
+                />
+              </div>
             </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="client_phone" class="form-label"
+                  >Phone Number</label
+                >
+                <input
+                  type="tel"
+                  class="form-control bg-dark text-light"
+                  id="client_phone"
+                  name="client_phone"
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="company_name" class="form-label"
+                  >Company Name</label
+                >
+                <input
+                  type="text"
+                  class="form-control bg-dark text-light"
+                  id="company_name"
+                  name="company_name"
+                />
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="company_position" class="form-label"
+                >Your Position</label
+              >
+              <input
+                type="text"
+                class="form-control bg-dark text-light"
+                id="company_position"
+                name="company_position"
+                placeholder="e.g., CEO, Manager, Client"
+              />
+            </div>
+
+            <!-- Service Information -->
+            <h4 class="mb-4 text-primary">Service Details</h4>
+            <div class="row mb-3">
+              <div class="col-md-8">
+                <label for="service_type" class="form-label"
+                  >Which service did you use? *</label
+                >
+                <select
+                  class="form-select bg-dark text-light"
+                  id="service_type"
+                  name="service_type"
+                  required
+                >
+                  <option value="">Select a service...</option>
+                  <option value="cybersecurity">
+                    Cybersecurity & Threat Monitoring
+                  </option>
+                  <option value="real_estate">Real Estate Services</option>
+                  <option value="telegram_bot">Telegram Bot Automation</option>
+                  <option value="recovery_service">
+                    Asset Recovery Service
+                  </option>
+                  <option value="power_of_attorney">Power of Attorney</option>
+                  <option value="investment">Investment Portfolio</option>
+                  <option value="business_analysis">
+                    Business Analysis & Integration
+                  </option>
+                  <option value="other">Other Services</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="rating" class="form-label">Rating *</label>
+                <div class="star-rating-input">
+                  <input type="hidden" id="rating" name="rating" value="5" />
+                  <div class="stars">
+                    <i class="fas fa-star star-button" data-rating="1"></i>
+                    <i class="fas fa-star star-button" data-rating="2"></i>
+                    <i class="fas fa-star star-button" data-rating="3"></i>
+                    <i class="fas fa-star star-button" data-rating="4"></i>
+                    <i
+                      class="fas fa-star star-button selected"
+                      data-rating="5"
+                    ></i>
+                  </div>
+                  <span class="rating-text">5 stars</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Testimonial Content -->
+            <h4 class="mb-4 text-primary">Your Testimonial</h4>
+            <div class="mb-3">
+              <label for="title" class="form-label">Testimonial Title</label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light"
+                id="title"
+                name="title"
+                placeholder="e.g., Excellent Service and Support"
+              />
+            </div>
+
+            <div class="mb-4">
+              <label for="testimonial_text" class="form-label"
+                >Your Experience *</label
+              >
+              <textarea
+                class="form-control bg-dark text-light"
+                id="testimonial_text"
+                name="testimonial_text"
+                rows="6"
+                required
+                placeholder="Please share your experience with our services..."
+              ></textarea>
+            </div>
+
+            <!-- Media Upload -->
+            <h4 class="mb-4 text-primary">Media (Optional)</h4>
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="video_file" class="form-label"
+                  >Video Testimonial</label
+                >
+                <input
+                  type="file"
+                  class="form-control bg-dark text-light"
+                  id="video_file"
+                  name="video_file"
+                  accept="video/*"
+                />
+                <small class="text-muted">Max 100MB (MP4, AVI, MOV)</small>
+              </div>
+              <div class="col-md-4">
+                <label for="image_file" class="form-label">Your Photo</label>
+                <input
+                  type="file"
+                  class="form-control bg-dark text-light"
+                  id="image_file"
+                  name="image_file"
+                  accept="image/*"
+                />
+                <small class="text-muted">JPG, PNG, GIF</small>
+              </div>
+              <div class="col-md-4">
+                <label for="logo_file" class="form-label">Company Logo</label>
+                <input
+                  type="file"
+                  class="form-control bg-dark text-light"
+                  id="logo_file"
+                  name="logo_file"
+                  accept="image/*"
+                />
+                <small class="text-muted">JPG, PNG, GIF</small>
+              </div>
+            </div>
+
+            <!-- Consent -->
+            <h4 class="mb-4 text-primary">Consent</h4>
+            <div class="form-check mb-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="consent_display"
+                name="consent_display"
+                required
+              />
+              <label class="form-check-label" for="consent_display">
+                I consent to having my testimonial displayed on the Gem Assist
+                Enterprise website *
+              </label>
+            </div>
+
+            <div class="form-check mb-4">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="consent_contact"
+                name="consent_contact"
+              />
+              <label class="form-check-label" for="consent_contact">
+                I consent to being contacted for follow-up questions about my
+                testimonial
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-paper-plane me-2"></i>Submit Testimonial
+              </button>
+              <a href="{{ url_for('testimonials') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Testimonials
+              </a>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <style>
-.star-rating-input {
+  .star-rating-input {
     display: flex;
     align-items: center;
     gap: 10px;
-}
+  }
 
-.star-rating-input .stars {
+  .star-rating-input .stars {
     display: flex;
     gap: 5px;
-}
+  }
 
-.star-button {
+  .star-button {
     font-size: 1.5rem;
     color: #6c757d;
     cursor: pointer;
     transition: all 0.2s;
-}
+  }
 
-.star-button:hover {
+  .star-button:hover {
     color: #ffc107;
     transform: scale(1.1);
-}
+  }
 
-.star-button.selected {
+  .star-button.selected {
     color: #ffc107;
-}
+  }
 
-.rating-text {
+  .rating-text {
     color: #6c757d;
     font-size: 0.9rem;
-}
+  }
 
-.form-control:focus,
-.form-select:focus {
+  .form-control:focus,
+  .form-select:focus {
     background-color: var(--bg-dark);
     border-color: var(--primary-color);
     color: var(--text-primary);
     box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
-}
+  }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Star rating functionality
-    const stars = document.querySelectorAll('.star-button');
-    const ratingInput = document.getElementById('rating');
-    const ratingText = document.querySelector('.rating-text');
-    
+    const stars = document.querySelectorAll(".star-button");
+    const ratingInput = document.getElementById("rating");
+    const ratingText = document.querySelector(".rating-text");
+
     stars.forEach((star, index) => {
-        star.addEventListener('click', function() {
-            const rating = index + 1;
-            ratingInput.value = rating;
-            ratingText.textContent = rating + (rating === 1 ? ' star' : ' stars');
-            
-            stars.forEach((s, i) => {
-                if (i < rating) {
-                    s.classList.add('selected');
-                } else {
-                    s.classList.remove('selected');
-                }
-            });
+      star.addEventListener("click", function () {
+        const rating = index + 1;
+        ratingInput.value = rating;
+        ratingText.textContent = rating + (rating === 1 ? " star" : " stars");
+
+        stars.forEach((s, i) => {
+          if (i < rating) {
+            s.classList.add("selected");
+          } else {
+            s.classList.remove("selected");
+          }
         });
-        
-        star.addEventListener('mouseenter', function() {
-            const rating = index + 1;
-            stars.forEach((s, i) => {
-                if (i < rating) {
-                    s.style.color = '#ffc107';
-                } else {
-                    s.style.color = '#6c757d';
-                }
-            });
+      });
+
+      star.addEventListener("mouseenter", function () {
+        const rating = index + 1;
+        stars.forEach((s, i) => {
+          if (i < rating) {
+            s.style.color = "#ffc107";
+          } else {
+            s.style.color = "#6c757d";
+          }
         });
+      });
     });
-    
-    const starContainer = document.querySelector('.stars');
+
+    const starContainer = document.querySelector(".stars");
     if (starContainer) {
-        starContainer.addEventListener('mouseleave', function() {
-            stars.forEach((s, i) => {
-                if (s.classList.contains('selected')) {
-                    s.style.color = '#ffc107';
-                } else {
-                    s.style.color = '#6c757d';
-                }
-            });
+      starContainer.addEventListener("mouseleave", function () {
+        stars.forEach((s, i) => {
+          if (s.classList.contains("selected")) {
+            s.style.color = "#ffc107";
+          } else {
+            s.style.color = "#6c757d";
+          }
         });
+      });
     }
-});
+  });
 </script>
 {% endblock %}

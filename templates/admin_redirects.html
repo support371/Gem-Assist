@@ -1,85 +1,119 @@
-{% extends "base.html" %}
-
-{% block title %}Manage Redirects - Admin Panel{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Manage Redirects - Admin Panel{%
+endblock %} {% block content %}
 <section class="page-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h1><i class="fas fa-link me-3"></i>Manage URL Redirects</h1>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h1><i class="fas fa-link me-3"></i>Manage URL Redirects</h1>
+      </div>
     </div>
+  </div>
 </section>
 
 <section class="py-5">
-    <div class="container">
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+  <div class="container">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
 
-        <!-- Create New Redirect Form -->
-        <div class="card mb-4">
-            <div class="card-header">Create New Redirect</div>
-            <div class="card-body">
-                <form action="{{ url_for('admin_redirects') }}" method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <input type="hidden" name="action" value="add">
-                    <div class="form-group">
-                        <label for="short_code">Short Code</label>
-                        <input type="text" class="form-control" id="short_code" name="short_code" required>
-                        <small class="form-text text-muted">e.g., "promo" for "/r/promo"</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="destination_url">Destination URL</label>
-                        <input type="url" class="form-control" id="destination_url" name="destination_url" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-3">Create Redirect</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Existing Redirects Table -->
-        <div class="card">
-            <div class="card-header">Existing Redirects</div>
-            <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Short Code</th>
-                            <th>Destination URL</th>
-                            <th>Clicks</th>
-                            <th>Created At</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for redirect in redirects %}
-                            <tr>
-                                <td><a href="{{ url_for('handle_redirect', short_code=redirect.short_code) }}" target="_blank">/r/{{ redirect.short_code }}</a></td>
-                                <td>{{ redirect.destination_url }}</td>
-                                <td>{{ redirect.clicks }}</td>
-                                <td>{{ redirect.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                                <td>
-                                    <form action="{{ url_for('admin_redirects') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this redirect?');">
-                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                        <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="redirect_id" value="{{ redirect.id }}">
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <!-- Create New Redirect Form -->
+    <div class="card mb-4">
+      <div class="card-header">Create New Redirect</div>
+      <div class="card-body">
+        <form action="{{ url_for('admin_redirects') }}" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <input type="hidden" name="action" value="add" />
+          <div class="form-group">
+            <label for="short_code">Short Code</label>
+            <input
+              type="text"
+              class="form-control"
+              id="short_code"
+              name="short_code"
+              required
+            />
+            <small class="form-text text-muted"
+              >e.g., "promo" for "/r/promo"</small
+            >
+          </div>
+          <div class="form-group">
+            <label for="destination_url">Destination URL</label>
+            <input
+              type="url"
+              class="form-control"
+              id="destination_url"
+              name="destination_url"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">
+            Create Redirect
+          </button>
+        </form>
+      </div>
     </div>
+
+    <!-- Existing Redirects Table -->
+    <div class="card">
+      <div class="card-header">Existing Redirects</div>
+      <div class="card-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Short Code</th>
+              <th>Destination URL</th>
+              <th>Clicks</th>
+              <th>Created At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for redirect in redirects %}
+            <tr>
+              <td>
+                <a
+                  href="{{ url_for('handle_redirect', short_code=redirect.short_code) }}"
+                  target="_blank"
+                  >/r/{{ redirect.short_code }}</a
+                >
+              </td>
+              <td>{{ redirect.destination_url }}</td>
+              <td>{{ redirect.clicks }}</td>
+              <td>{{ redirect.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              <td>
+                <form
+                  action="{{ url_for('admin_redirects') }}"
+                  method="POST"
+                  onsubmit="
+                    return confirm(
+                      'Are you sure you want to delete this redirect?',
+                    );
+                  "
+                >
+                  <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                  />
+                  <input type="hidden" name="action" value="delete" />
+                  <input
+                    type="hidden"
+                    name="redirect_id"
+                    value="{{ redirect.id }}"
+                  />
+                  <button type="submit" class="btn btn-danger btn-sm">
+                    Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}

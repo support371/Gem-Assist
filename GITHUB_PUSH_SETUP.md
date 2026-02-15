@@ -3,6 +3,7 @@
 ## Quick Start (Choose One Method)
 
 ### Method 1: Using Replit's Built-In GitHub Integration (EASIEST)
+
 1. Click the **Version Control** button in Replit sidebar (left panel)
 2. Select **Connect to GitHub**
 3. Authorize your GitHub account
@@ -10,20 +11,25 @@
 5. Click **Push to GitHub** button to upload all files
 
 ### Method 2: Using Personal Access Token (RECOMMENDED)
+
 1. Go to https://github.com/settings/tokens
 2. Click "Generate new token" → "Generate new token (classic)"
 3. Name: "GEM Enterprise Deployment"
 4. Select scopes: ✓ repo (full control)
 5. Copy the token
 6. In Replit terminal, run:
+
 ```bash
 cd /home/runner/workspace
 git push https://support371:YOUR_TOKEN@github.com/support371/GemAssist-1.git replit-agent:main -f
 ```
+
 Replace `YOUR_TOKEN` with your token
 
 ### Method 3: Using SSH Keys
+
 1. In Replit terminal:
+
 ```bash
 ssh-keygen -t ed25519 -C "your-email@example.com" -f ~/.ssh/github_key -N ""
 cat ~/.ssh/github_key.pub
@@ -32,6 +38,7 @@ cat ~/.ssh/github_key.pub
 2. Go to https://github.com/settings/keys
 3. Paste the public key (from cat output)
 4. Back in terminal:
+
 ```bash
 git remote set-url origin git@github.com:support371/GemAssist-1.git
 git push origin replit-agent:main
@@ -42,6 +49,7 @@ git push origin replit-agent:main
 ## What Gets Pushed
 
 ### Backend (Python)
+
 - ✓ app.py - Main Flask application
 - ✓ models.py - Database models
 - ✓ notion_cms.py - Notion integration
@@ -50,11 +58,13 @@ git push origin replit-agent:main
 - ✓ All requirements and dependencies
 
 ### Frontend (HTML/CSS/JS)
+
 - ✓ 33 HTML templates
 - ✓ 5 CSS stylesheets (with modern enterprise design)
 - ✓ 8 JavaScript files (fixed conflicts, production-ready)
 
 ### Features Included
+
 - ✓ News & Newsletter system
 - ✓ Trustees & Fiduciaries page
 - ✓ Professional styling with dark theme
@@ -69,6 +79,7 @@ git push origin replit-agent:main
 ## Verify Push Success
 
 After pushing, verify in terminal:
+
 ```bash
 git log --oneline -5
 git branch -r | grep origin/main
@@ -99,12 +110,15 @@ After pushing to GitHub:
 ## Troubleshooting
 
 **Error: "Authentication failed"**
+
 - Use Method 1 (Replit GitHub Integration) - no token needed
 
 **Error: "Permission denied (publickey)"**
+
 - Check SSH key is added to https://github.com/settings/keys
 
 **Error: "rejected because the tip of your current branch is behind"**
+
 - Run: `git push origin replit-agent:main -f`
 
 ---
@@ -112,6 +126,7 @@ After pushing to GitHub:
 ## Support
 
 All project files verified:
+
 - ✓ No corrupted files
 - ✓ Zero JavaScript errors
 - ✓ Database connected

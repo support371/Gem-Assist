@@ -4,7 +4,9 @@ export const Activity: React.FC = () => {
   return (
     <div style={{ padding: 16, display: "grid", gap: 10 }}>
       <div style={{ fontSize: 18, fontWeight: 800 }}>Activity</div>
-      <div style={{ opacity: 0.85 }}>Webhook stream slot (connect your backend next).</div>
+      <div style={{ opacity: 0.85 }}>
+        Webhook stream slot (connect your backend next).
+      </div>
       <div
         style={{
           borderRadius: 12,

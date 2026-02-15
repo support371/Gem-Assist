@@ -1,28 +1,33 @@
 # GitHub OAuth Setup for GEM Enterprise
 
 ## Overview
+
 GitHub OAuth 2.0 authentication has been successfully integrated into GEM Enterprise. Users can now securely login with their GitHub accounts.
 
 ## Configuration
 
 Your GitHub OAuth credentials are securely stored in Replit Secrets:
+
 - **Client ID:** `Ov23liosCze0VfrvHuv0`
 - **Client Secret:** Stored securely in `GITHUB_OAUTH_CLIENT_SECRET`
 
 ## Features
 
 ### Authentication Endpoints
+
 - **Login:** `/auth/github` - Redirects user to GitHub OAuth
 - **Callback:** `/auth/github/callback` - Handles GitHub OAuth callback
 - **Logout:** `/auth/logout` - Clears user session
 
 ### User Data Captured
+
 - GitHub username & ID
 - Name, email, avatar
 - Bio, company, location
 - Public repos, followers, following count
 
 ### Session Management
+
 - User data stored in Flask session
 - Access token securely managed
 - CSRF protection via state parameter
@@ -30,6 +35,7 @@ Your GitHub OAuth credentials are securely stored in Replit Secrets:
 ## Frontend Integration
 
 The authentication UI is available in the navigation bar via `auth-buttons.html`:
+
 - Shows "Login with GitHub" button when logged out
 - Displays user profile with dropdown menu when logged in
 - Quick logout option
@@ -38,11 +44,10 @@ The authentication UI is available in the navigation bar via `auth-buttons.html`
 
 ```html
 {% if session.get('github_user') %}
-  <!-- User is authenticated -->
-  {{ session['github_user'].get('name') }}
-{% else %}
-  <!-- User not authenticated -->
-  <a href="{{ url_for('github_login') }}">Login</a>
+<!-- User is authenticated -->
+{{ session['github_user'].get('name') }} {% else %}
+<!-- User not authenticated -->
+<a href="{{ url_for('github_login') }}">Login</a>
 {% endif %}
 ```
 
@@ -61,4 +66,5 @@ The authentication UI is available in the navigation bar via `auth-buttons.html`
 4. Monitor session activity in logs
 
 ---
+
 Generated: 2024-11-27

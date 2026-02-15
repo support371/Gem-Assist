@@ -1,353 +1,400 @@
-{% extends "base.html" %}
-
-{% block title %}Notion CMS Setup - Admin Panel{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Notion CMS Setup - Admin Panel{%
+endblock %} {% block content %}
 <section class="page-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h1><i class="fas fa-cog me-3"></i>Notion CMS Setup</h1>
-                <p class="lead">Configure and manage your Notion content management system</p>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h1><i class="fas fa-cog me-3"></i>Notion CMS Setup</h1>
+        <p class="lead">
+          Configure and manage your Notion content management system
+        </p>
+      </div>
     </div>
+  </div>
 </section>
 
 <section class="py-5">
-    <div class="container">
-        <!-- Connection Status -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card bg-dark border-secondary">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            <i class="fas fa-plug me-2"></i>Connection Status
-                        </h4>
-                        
-                        {% if notion_configured %}
-                            <div class="alert alert-success">
-                                <i class="fas fa-check-circle me-2"></i>
-                                <strong>Connected!</strong> Your Notion database is properly configured and accessible.
-                            </div>
-                        {% else %}
-                            <div class="alert alert-warning">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                <strong>Not Connected</strong> - Please configure your Notion integration.
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <!-- Connection Status -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card bg-dark border-secondary">
+          <div class="card-body">
+            <h4 class="card-title">
+              <i class="fas fa-plug me-2"></i>Connection Status
+            </h4>
 
-        <!-- Setup Instructions -->
-        <div class="row mb-4">
-            <div class="col-lg-12">
-                <div class="card bg-dark border-secondary">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            <i class="fas fa-info-circle me-2"></i>Setup Instructions
-                        </h4>
-                        
-                        <div class="setup-steps">
-                            <h5 class="text-primary mt-4">Step 1: Create Notion Integration</h5>
-                            <ol>
-                                <li>Go to <a href="https://www.notion.so/my-integrations" target="_blank" class="text-info">https://www.notion.so/my-integrations</a></li>
-                                <li>Click "New integration"</li>
-                                <li>Name it "GEM Enterprise CMS"</li>
-                                <li>Select the workspace to integrate with</li>
-                                <li>Copy the <strong>Internal Integration Secret</strong></li>
-                                <li>Set it as <code>NOTION_INTEGRATION_SECRET</code> in your environment</li>
-                            </ol>
-
-                            <h5 class="text-primary mt-4">Step 2: Create Content Database</h5>
-                            <ol>
-                                <li>Create a new page in Notion</li>
-                                <li>Add a database to the page (inline or full page)</li>
-                                <li>Name it "GEM Enterprise Content"</li>
-                                <li>Click the "..." menu → "Add connections" → Select your integration</li>
-                                <li>Copy the database ID from the URL:
-                                    <br><code>https://notion.so/YOUR_WORKSPACE/[DATABASE_ID]?v=...</code>
-                                </li>
-                                <li>Set it as <code>NOTION_DATABASE_ID</code> in your environment</li>
-                            </ol>
-
-                            <h5 class="text-primary mt-4">Step 3: Configure Database Properties</h5>
-                            <p>Your database should have these properties (they'll be created automatically):</p>
-                            <ul>
-                                <li><strong>Title</strong> (title) - Content title</li>
-                                <li><strong>Content Type</strong> (select) - Service, News, Testimonial, etc.</li>
-                                <li><strong>Status</strong> (select) - Draft, Published, Archived</li>
-                                <li><strong>Category</strong> (multi-select) - Content categories</li>
-                                <li><strong>Priority</strong> (number) - Sort order</li>
-                                <li><strong>Author</strong> (text) - Content author</li>
-                                <li><strong>Publish Date</strong> (date) - Publication date</li>
-                                <li><strong>Featured</strong> (checkbox) - Feature on homepage</li>
-                                <li><strong>SEO Description</strong> (text) - Meta description</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            {% if notion_configured %}
+            <div class="alert alert-success">
+              <i class="fas fa-check-circle me-2"></i>
+              <strong>Connected!</strong> Your Notion database is properly
+              configured and accessible.
             </div>
+            {% else %}
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Not Connected</strong> - Please configure your Notion
+              integration.
+            </div>
+            {% endif %}
+          </div>
         </div>
-
-        {% if notion_configured %}
-        <!-- Content Statistics -->
-        <div class="row mb-4">
-            <div class="col-lg-12">
-                <div class="card bg-dark border-secondary">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            <i class="fas fa-chart-bar me-2"></i>Content Statistics
-                        </h4>
-                        
-                        <div class="row mt-4">
-                            <div class="col-md-3">
-                                <div class="stat-card text-center">
-                                    <i class="fas fa-cogs fa-3x text-primary mb-3"></i>
-                                    <h3>{{ content_stats.get('services', 0) }}</h3>
-                                    <p>Services</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stat-card text-center">
-                                    <i class="fas fa-newspaper fa-3x text-success mb-3"></i>
-                                    <h3>{{ content_stats.get('news', 0) }}</h3>
-                                    <p>News Articles</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stat-card text-center">
-                                    <i class="fas fa-star fa-3x text-warning mb-3"></i>
-                                    <h3>{{ content_stats.get('testimonials', 0) }}</h3>
-                                    <p>Testimonials</p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="stat-card text-center">
-                                    <i class="fas fa-trophy fa-3x text-info mb-3"></i>
-                                    <h3>{{ content_stats.get('featured', 0) }}</h3>
-                                    <p>Featured Items</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Setup Guide Button -->
-        <div class="row mb-4">
-            <div class="col-12 text-center">
-                <a href="{{ url_for('notion_onboarding') }}" class="btn btn-info btn-lg">
-                    <i class="fas fa-graduation-cap me-2"></i>View Complete Setup Guide
-                </a>
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="card bg-dark border-secondary">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            <i class="fas fa-sync me-2"></i>Sync Content
-                        </h4>
-                        <p>Manually sync content from your Notion database.</p>
-                        <button class="btn btn-primary" onclick="syncContent()">
-                            <i class="fas fa-sync-alt me-2"></i>Sync Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-6">
-                <div class="card bg-dark border-secondary">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            <i class="fas fa-plus-circle me-2"></i>Initialize Sample Content
-                        </h4>
-                        <p>Create sample content in your Notion database to get started.</p>
-                        <form method="POST" action="{{ url_for('notion_initialize') }}">
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-magic me-2"></i>Create Sample Content
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- API Endpoints -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card bg-dark border-secondary">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            <i class="fas fa-code me-2"></i>API Endpoints
-                        </h4>
-                        <div class="table-responsive">
-                            <table class="table table-dark table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Endpoint</th>
-                                        <th>Method</th>
-                                        <th>Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><code>/api/notion/content/services</code></td>
-                                        <td><span class="badge bg-success">GET</span></td>
-                                        <td>Get all services content</td>
-                                    </tr>
-                                    <tr>
-                                        <td><code>/api/notion/content/news</code></td>
-                                        <td><span class="badge bg-success">GET</span></td>
-                                        <td>Get all news articles</td>
-                                    </tr>
-                                    <tr>
-                                        <td><code>/api/notion/content/testimonials</code></td>
-                                        <td><span class="badge bg-success">GET</span></td>
-                                        <td>Get all testimonials</td>
-                                    </tr>
-                                    <tr>
-                                        <td><code>/api/notion/content/featured</code></td>
-                                        <td><span class="badge bg-success">GET</span></td>
-                                        <td>Get featured content</td>
-                                    </tr>
-                                    <tr>
-                                        <td><code>/api/notion/sync</code></td>
-                                        <td><span class="badge bg-primary">POST</span></td>
-                                        <td>Sync all content from Notion</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Cache Management -->
-        <div class="row mt-4">
-            <div class="col-lg-12">
-                <div class="card bg-dark border-secondary">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            <i class="fas fa-database me-2"></i>Cache Management
-                        </h4>
-                        <p>Manage the local content cache for better performance.</p>
-                        <button class="btn btn-warning" onclick="clearCache()">
-                            <i class="fas fa-trash me-2"></i>Clear Cache
-                        </button>
-                        <button class="btn btn-info ms-2" onclick="viewCache()">
-                            <i class="fas fa-eye me-2"></i>View Cached Content
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Back to Admin -->
-        <div class="row mt-4">
-            <div class="col-12 text-center">
-                <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Admin Panel
-                </a>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <!-- Setup Instructions -->
+    <div class="row mb-4">
+      <div class="col-lg-12">
+        <div class="card bg-dark border-secondary">
+          <div class="card-body">
+            <h4 class="card-title">
+              <i class="fas fa-info-circle me-2"></i>Setup Instructions
+            </h4>
+
+            <div class="setup-steps">
+              <h5 class="text-primary mt-4">
+                Step 1: Create Notion Integration
+              </h5>
+              <ol>
+                <li>
+                  Go to
+                  <a
+                    href="https://www.notion.so/my-integrations"
+                    target="_blank"
+                    class="text-info"
+                    >https://www.notion.so/my-integrations</a
+                  >
+                </li>
+                <li>Click "New integration"</li>
+                <li>Name it "GEM Enterprise CMS"</li>
+                <li>Select the workspace to integrate with</li>
+                <li>Copy the <strong>Internal Integration Secret</strong></li>
+                <li>
+                  Set it as <code>NOTION_INTEGRATION_SECRET</code> in your
+                  environment
+                </li>
+              </ol>
+
+              <h5 class="text-primary mt-4">Step 2: Create Content Database</h5>
+              <ol>
+                <li>Create a new page in Notion</li>
+                <li>Add a database to the page (inline or full page)</li>
+                <li>Name it "GEM Enterprise Content"</li>
+                <li>
+                  Click the "..." menu → "Add connections" → Select your
+                  integration
+                </li>
+                <li>
+                  Copy the database ID from the URL: <br /><code
+                    >https://notion.so/YOUR_WORKSPACE/[DATABASE_ID]?v=...</code
+                  >
+                </li>
+                <li>
+                  Set it as <code>NOTION_DATABASE_ID</code> in your environment
+                </li>
+              </ol>
+
+              <h5 class="text-primary mt-4">
+                Step 3: Configure Database Properties
+              </h5>
+              <p>
+                Your database should have these properties (they'll be created
+                automatically):
+              </p>
+              <ul>
+                <li><strong>Title</strong> (title) - Content title</li>
+                <li>
+                  <strong>Content Type</strong> (select) - Service, News,
+                  Testimonial, etc.
+                </li>
+                <li>
+                  <strong>Status</strong> (select) - Draft, Published, Archived
+                </li>
+                <li>
+                  <strong>Category</strong> (multi-select) - Content categories
+                </li>
+                <li><strong>Priority</strong> (number) - Sort order</li>
+                <li><strong>Author</strong> (text) - Content author</li>
+                <li><strong>Publish Date</strong> (date) - Publication date</li>
+                <li>
+                  <strong>Featured</strong> (checkbox) - Feature on homepage
+                </li>
+                <li>
+                  <strong>SEO Description</strong> (text) - Meta description
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if notion_configured %}
+    <!-- Content Statistics -->
+    <div class="row mb-4">
+      <div class="col-lg-12">
+        <div class="card bg-dark border-secondary">
+          <div class="card-body">
+            <h4 class="card-title">
+              <i class="fas fa-chart-bar me-2"></i>Content Statistics
+            </h4>
+
+            <div class="row mt-4">
+              <div class="col-md-3">
+                <div class="stat-card text-center">
+                  <i class="fas fa-cogs fa-3x text-primary mb-3"></i>
+                  <h3>{{ content_stats.get('services', 0) }}</h3>
+                  <p>Services</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card text-center">
+                  <i class="fas fa-newspaper fa-3x text-success mb-3"></i>
+                  <h3>{{ content_stats.get('news', 0) }}</h3>
+                  <p>News Articles</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card text-center">
+                  <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                  <h3>{{ content_stats.get('testimonials', 0) }}</h3>
+                  <p>Testimonials</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="stat-card text-center">
+                  <i class="fas fa-trophy fa-3x text-info mb-3"></i>
+                  <h3>{{ content_stats.get('featured', 0) }}</h3>
+                  <p>Featured Items</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Setup Guide Button -->
+    <div class="row mb-4">
+      <div class="col-12 text-center">
+        <a
+          href="{{ url_for('notion_onboarding') }}"
+          class="btn btn-info btn-lg"
+        >
+          <i class="fas fa-graduation-cap me-2"></i>View Complete Setup Guide
+        </a>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="card bg-dark border-secondary">
+          <div class="card-body">
+            <h4 class="card-title">
+              <i class="fas fa-sync me-2"></i>Sync Content
+            </h4>
+            <p>Manually sync content from your Notion database.</p>
+            <button class="btn btn-primary" onclick="syncContent()">
+              <i class="fas fa-sync-alt me-2"></i>Sync Now
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card bg-dark border-secondary">
+          <div class="card-body">
+            <h4 class="card-title">
+              <i class="fas fa-plus-circle me-2"></i>Initialize Sample Content
+            </h4>
+            <p>Create sample content in your Notion database to get started.</p>
+            <form method="POST" action="{{ url_for('notion_initialize') }}">
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-magic me-2"></i>Create Sample Content
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Endpoints -->
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card bg-dark border-secondary">
+          <div class="card-body">
+            <h4 class="card-title">
+              <i class="fas fa-code me-2"></i>API Endpoints
+            </h4>
+            <div class="table-responsive">
+              <table class="table table-dark table-striped">
+                <thead>
+                  <tr>
+                    <th>Endpoint</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>/api/notion/content/services</code></td>
+                    <td><span class="badge bg-success">GET</span></td>
+                    <td>Get all services content</td>
+                  </tr>
+                  <tr>
+                    <td><code>/api/notion/content/news</code></td>
+                    <td><span class="badge bg-success">GET</span></td>
+                    <td>Get all news articles</td>
+                  </tr>
+                  <tr>
+                    <td><code>/api/notion/content/testimonials</code></td>
+                    <td><span class="badge bg-success">GET</span></td>
+                    <td>Get all testimonials</td>
+                  </tr>
+                  <tr>
+                    <td><code>/api/notion/content/featured</code></td>
+                    <td><span class="badge bg-success">GET</span></td>
+                    <td>Get featured content</td>
+                  </tr>
+                  <tr>
+                    <td><code>/api/notion/sync</code></td>
+                    <td><span class="badge bg-primary">POST</span></td>
+                    <td>Sync all content from Notion</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cache Management -->
+    <div class="row mt-4">
+      <div class="col-lg-12">
+        <div class="card bg-dark border-secondary">
+          <div class="card-body">
+            <h4 class="card-title">
+              <i class="fas fa-database me-2"></i>Cache Management
+            </h4>
+            <p>Manage the local content cache for better performance.</p>
+            <button class="btn btn-warning" onclick="clearCache()">
+              <i class="fas fa-trash me-2"></i>Clear Cache
+            </button>
+            <button class="btn btn-info ms-2" onclick="viewCache()">
+              <i class="fas fa-eye me-2"></i>View Cached Content
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Back to Admin -->
+    <div class="row mt-4">
+      <div class="col-12 text-center">
+        <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left me-2"></i>Back to Admin Panel
+        </a>
+      </div>
+    </div>
+  </div>
 </section>
 
 <script>
-function syncContent() {
-    fetch('/api/notion/sync', { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(`Content synced successfully!\n\nServices: ${data.content_counts.services}\nNews: ${data.content_counts.news}\nTestimonials: ${data.content_counts.testimonials}\nFeatured: ${data.content_counts.featured}\n\nLast sync: ${data.last_sync}`);
-                location.reload();
-            } else {
-                alert('Error syncing content: ' + (data.error || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            alert('Error syncing content: ' + error);
-        });
-}
+  function syncContent() {
+    fetch("/api/notion/sync", { method: "POST" })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          alert(
+            `Content synced successfully!\n\nServices: ${data.content_counts.services}\nNews: ${data.content_counts.news}\nTestimonials: ${data.content_counts.testimonials}\nFeatured: ${data.content_counts.featured}\n\nLast sync: ${data.last_sync}`,
+          );
+          location.reload();
+        } else {
+          alert("Error syncing content: " + (data.error || "Unknown error"));
+        }
+      })
+      .catch((error) => {
+        alert("Error syncing content: " + error);
+      });
+  }
 
-function clearCache() {
-    if (confirm('Are you sure you want to clear the content cache?')) {
-        fetch('/api/notion/clear-cache', { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Cache cleared successfully!');
-                    location.reload();
-                } else {
-                    alert('Failed to clear cache: ' + (data.message || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                alert('Error clearing cache: ' + error);
-            });
+  function clearCache() {
+    if (confirm("Are you sure you want to clear the content cache?")) {
+      fetch("/api/notion/clear-cache", { method: "POST" })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            alert("Cache cleared successfully!");
+            location.reload();
+          } else {
+            alert(
+              "Failed to clear cache: " + (data.message || "Unknown error"),
+            );
+          }
+        })
+        .catch((error) => {
+          alert("Error clearing cache: " + error);
+        });
     }
-}
+  }
 
-function viewCache() {
-    fetch('/api/notion/cached-content')
-        .then(response => response.json())
-        .then(data => {
-            console.log('Cached content:', data);
-            alert(`Cached Content Summary:\n\nServices: ${data.services ? data.services.length : 0}\nNews: ${data.news ? data.news.length : 0}\nTestimonials: ${data.testimonials ? data.testimonials.length : 0}\nFeatured: ${data.featured ? data.featured.length : 0}\n\nLast Sync: ${data.last_sync || 'Never'}\nSync Status: ${data.sync_status || 'Unknown'}\n\n(Full data logged to console)`);
-        })
-        .catch(error => {
-            alert('Error viewing cache: ' + error);
-        });
-}
+  function viewCache() {
+    fetch("/api/notion/cached-content")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Cached content:", data);
+        alert(
+          `Cached Content Summary:\n\nServices: ${data.services ? data.services.length : 0}\nNews: ${data.news ? data.news.length : 0}\nTestimonials: ${data.testimonials ? data.testimonials.length : 0}\nFeatured: ${data.featured ? data.featured.length : 0}\n\nLast Sync: ${data.last_sync || "Never"}\nSync Status: ${data.sync_status || "Unknown"}\n\n(Full data logged to console)`,
+        );
+      })
+      .catch((error) => {
+        alert("Error viewing cache: " + error);
+      });
+  }
 </script>
 
 <style>
-.setup-steps {
-    background: rgba(0,0,0,0.3);
+  .setup-steps {
+    background: rgba(0, 0, 0, 0.3);
     padding: 20px;
     border-radius: 8px;
     margin-top: 20px;
-}
+  }
 
-.setup-steps ol, .setup-steps ul {
+  .setup-steps ol,
+  .setup-steps ul {
     margin-left: 20px;
-}
+  }
 
-.setup-steps li {
+  .setup-steps li {
     margin: 10px 0;
-}
+  }
 
-.stat-card {
-    background: rgba(0,0,0,0.5);
+  .stat-card {
+    background: rgba(0, 0, 0, 0.5);
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.1);
-}
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-.stat-card h3 {
+  .stat-card h3 {
     color: var(--primary-color);
     margin: 10px 0;
-}
+  }
 
-.stat-card p {
+  .stat-card p {
     color: #888;
     margin: 0;
-}
+  }
 
-code {
-    background: rgba(0,0,0,0.5);
+  code {
+    background: rgba(0, 0, 0, 0.5);
     padding: 2px 8px;
     border-radius: 4px;
     color: var(--primary-color);
-}
+  }
 </style>
 {% endblock %}

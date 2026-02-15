@@ -1,40 +1,45 @@
-{% extends "base.html" %}
-
-{% block title %}Site Map - All Pages{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Site Map - All Pages{% endblock %} {%
+block content %}
 <div class="container mt-5">
-    <div class="row">
-        <div class="col-md-10 offset-md-1">
-            <div class="card bg-dark text-white shadow-lg">
-                <div class="card-header">
-                    <h1 class="text-center">Website Page Directory</h1>
-                    <p class="text-center text-muted">A complete list of all accessible pages on this website.</p>
-                </div>
-                <div class="card-body">
-                    <p>
-                        This page provides a full sitemap of the GEM Enterprise website. Use these links to navigate directly to any of our available pages.
-                    </p>
-                    <hr>
-                    <div class="list-group">
-                        {% for name, url in pages %}
-                            <a href="{{ url }}" class="list-group-item list-group-item-action bg-dark text-light border-secondary">
-                                <strong>{{ name.replace('_', ' ')|title }}</strong>
-                                <br>
-                                <small class="text-muted">{{ url }}</small>
-                            </a>
-                        {% else %}
-                            <div class="list-group-item bg-dark text-light border-secondary">
-                                <p class="mb-0">No pages were found.</p>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="card-footer text-center">
-                    <p class="mb-0">Navigate back to the <a href="{{ url_for('index') }}">Homepage</a>.</p>
-                </div>
-            </div>
+  <div class="row">
+    <div class="col-md-10 offset-md-1">
+      <div class="card bg-dark text-white shadow-lg">
+        <div class="card-header">
+          <h1 class="text-center">Website Page Directory</h1>
+          <p class="text-center text-muted">
+            A complete list of all accessible pages on this website.
+          </p>
         </div>
+        <div class="card-body">
+          <p>
+            This page provides a full sitemap of the GEM Enterprise website. Use
+            these links to navigate directly to any of our available pages.
+          </p>
+          <hr />
+          <div class="list-group">
+            {% for name, url in pages %}
+            <a
+              href="{{ url }}"
+              class="list-group-item list-group-item-action bg-dark text-light border-secondary"
+            >
+              <strong>{{ name.replace('_', ' ')|title }}</strong>
+              <br />
+              <small class="text-muted">{{ url }}</small>
+            </a>
+            {% else %}
+            <div class="list-group-item bg-dark text-light border-secondary">
+              <p class="mb-0">No pages were found.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="card-footer text-center">
+          <p class="mb-0">
+            Navigate back to the <a href="{{ url_for('index') }}">Homepage</a>.
+          </p>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

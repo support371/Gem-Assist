@@ -1,17 +1,20 @@
 # GEM Enterprise AI-Powered Website - Testing & Deployment Guide
 
 ## Overview
+
 This document provides comprehensive testing instructions and deployment verification procedures for the GEM Enterprise AI-powered website platform.
 
 ## Prerequisites
 
 ### Local Development Environment
+
 - Python 3.11+
 - Node.js 20+
 - PostgreSQL 15+
 - Git
 
 ### Required API Keys & Services
+
 - OpenAI API Key (for image generation, chat, GPT-5)
 - ElevenLabs API Key (for text-to-speech)
 - Replicate API Token (for video generation)
@@ -111,12 +114,14 @@ print('Static assets manifest generated successfully')
 ## API Endpoint Testing
 
 ### 1. Health Check
+
 ```bash
 curl -X GET http://localhost:5000/health
 # Expected: {"status": "healthy", "timestamp": "...", "services": {...}}
 ```
 
 ### 2. Image Generation
+
 ```bash
 curl -X POST http://localhost:3001/api/media/image \
   -H "Content-Type: application/json" \
@@ -128,6 +133,7 @@ curl -X POST http://localhost:3001/api/media/image \
 ```
 
 ### 3. Text-to-Speech
+
 ```bash
 curl -X POST http://localhost:3001/api/media/tts \
   -H "Content-Type: application/json" \
@@ -139,6 +145,7 @@ curl -X POST http://localhost:3001/api/media/tts \
 ```
 
 ### 4. AI Chat
+
 ```bash
 curl -X POST http://localhost:3001/api/media/chat \
   -H "Content-Type: application/json" \
@@ -150,6 +157,7 @@ curl -X POST http://localhost:3001/api/media/chat \
 ```
 
 ### 5. Voice Call (Test Mode)
+
 ```bash
 curl -X POST http://localhost:3001/api/media/call/place \
   -H "Content-Type: application/json" \
@@ -167,12 +175,14 @@ curl -X POST http://localhost:3001/api/media/call/place \
 Navigate to each page and verify:
 
 **Homepage (http://localhost:5000/)**
+
 - [ ] Page loads without errors
 - [ ] Navigation menu works
 - [ ] Hero section displays correctly
 - [ ] Service cards are responsive
 
 **Media Generator (http://localhost:5000/media-generator)**
+
 - [ ] All form sections load properly
 - [ ] Input validation works
 - [ ] Loading states display correctly
@@ -181,6 +191,7 @@ Navigate to each page and verify:
 - [ ] HTML snippets are generated correctly
 
 **Service Pages**
+
 - [ ] `/about` - Company information loads
 - [ ] `/services` - Service listings display
 - [ ] `/contact` - Contact form functions
@@ -201,21 +212,21 @@ def test_media_generator():
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
-        
+
         # Test homepage
         page.goto('http://localhost:5000')
         assert 'GEM Enterprise' in page.title()
-        
+
         # Test media generator
         page.goto('http://localhost:5000/media-generator')
         assert page.is_visible('#image-section')
         assert page.is_visible('#video-section')
         assert page.is_visible('#tts-section')
-        
+
         # Test form interactions
         page.fill('#image-prompt', 'Test image prompt')
         page.click('#generate-image-btn')
-        
+
         browser.close()
         print('✅ Browser tests passed')
 
@@ -239,6 +250,7 @@ autocannon -c 10 -d 30 http://localhost:5000
 ## Security Testing
 
 ### 1. Dependency Vulnerability Scan
+
 ```bash
 # Python dependencies
 pip install safety
@@ -249,6 +261,7 @@ npm audit --audit-level high
 ```
 
 ### 2. Static Code Analysis
+
 ```bash
 # Install semgrep
 pip install semgrep
@@ -258,6 +271,7 @@ semgrep --config=auto .
 ```
 
 ### 3. SSL/TLS Testing (Production)
+
 ```bash
 # Test SSL configuration
 curl -I https://your-domain.com
@@ -267,6 +281,7 @@ openssl s_client -connect your-domain.com:443 -servername your-domain.com
 ## Database Testing
 
 ### 1. Connection Testing
+
 ```bash
 # Test database connection
 python -c "
@@ -290,6 +305,7 @@ conn.close()
 ```
 
 ### 2. Migration Testing
+
 ```bash
 # Test database migrations
 python -c "
@@ -348,6 +364,7 @@ curl -I "$AWS_URL" | grep -E "(Cache-Control|Expires)"
 ## Monitoring and Alerting
 
 ### 1. Health Monitoring
+
 ```bash
 # Create health check script
 cat > monitor.sh << 'EOF'
@@ -369,6 +386,7 @@ chmod +x monitor.sh
 ```
 
 ### 2. Log Monitoring
+
 ```bash
 # Monitor application logs
 tail -f app.log | grep -E "(ERROR|CRITICAL)"
@@ -380,18 +398,21 @@ tail -f media-server.log | grep -E "(error|failed)"
 ## Compliance Testing
 
 ### 1. GDPR Compliance
+
 - [ ] Cookie consent mechanism
 - [ ] Data deletion capabilities
 - [ ] Privacy policy accessibility
 - [ ] Data export functionality
 
 ### 2. Security Headers
+
 ```bash
 # Check security headers
 curl -I https://your-domain.com | grep -E "(Strict-Transport-Security|Content-Security-Policy|X-Frame-Options)"
 ```
 
 ### 3. Content Security Policy
+
 ```bash
 # Validate CSP
 python -c "
@@ -409,6 +430,7 @@ print('✅ CSP validation passed')
 ### Common Issues
 
 **1. Database Connection Errors**
+
 ```bash
 # Check database status
 pg_isready -h localhost -p 5432
@@ -418,6 +440,7 @@ echo $DATABASE_URL
 ```
 
 **2. API Key Issues**
+
 ```bash
 # Verify environment variables
 env | grep -E "(OPENAI|ELEVENLABS|TWILIO|AWS|GCP)"
@@ -427,6 +450,7 @@ curl -H "Authorization: Bearer $OPENAI_API_KEY" https://api.openai.com/v1/models
 ```
 
 **3. Port Conflicts**
+
 ```bash
 # Check what's running on ports
 lsof -i :5000
@@ -437,6 +461,7 @@ kill -9 $(lsof -t -i:5000)
 ```
 
 **4. Static Asset Issues**
+
 ```bash
 # Verify static files exist
 ls -la static/css/
@@ -449,6 +474,7 @@ chmod -R 755 static/
 ### Performance Issues
 
 **1. Slow API Responses**
+
 ```bash
 # Monitor API response times
 curl -w "@-" -o /dev/null -s http://localhost:3001/api/media/health << 'EOF'
@@ -457,6 +483,7 @@ EOF
 ```
 
 **2. High Memory Usage**
+
 ```bash
 # Monitor memory usage
 ps aux | grep -E "(python|node)" | awk '{print $4, $11}' | sort -nr
@@ -465,6 +492,7 @@ ps aux | grep -E "(python|node)" | awk '{print $4, $11}' | sort -nr
 ## Continuous Integration
 
 The GitHub Actions workflow automatically runs:
+
 - Security scans (Bandit, Safety, npm audit)
 - Code quality checks (Black, Flake8, ESLint, Prettier)
 - Unit and integration tests
@@ -475,6 +503,7 @@ The GitHub Actions workflow automatically runs:
 ## Support and Documentation
 
 For additional support:
+
 1. Check the application logs for detailed error messages
 2. Review the API documentation in the code comments
 3. Verify all environment variables are properly configured
@@ -484,6 +513,7 @@ For additional support:
 ## Success Criteria
 
 Deployment is considered successful when:
+
 - [ ] All health checks pass
 - [ ] Static assets load correctly
 - [ ] API endpoints respond within acceptable timeframes

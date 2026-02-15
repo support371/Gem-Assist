@@ -2,181 +2,193 @@
 
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Optimize animations for better performance */
 .optimized-animation {
-    transform: translateZ(0);
-    will-change: transform;
-    backface-visibility: hidden;
-    perspective: 1000px;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 /* Lazy loading for images */
 .lazy-image {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .lazy-image.loaded {
-    opacity: 1;
+  opacity: 1;
 }
 
 /* Efficient hover states */
 .efficient-hover {
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .efficient-hover:hover {
-    transform: translateY(-2px);
+  transform: translateY(-2px);
 }
 
 /* Optimize large content areas */
 .content-optimize {
-    contain: layout style paint;
+  contain: layout style paint;
 }
 
 /* Performance-focused button styles */
 .perf-btn {
-    position: relative;
-    overflow: hidden;
-    transform: translateZ(0);
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
 }
 
 .perf-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s ease, height 0.3s ease;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.3s ease,
+    height 0.3s ease;
 }
 
 .perf-btn:hover::before {
-    width: 200%;
-    height: 200%;
+  width: 200%;
+  height: 200%;
 }
 
 /* Critical CSS for above-the-fold content */
 .hero-critical {
-    min-height: 50vh;
-    display: flex;
-    align-items: center;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-dark) 100%
+  );
 }
 
 /* Optimize card layouts */
 .card-optimized {
-    contain: layout style;
-    transform: translateZ(0);
-    transition: transform 0.2s ease;
+  contain: layout style;
+  transform: translateZ(0);
+  transition: transform 0.2s ease;
 }
 
 .card-optimized:hover {
-    transform: translateY(-3px) translateZ(0);
+  transform: translateY(-3px) translateZ(0);
 }
 
 /* Optimize grid layouts */
 .grid-optimized {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    contain: layout;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  contain: layout;
 }
 
 /* Image optimization */
 .responsive-image {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    transition: transform 0.3s ease;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
 .responsive-image:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 /* Video optimization */
 .optimized-video {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: cover;
 }
 
 /* Reduce paint operations */
 .no-paint {
-    will-change: transform;
-    transform: translateZ(0);
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* Optimize text rendering */
 .optimized-text {
-    font-display: swap;
-    text-rendering: optimizeSpeed;
+  font-display: swap;
+  text-rendering: optimizeSpeed;
 }
 
 /* Critical resource hints */
 .preload-hint {
-    font-display: swap;
+  font-display: swap;
 }
 
 /* Efficient loading states */
 .loading-efficient {
-    background: linear-gradient(90deg, 
-        rgba(255, 255, 255, 0.1) 25%, 
-        rgba(255, 255, 255, 0.2) 50%, 
-        rgba(255, 255, 255, 0.1) 75%);
-    background-size: 200% 100%;
-    animation: shimmer-fast 1s infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-fast 1s infinite;
 }
 
 @keyframes shimmer-fast {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* Mobile-first responsive optimizations */
 @media (max-width: 768px) {
-    .mobile-optimize {
-        contain: layout style;
-    }
-    
-    .mobile-optimize * {
-        will-change: auto;
-    }
-    
-    /* Reduce animation complexity on mobile */
-    .complex-animation {
-        animation: none;
-    }
+  .mobile-optimize {
+    contain: layout style;
+  }
+
+  .mobile-optimize * {
+    will-change: auto;
+  }
+
+  /* Reduce animation complexity on mobile */
+  .complex-animation {
+    animation: none;
+  }
 }
 
 /* Performance monitoring styles */
 .performance-monitor {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    z-index: 9999;
-    display: none;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 9999;
+  display: none;
 }
 
 .performance-monitor.show {
-    display: block;
+  display: block;
 }

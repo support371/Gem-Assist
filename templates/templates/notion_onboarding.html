@@ -1,248 +1,307 @@
-{% extends "base.html" %}
-
-{% block title %}Notion CMS Setup Guide - GEM Enterprise{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Notion CMS Setup Guide - GEM
+Enterprise{% endblock %} {% block content %}
 <section class="page-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h1><i class="fab fa-notion me-3"></i>Notion CMS Setup Guide</h1>
-                <p class="lead">Easy steps to connect your Notion database</p>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h1><i class="fab fa-notion me-3"></i>Notion CMS Setup Guide</h1>
+        <p class="lead">Easy steps to connect your Notion database</p>
+      </div>
     </div>
+  </div>
 </section>
 
 <section class="py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-10 mx-auto">
-                <!-- Step 1: Create Integration -->
-                <div class="setup-step mb-5">
-                    <div class="step-number">Step 1</div>
-                    <h3>Create Your Notion Integration</h3>
-                    <div class="row">
-                        <div class="col-md-8">
-                            <ol>
-                                <li>Visit <a href="https://www.notion.so/my-integrations" target="_blank" class="text-primary">
-                                    notion.so/my-integrations <i class="fas fa-external-link-alt ms-1"></i>
-                                </a></li>
-                                <li>Click "New integration" button</li>
-                                <li>Name it "GEM Enterprise CMS"</li>
-                                <li>Select your workspace</li>
-                                <li>Grant the following capabilities:
-                                    <ul>
-                                        <li>Read content</li>
-                                        <li>Update content</li>
-                                        <li>Insert content</li>
-                                    </ul>
-                                </li>
-                                <li>Click "Submit"</li>
-                                <li>Copy the "Internal Integration Secret"</li>
-                            </ol>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="info-box">
-                                <i class="fas fa-info-circle text-info"></i>
-                                <p>Your integration secret starts with "secret_" and should be kept secure.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 2: Create Database -->
-                <div class="setup-step mb-5">
-                    <div class="step-number">Step 2</div>
-                    <h3>Create Your Content Database</h3>
-                    <div class="row">
-                        <div class="col-md-8">
-                            <ol>
-                                <li>Open Notion and create a new page</li>
-                                <li>Add a database (type "/" and select "Database - Inline")</li>
-                                <li>Name it "GEM Enterprise Content"</li>
-                                <li>Click the "..." menu in the top right of the database</li>
-                                <li>Select "Add connections"</li>
-                                <li>Find and select "GEM Enterprise CMS" integration</li>
-                                <li>Copy the database ID from the URL:
-                                    <div class="code-example mt-2">
-                                        https://notion.so/<span class="text-warning">1df61c1697bb80748514fbfac3a3c560</span>?v=...
-                                    </div>
-                                    <small class="text-muted">The highlighted part is your database ID</small>
-                                </li>
-                            </ol>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="info-box">
-                                <i class="fas fa-lightbulb text-warning"></i>
-                                <p>The database will be automatically configured with all required properties when you initialize content.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 3: Configure Environment -->
-                <div class="setup-step mb-5">
-                    <div class="step-number">Step 3</div>
-                    <h3>Update Environment Variables</h3>
-                    <div class="row">
-                        <div class="col-md-8">
-                            <p>Add these to your environment:</p>
-                            <div class="code-block">
-                                <pre><code>NOTION_INTEGRATION_SECRET=secret_your_integration_secret_here
-NOTION_DATABASE_ID=your_database_id_here</code></pre>
-                            </div>
-                            <div class="mt-3">
-                                <h5>Current Status:</h5>
-                                <ul class="status-list">
-                                    <li>
-                                        NOTION_INTEGRATION_SECRET: 
-                                        {% if has_secret %}
-                                        <span class="badge bg-success">Configured</span>
-                                        {% else %}
-                                        <span class="badge bg-danger">Not Set</span>
-                                        {% endif %}
-                                    </li>
-                                    <li>
-                                        NOTION_DATABASE_ID: 
-                                        {% if has_database %}
-                                        <span class="badge bg-success">Configured</span>
-                                        {% else %}
-                                        <span class="badge bg-danger">Not Set</span>
-                                        {% endif %}
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="info-box">
-                                <i class="fas fa-shield-alt text-danger"></i>
-                                <p>Keep your integration secret secure. Never share it publicly.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 4: Initialize Content -->
-                <div class="setup-step mb-5">
-                    <div class="step-number">Step 4</div>
-                    <h3>Initialize Your Content</h3>
-                    <div class="row">
-                        <div class="col-md-8">
-                            {% if has_secret and has_database %}
-                            <p>Great! Your Notion is configured. Now initialize your content:</p>
-                            <form action="{{ url_for('notion_initialize') }}" method="POST">
-                                <button type="submit" class="btn btn-success btn-lg">
-                                    <i class="fas fa-magic me-2"></i>Create Sample Content
-                                </button>
-                            </form>
-                            <p class="mt-3">This will create:</p>
-                            <ul>
-                                <li>5 sample services</li>
-                                <li>3 news articles</li>
-                                <li>2 testimonials</li>
-                                <li>Proper database structure</li>
-                            </ul>
-                            {% else %}
-                            <div class="alert alert-warning">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                Please complete steps 1-3 before initializing content.
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-4">
-                            <div class="info-box">
-                                <i class="fas fa-rocket text-success"></i>
-                                <p>After initialization, you can manage all content directly in Notion!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Video Tutorial Placeholder -->
-                <div class="setup-step mb-5">
-                    <div class="step-number">
-                        <i class="fas fa-video"></i>
-                    </div>
-                    <h3>Video Tutorial</h3>
-                    <div class="video-placeholder">
-                        <i class="fas fa-play-circle fa-3x mb-3"></i>
-                        <p>Coming Soon: Step-by-step video guide</p>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="quick-actions text-center mt-5">
-                    <h4>Quick Actions</h4>
-                    <div class="btn-group" role="group">
-                        <a href="{{ url_for('notion_setup') }}" class="btn btn-primary">
-                            <i class="fas fa-cog me-2"></i>Admin Panel
-                        </a>
-                        <button onclick="syncContent()" class="btn btn-info">
-                            <i class="fas fa-sync me-2"></i>Sync Now
-                        </button>
-                        <a href="https://www.notion.so" target="_blank" class="btn btn-secondary">
-                            <i class="fab fa-notion me-2"></i>Open Notion
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Troubleshooting -->
-                <div class="troubleshooting mt-5">
-                    <h4><i class="fas fa-tools me-2"></i>Troubleshooting</h4>
-                    <div class="accordion" id="troubleshootingAccordion">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue1">
-                                    Database not found error
-                                </button>
-                            </h2>
-                            <div id="issue1" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
-                                <div class="accordion-body">
-                                    Make sure you've shared the database with your integration. Go to the database page, click "..." → "Add connections" → Select your integration.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue2">
-                                    Content not appearing on website
-                                </button>
-                            </h2>
-                            <div id="issue2" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
-                                <div class="accordion-body">
-                                    Click "Sync Now" to refresh the cache. Make sure your content status is set to "Published" in Notion.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#issue3">
-                                    Invalid API key error
-                                </button>
-                            </h2>
-                            <div id="issue3" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
-                                <div class="accordion-body">
-                                    Verify your integration secret starts with "secret_" and is copied correctly. Check for extra spaces.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <!-- Step 1: Create Integration -->
+        <div class="setup-step mb-5">
+          <div class="step-number">Step 1</div>
+          <h3>Create Your Notion Integration</h3>
+          <div class="row">
+            <div class="col-md-8">
+              <ol>
+                <li>
+                  Visit
+                  <a
+                    href="https://www.notion.so/my-integrations"
+                    target="_blank"
+                    class="text-primary"
+                  >
+                    notion.so/my-integrations
+                    <i class="fas fa-external-link-alt ms-1"></i>
+                  </a>
+                </li>
+                <li>Click "New integration" button</li>
+                <li>Name it "GEM Enterprise CMS"</li>
+                <li>Select your workspace</li>
+                <li>
+                  Grant the following capabilities:
+                  <ul>
+                    <li>Read content</li>
+                    <li>Update content</li>
+                    <li>Insert content</li>
+                  </ul>
+                </li>
+                <li>Click "Submit"</li>
+                <li>Copy the "Internal Integration Secret"</li>
+              </ol>
             </div>
+            <div class="col-md-4">
+              <div class="info-box">
+                <i class="fas fa-info-circle text-info"></i>
+                <p>
+                  Your integration secret starts with "secret_" and should be
+                  kept secure.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Step 2: Create Database -->
+        <div class="setup-step mb-5">
+          <div class="step-number">Step 2</div>
+          <h3>Create Your Content Database</h3>
+          <div class="row">
+            <div class="col-md-8">
+              <ol>
+                <li>Open Notion and create a new page</li>
+                <li>
+                  Add a database (type "/" and select "Database - Inline")
+                </li>
+                <li>Name it "GEM Enterprise Content"</li>
+                <li>Click the "..." menu in the top right of the database</li>
+                <li>Select "Add connections"</li>
+                <li>Find and select "GEM Enterprise CMS" integration</li>
+                <li>
+                  Copy the database ID from the URL:
+                  <div class="code-example mt-2">
+                    https://notion.so/<span class="text-warning"
+                      >1df61c1697bb80748514fbfac3a3c560</span
+                    >?v=...
+                  </div>
+                  <small class="text-muted"
+                    >The highlighted part is your database ID</small
+                  >
+                </li>
+              </ol>
+            </div>
+            <div class="col-md-4">
+              <div class="info-box">
+                <i class="fas fa-lightbulb text-warning"></i>
+                <p>
+                  The database will be automatically configured with all
+                  required properties when you initialize content.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Configure Environment -->
+        <div class="setup-step mb-5">
+          <div class="step-number">Step 3</div>
+          <h3>Update Environment Variables</h3>
+          <div class="row">
+            <div class="col-md-8">
+              <p>Add these to your environment:</p>
+              <div class="code-block">
+                <pre><code>NOTION_INTEGRATION_SECRET=secret_your_integration_secret_here
+NOTION_DATABASE_ID=your_database_id_here</code></pre>
+              </div>
+              <div class="mt-3">
+                <h5>Current Status:</h5>
+                <ul class="status-list">
+                  <li>
+                    NOTION_INTEGRATION_SECRET: {% if has_secret %}
+                    <span class="badge bg-success">Configured</span>
+                    {% else %}
+                    <span class="badge bg-danger">Not Set</span>
+                    {% endif %}
+                  </li>
+                  <li>
+                    NOTION_DATABASE_ID: {% if has_database %}
+                    <span class="badge bg-success">Configured</span>
+                    {% else %}
+                    <span class="badge bg-danger">Not Set</span>
+                    {% endif %}
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="info-box">
+                <i class="fas fa-shield-alt text-danger"></i>
+                <p>
+                  Keep your integration secret secure. Never share it publicly.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Initialize Content -->
+        <div class="setup-step mb-5">
+          <div class="step-number">Step 4</div>
+          <h3>Initialize Your Content</h3>
+          <div class="row">
+            <div class="col-md-8">
+              {% if has_secret and has_database %}
+              <p>
+                Great! Your Notion is configured. Now initialize your content:
+              </p>
+              <form action="{{ url_for('notion_initialize') }}" method="POST">
+                <button type="submit" class="btn btn-success btn-lg">
+                  <i class="fas fa-magic me-2"></i>Create Sample Content
+                </button>
+              </form>
+              <p class="mt-3">This will create:</p>
+              <ul>
+                <li>5 sample services</li>
+                <li>3 news articles</li>
+                <li>2 testimonials</li>
+                <li>Proper database structure</li>
+              </ul>
+              {% else %}
+              <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Please complete steps 1-3 before initializing content.
+              </div>
+              {% endif %}
+            </div>
+            <div class="col-md-4">
+              <div class="info-box">
+                <i class="fas fa-rocket text-success"></i>
+                <p>
+                  After initialization, you can manage all content directly in
+                  Notion!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Tutorial Placeholder -->
+        <div class="setup-step mb-5">
+          <div class="step-number">
+            <i class="fas fa-video"></i>
+          </div>
+          <h3>Video Tutorial</h3>
+          <div class="video-placeholder">
+            <i class="fas fa-play-circle fa-3x mb-3"></i>
+            <p>Coming Soon: Step-by-step video guide</p>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions text-center mt-5">
+          <h4>Quick Actions</h4>
+          <div class="btn-group" role="group">
+            <a href="{{ url_for('notion_setup') }}" class="btn btn-primary">
+              <i class="fas fa-cog me-2"></i>Admin Panel
+            </a>
+            <button onclick="syncContent()" class="btn btn-info">
+              <i class="fas fa-sync me-2"></i>Sync Now
+            </button>
+            <a
+              href="https://www.notion.so"
+              target="_blank"
+              class="btn btn-secondary"
+            >
+              <i class="fab fa-notion me-2"></i>Open Notion
+            </a>
+          </div>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="troubleshooting mt-5">
+          <h4><i class="fas fa-tools me-2"></i>Troubleshooting</h4>
+          <div class="accordion" id="troubleshootingAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#issue1"
+                >
+                  Database not found error
+                </button>
+              </h2>
+              <div
+                id="issue1"
+                class="accordion-collapse collapse"
+                data-bs-parent="#troubleshootingAccordion"
+              >
+                <div class="accordion-body">
+                  Make sure you've shared the database with your integration. Go
+                  to the database page, click "..." → "Add connections" → Select
+                  your integration.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#issue2"
+                >
+                  Content not appearing on website
+                </button>
+              </h2>
+              <div
+                id="issue2"
+                class="accordion-collapse collapse"
+                data-bs-parent="#troubleshootingAccordion"
+              >
+                <div class="accordion-body">
+                  Click "Sync Now" to refresh the cache. Make sure your content
+                  status is set to "Published" in Notion.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#issue3"
+                >
+                  Invalid API key error
+                </button>
+              </h2>
+              <div
+                id="issue3"
+                class="accordion-collapse collapse"
+                data-bs-parent="#troubleshootingAccordion"
+              >
+                <div class="accordion-body">
+                  Verify your integration secret starts with "secret_" and is
+                  copied correctly. Check for extra spaces.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
 <style>
-.setup-step {
+  .setup-step {
     background: #1a1a1a;
     border-radius: 10px;
     padding: 30px;
     border-left: 4px solid var(--primary-color);
-}
+  }
 
-.step-number {
+  .step-number {
     background: var(--primary-color);
     color: white;
     width: 40px;
@@ -253,102 +312,102 @@ NOTION_DATABASE_ID=your_database_id_here</code></pre>
     justify-content: center;
     font-weight: bold;
     margin-bottom: 20px;
-}
+  }
 
-.info-box {
+  .info-box {
     background: #252525;
     border-radius: 8px;
     padding: 20px;
     margin-top: 20px;
-}
+  }
 
-.info-box i {
+  .info-box i {
     font-size: 24px;
     margin-bottom: 10px;
     display: block;
-}
+  }
 
-.code-example {
+  .code-example {
     background: #0d0d0d;
     padding: 10px;
     border-radius: 5px;
     font-family: monospace;
     word-break: break-all;
-}
+  }
 
-.code-block {
+  .code-block {
     background: #0d0d0d;
     border-radius: 5px;
     padding: 15px;
-}
+  }
 
-.code-block pre {
+  .code-block pre {
     margin: 0;
     color: #fff;
-}
+  }
 
-.status-list {
+  .status-list {
     list-style: none;
     padding: 0;
-}
+  }
 
-.status-list li {
+  .status-list li {
     padding: 8px 0;
     border-bottom: 1px solid #333;
-}
+  }
 
-.video-placeholder {
+  .video-placeholder {
     background: #1a1a1a;
     border: 2px dashed #444;
     border-radius: 10px;
     padding: 60px;
     text-align: center;
     color: #888;
-}
+  }
 
-.quick-actions {
+  .quick-actions {
     background: #1a1a1a;
     border-radius: 10px;
     padding: 30px;
-}
+  }
 
-.troubleshooting {
+  .troubleshooting {
     background: #1a1a1a;
     border-radius: 10px;
     padding: 30px;
-}
+  }
 
-.accordion-item {
+  .accordion-item {
     background: #252525;
     border: none;
     margin-bottom: 10px;
-}
+  }
 
-.accordion-button {
+  .accordion-button {
     background: #252525;
     color: #fff;
-}
+  }
 
-.accordion-button:not(.collapsed) {
+  .accordion-button:not(.collapsed) {
     background: var(--primary-color);
     color: #fff;
-}
+  }
 </style>
 
 <script>
-function syncContent() {
-    fetch('/api/notion/sync', { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Content synced successfully!');
-            } else {
-                alert('Error syncing content: ' + (data.error || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            alert('Error: ' + error);
-        });
-}
+  function syncContent() {
+    fetch("/api/notion/sync", { method: "POST" })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Content synced successfully!");
+        } else {
+          alert("Error syncing content: " + (data.error || "Unknown error"));
+        }
+      })
+      .catch((error) => {
+        alert("Error: " + error);
+      });
+  }
 </script>
 {% endblock %}
