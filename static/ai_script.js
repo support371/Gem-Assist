@@ -20,14 +20,18 @@ async function sendMessage() {
   try {
     const response = await fetch("/chat", {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({message: text})
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text }),
     });
 
     const data = await response.json();
     appendMessage("AI", data.reply, "ai");
   } catch (err) {
-    appendMessage("AI", "Sorry, something went wrong while contacting the assistant.", "ai");
+    appendMessage(
+      "AI",
+      "Sorry, something went wrong while contacting the assistant.",
+      "ai",
+    );
   } finally {
     sendBtn.disabled = false;
     sendBtn.textContent = "Send";
@@ -45,10 +49,7 @@ function appendMessage(sender, text, type) {
 }
 
 function escapeHtml(str) {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 // Allow pressing Enter to send

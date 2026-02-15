@@ -4,486 +4,543 @@ Enterprise-grade UI for automated content creation
 Integrates with Flask template system
 -->
 
-{% extends "base.html" %}
-
-{% block title %}AI Media Generator - GEM Enterprise{% endblock %}
-
-{% block extra_css %}
+{% extends "base.html" %} {% block title %}AI Media Generator - GEM Enterprise{%
+endblock %} {% block extra_css %}
 <style>
-    /* Media Generator Specific Styles */
-    .media-generator {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    }
-    
-    .media-section {
-        margin-bottom: 3rem;
-        padding: 1.5rem;
-        background: var(--bg-darker);
-        border-radius: 8px;
-        border-left: 4px solid var(--primary-color);
-    }
-    
-    .media-input-group {
-        margin-bottom: 1.5rem;
-    }
-    
-    .media-input-group label {
-        color: var(--text-secondary);
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-    
-    .media-textarea {
-        width: 100%;
-        min-height: 120px;
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        padding: 1rem;
-        color: var(--text-primary);
-        font-family: inherit;
-        resize: vertical;
-    }
-    
-    .media-input {
-        width: 100%;
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        padding: 0.75rem;
-        color: var(--text-primary);
-        font-family: inherit;
-    }
-    
-    .media-select {
-        width: 100%;
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        padding: 0.75rem;
-        color: var(--text-primary);
-        font-family: inherit;
-    }
-    
-    .media-btn {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 1rem 2rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        width: 100%;
-        margin-top: 1rem;
-    }
-    
-    .media-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 102, 204, 0.3);
-    }
-    
-    .media-btn:disabled {
-        background: var(--text-muted);
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    
-    .loading-spinner {
-        display: none;
-        margin: 1rem 0;
-        text-align: center;
-    }
-    
-    .loading-spinner.active {
-        display: block;
-    }
-    
-    .preview-container {
-        margin-top: 1.5rem;
-        padding: 1rem;
-        background: var(--bg-card);
-        border-radius: 6px;
-        border: 1px solid var(--border-color);
-        min-height: 100px;
-        display: none;
-    }
-    
-    .preview-container.active {
-        display: block;
-    }
-    
-    .preview-media {
-        max-width: 100%;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-    }
-    
-    .snippet-code {
-        background: var(--bg-darker);
-        border: 1px solid var(--border-light);
-        border-radius: 4px;
-        padding: 1rem;
-        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-        font-size: 0.9rem;
-        color: var(--text-accent);
-        white-space: pre-wrap;
-        overflow-x: auto;
-    }
-    
-    .error-message {
-        background: rgba(220, 38, 38, 0.1);
-        border: 1px solid var(--danger-color);
-        color: var(--danger-color);
-        padding: 1rem;
-        border-radius: 6px;
-        margin-top: 1rem;
-        display: none;
-    }
-    
-    .error-message.active {
-        display: block;
-    }
-    
-    .success-message {
-        background: rgba(5, 150, 105, 0.1);
-        border: 1px solid var(--success-color);
-        color: var(--success-color);
-        padding: 1rem;
-        border-radius: 6px;
-        margin-top: 1rem;
-        display: none;
-    }
-    
-    .success-message.active {
-        display: block;
-    }
-    
-    .row-inputs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
-    
-    @media (max-width: 768px) {
-        .row-inputs {
-            grid-template-columns: 1fr;
-        }
-    }
-    
-    .section-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-    
-    .section-icon {
-        font-size: 1.5rem;
-        margin-right: 0.75rem;
-        color: var(--primary-color);
-    }
-    
-    .section-title {
-        color: var(--text-primary);
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin: 0;
-    }
-</style>
-{% endblock %}
+  /* Media Generator Specific Styles */
+  .media-generator {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
 
-{% block content %}
+  .media-section {
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    background: var(--bg-darker);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+  }
+
+  .media-input-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .media-input-group label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .media-textarea {
+    width: 100%;
+    min-height: 120px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 1rem;
+    color: var(--text-primary);
+    font-family: inherit;
+    resize: vertical;
+  }
+
+  .media-input {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: var(--text-primary);
+    font-family: inherit;
+  }
+
+  .media-select {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: var(--text-primary);
+    font-family: inherit;
+  }
+
+  .media-btn {
+    background: linear-gradient(
+      135deg,
+      var(--primary-color),
+      var(--primary-light)
+    );
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .media-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 102, 204, 0.3);
+  }
+
+  .media-btn:disabled {
+    background: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .loading-spinner {
+    display: none;
+    margin: 1rem 0;
+    text-align: center;
+  }
+
+  .loading-spinner.active {
+    display: block;
+  }
+
+  .preview-container {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-card);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    min-height: 100px;
+    display: none;
+  }
+
+  .preview-container.active {
+    display: block;
+  }
+
+  .preview-media {
+    max-width: 100%;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+
+  .snippet-code {
+    background: var(--bg-darker);
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+    font-size: 0.9rem;
+    color: var(--text-accent);
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  .error-message {
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    display: none;
+  }
+
+  .error-message.active {
+    display: block;
+  }
+
+  .success-message {
+    background: rgba(5, 150, 105, 0.1);
+    border: 1px solid var(--success-color);
+    color: var(--success-color);
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    display: none;
+  }
+
+  .success-message.active {
+    display: block;
+  }
+
+  .row-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .row-inputs {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-icon {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+    color: var(--primary-color);
+  }
+
+  .section-title {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+</style>
+{% endblock %} {% block content %}
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <!-- Page Header -->
-            <div class="text-center mb-5">
-                <h1 class="display-4 text-gradient">AI Media Generator</h1>
-                <p class="lead text-secondary">Enterprise-grade automated content creation powered by cutting-edge AI</p>
+  <div class="row">
+    <div class="col-12">
+      <!-- Page Header -->
+      <div class="text-center mb-5">
+        <h1 class="display-4 text-gradient">AI Media Generator</h1>
+        <p class="lead text-secondary">
+          Enterprise-grade automated content creation powered by cutting-edge AI
+        </p>
+      </div>
+
+      <!-- Media Generator Interface -->
+      <div class="media-generator">
+        <!-- Image Generation Section -->
+        <div class="media-section" id="image-section">
+          <div class="section-header">
+            <i class="fas fa-image section-icon"></i>
+            <h3 class="section-title">AI Image Generation</h3>
+          </div>
+
+          <div class="media-input-group">
+            <label for="image-prompt">Image Description</label>
+            <textarea
+              id="image-prompt"
+              class="media-textarea"
+              placeholder="Describe the image you want to generate (e.g., 'Professional corporate office with modern technology and security elements')"
+            ></textarea>
+          </div>
+
+          <div class="row-inputs">
+            <div class="media-input-group">
+              <label for="image-size">Image Size</label>
+              <select id="image-size" class="media-select">
+                <option value="1024x1024">Square (1024x1024)</option>
+                <option value="1792x1024">Landscape (1792x1024)</option>
+                <option value="1024x1792">Portrait (1024x1792)</option>
+              </select>
             </div>
-            
-            <!-- Media Generator Interface -->
-            <div class="media-generator">
-                
-                <!-- Image Generation Section -->
-                <div class="media-section" id="image-section">
-                    <div class="section-header">
-                        <i class="fas fa-image section-icon"></i>
-                        <h3 class="section-title">AI Image Generation</h3>
-                    </div>
-                    
-                    <div class="media-input-group">
-                        <label for="image-prompt">Image Description</label>
-                        <textarea id="image-prompt" class="media-textarea" 
-                                placeholder="Describe the image you want to generate (e.g., 'Professional corporate office with modern technology and security elements')"></textarea>
-                    </div>
-                    
-                    <div class="row-inputs">
-                        <div class="media-input-group">
-                            <label for="image-size">Image Size</label>
-                            <select id="image-size" class="media-select">
-                                <option value="1024x1024">Square (1024x1024)</option>
-                                <option value="1792x1024">Landscape (1792x1024)</option>
-                                <option value="1024x1792">Portrait (1024x1792)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="media-input-group">
-                            <label for="image-style">Style</label>
-                            <select id="image-style" class="media-select">
-                                <option value="vivid">Vivid</option>
-                                <option value="natural">Natural</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <button id="generate-image-btn" class="media-btn">
-                        <i class="fas fa-magic"></i> Generate Professional Image
-                    </button>
-                    
-                    <div id="image-loading" class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i> Generating your image...
-                    </div>
-                    
-                    <div id="image-preview" class="preview-container">
-                        <h5>Generated Image:</h5>
-                        <img id="image-result" class="preview-media" alt="Generated Image">
-                        <h6>HTML Snippet:</h6>
-                        <div id="image-snippet" class="snippet-code"></div>
-                    </div>
-                    
-                    <div id="image-error" class="error-message"></div>
-                    <div id="image-success" class="success-message"></div>
-                </div>
-                
-                <!-- Video Generation Section -->
-                <div class="media-section" id="video-section">
-                    <div class="section-header">
-                        <i class="fas fa-video section-icon"></i>
-                        <h3 class="section-title">AI Video Generation</h3>
-                    </div>
-                    
-                    <div class="media-input-group">
-                        <label for="video-prompt">Video Description</label>
-                        <textarea id="video-prompt" class="media-textarea" 
-                                placeholder="Describe the video content (e.g., 'Modern cybersecurity operations center with analysts monitoring data streams')"></textarea>
-                    </div>
-                    
-                    <div class="row-inputs">
-                        <div class="media-input-group">
-                            <label for="video-duration">Duration (seconds)</label>
-                            <select id="video-duration" class="media-select">
-                                <option value="4">4 seconds</option>
-                                <option value="6">6 seconds</option>
-                                <option value="8">8 seconds</option>
-                            </select>
-                        </div>
-                        
-                        <div class="media-input-group">
-                            <label for="video-quality">Quality</label>
-                            <select id="video-quality" class="media-select">
-                                <option value="standard">Standard (1024x576)</option>
-                                <option value="hd">HD (1280x720)</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <button id="generate-video-btn" class="media-btn">
-                        <i class="fas fa-film"></i> Generate Professional Video
-                    </button>
-                    
-                    <div id="video-loading" class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i> Generating your video (this may take several minutes)...
-                    </div>
-                    
-                    <div id="video-preview" class="preview-container">
-                        <h5>Generated Video:</h5>
-                        <video id="video-result" class="preview-media" controls></video>
-                        <h6>HTML Snippet:</h6>
-                        <div id="video-snippet" class="snippet-code"></div>
-                    </div>
-                    
-                    <div id="video-error" class="error-message"></div>
-                    <div id="video-success" class="success-message"></div>
-                </div>
-                
-                <!-- Text-to-Speech Section -->
-                <div class="media-section" id="tts-section">
-                    <div class="section-header">
-                        <i class="fas fa-microphone section-icon"></i>
-                        <h3 class="section-title">Professional Text-to-Speech</h3>
-                    </div>
-                    
-                    <div class="media-input-group">
-                        <label for="tts-text">Text to Convert</label>
-                        <textarea id="tts-text" class="media-textarea" 
-                                placeholder="Enter the text you want to convert to speech (e.g., professional announcements, presentations, etc.)"></textarea>
-                    </div>
-                    
-                    <div class="row-inputs">
-                        <div class="media-input-group">
-                            <label for="tts-voice">Voice</label>
-                            <select id="tts-voice" class="media-select">
-                                <option value="Rachel">Rachel (Professional Female)</option>
-                                <option value="Drew">Drew (Professional Male)</option>
-                                <option value="Clyde">Clyde (Warm Male)</option>
-                                <option value="Bella">Bella (Friendly Female)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="media-input-group">
-                            <label for="tts-model">Quality Model</label>
-                            <select id="tts-model" class="media-select">
-                                <option value="eleven_monolingual_v1">Standard Quality</option>
-                                <option value="eleven_multilingual_v2">Premium Quality</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <button id="generate-tts-btn" class="media-btn">
-                        <i class="fas fa-volume-up"></i> Generate Professional Audio
-                    </button>
-                    
-                    <div id="tts-loading" class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i> Converting text to speech...
-                    </div>
-                    
-                    <div id="tts-preview" class="preview-container">
-                        <h5>Generated Audio:</h5>
-                        <audio id="tts-result" class="preview-media" controls></audio>
-                        <h6>HTML Snippet:</h6>
-                        <div id="tts-snippet" class="snippet-code"></div>
-                    </div>
-                    
-                    <div id="tts-error" class="error-message"></div>
-                    <div id="tts-success" class="success-message"></div>
-                </div>
-                
-                <!-- AI Chat Section -->
-                <div class="media-section" id="chat-section">
-                    <div class="section-header">
-                        <i class="fas fa-comments section-icon"></i>
-                        <h3 class="section-title">Enterprise AI Assistant</h3>
-                    </div>
-                    
-                    <div class="media-input-group">
-                        <label for="chat-message">Your Message</label>
-                        <textarea id="chat-message" class="media-textarea" 
-                                placeholder="Ask questions about cybersecurity, real estate, compliance, or any enterprise topic..."></textarea>
-                    </div>
-                    
-                    <div class="row-inputs">
-                        <div class="media-input-group">
-                            <label for="chat-context">Context</label>
-                            <select id="chat-context" class="media-select">
-                                <option value="enterprise">Enterprise General</option>
-                                <option value="cybersecurity">Cybersecurity Focus</option>
-                                <option value="realestate">Real Estate Focus</option>
-                                <option value="legal">Legal & Compliance</option>
-                            </select>
-                        </div>
-                        
-                        <div class="media-input-group">
-                            <label for="conversation-id">Conversation ID</label>
-                            <input type="text" id="conversation-id" class="media-input" 
-                                   placeholder="Enter conversation ID or leave blank for new chat" 
-                                   value="">
-                        </div>
-                    </div>
-                    
-                    <button id="send-chat-btn" class="media-btn">
-                        <i class="fas fa-paper-plane"></i> Send Message
-                    </button>
-                    
-                    <div id="chat-loading" class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i> Processing your message...
-                    </div>
-                    
-                    <div id="chat-preview" class="preview-container">
-                        <h5>AI Response:</h5>
-                        <div id="chat-response" style="background: var(--bg-darker); padding: 1rem; border-radius: 6px; color: var(--text-primary);"></div>
-                    </div>
-                    
-                    <div id="chat-error" class="error-message"></div>
-                    <div id="chat-success" class="success-message"></div>
-                </div>
-                
-                <!-- Voice Call Section -->
-                <div class="media-section" id="call-section">
-                    <div class="section-header">
-                        <i class="fas fa-phone section-icon"></i>
-                        <h3 class="section-title">Automated Voice Calls</h3>
-                    </div>
-                    
-                    <div class="media-input-group">
-                        <label for="call-number">Phone Number</label>
-                        <input type="tel" id="call-number" class="media-input" 
-                               placeholder="+1234567890" 
-                               pattern="^\+[1-9]\d{1,14}$">
-                        <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">
-                            Enter phone number in international format (e.g., +1234567890)
-                        </small>
-                    </div>
-                    
-                    <div class="media-input-group">
-                        <label for="call-message">Message to Deliver</label>
-                        <textarea id="call-message" class="media-textarea" 
-                                placeholder="Enter the message to be delivered via voice call (professional announcements, notifications, etc.)"></textarea>
-                    </div>
-                    
-                    <div class="media-input-group">
-                        <label for="call-voice">Voice Type</label>
-                        <select id="call-voice" class="media-select">
-                            <option value="alice">Alice (Professional Female)</option>
-                            <option value="man">Male Voice</option>
-                            <option value="woman">Female Voice</option>
-                        </select>
-                    </div>
-                    
-                    <button id="place-call-btn" class="media-btn">
-                        <i class="fas fa-phone-alt"></i> Place Professional Call
-                    </button>
-                    
-                    <div id="call-loading" class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i> Placing call...
-                    </div>
-                    
-                    <div id="call-preview" class="preview-container">
-                        <h5>Call Status:</h5>
-                        <div id="call-status" style="background: var(--bg-darker); padding: 1rem; border-radius: 6px; color: var(--text-primary);"></div>
-                    </div>
-                    
-                    <div id="call-error" class="error-message"></div>
-                    <div id="call-success" class="success-message"></div>
-                </div>
-                
-                <!-- System Status -->
-                <div class="media-section" id="status-section">
-                    <div class="section-header">
-                        <i class="fas fa-heartbeat section-icon"></i>
-                        <h3 class="section-title">System Status</h3>
-                    </div>
-                    
-                    <button id="check-status-btn" class="media-btn">
-                        <i class="fas fa-check-circle"></i> Check Service Status
-                    </button>
-                    
-                    <div id="status-preview" class="preview-container">
-                        <h5>Service Health:</h5>
-                        <div id="status-display" style="background: var(--bg-darker); padding: 1rem; border-radius: 6px; color: var(--text-primary);"></div>
-                    </div>
-                </div>
-                
+
+            <div class="media-input-group">
+              <label for="image-style">Style</label>
+              <select id="image-style" class="media-select">
+                <option value="vivid">Vivid</option>
+                <option value="natural">Natural</option>
+              </select>
             </div>
+          </div>
+
+          <button id="generate-image-btn" class="media-btn">
+            <i class="fas fa-magic"></i> Generate Professional Image
+          </button>
+
+          <div id="image-loading" class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i> Generating your image...
+          </div>
+
+          <div id="image-preview" class="preview-container">
+            <h5>Generated Image:</h5>
+            <img
+              id="image-result"
+              class="preview-media"
+              alt="Generated Image"
+            />
+            <h6>HTML Snippet:</h6>
+            <div id="image-snippet" class="snippet-code"></div>
+          </div>
+
+          <div id="image-error" class="error-message"></div>
+          <div id="image-success" class="success-message"></div>
         </div>
+
+        <!-- Video Generation Section -->
+        <div class="media-section" id="video-section">
+          <div class="section-header">
+            <i class="fas fa-video section-icon"></i>
+            <h3 class="section-title">AI Video Generation</h3>
+          </div>
+
+          <div class="media-input-group">
+            <label for="video-prompt">Video Description</label>
+            <textarea
+              id="video-prompt"
+              class="media-textarea"
+              placeholder="Describe the video content (e.g., 'Modern cybersecurity operations center with analysts monitoring data streams')"
+            ></textarea>
+          </div>
+
+          <div class="row-inputs">
+            <div class="media-input-group">
+              <label for="video-duration">Duration (seconds)</label>
+              <select id="video-duration" class="media-select">
+                <option value="4">4 seconds</option>
+                <option value="6">6 seconds</option>
+                <option value="8">8 seconds</option>
+              </select>
+            </div>
+
+            <div class="media-input-group">
+              <label for="video-quality">Quality</label>
+              <select id="video-quality" class="media-select">
+                <option value="standard">Standard (1024x576)</option>
+                <option value="hd">HD (1280x720)</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="generate-video-btn" class="media-btn">
+            <i class="fas fa-film"></i> Generate Professional Video
+          </button>
+
+          <div id="video-loading" class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i> Generating your video (this
+            may take several minutes)...
+          </div>
+
+          <div id="video-preview" class="preview-container">
+            <h5>Generated Video:</h5>
+            <video id="video-result" class="preview-media" controls></video>
+            <h6>HTML Snippet:</h6>
+            <div id="video-snippet" class="snippet-code"></div>
+          </div>
+
+          <div id="video-error" class="error-message"></div>
+          <div id="video-success" class="success-message"></div>
+        </div>
+
+        <!-- Text-to-Speech Section -->
+        <div class="media-section" id="tts-section">
+          <div class="section-header">
+            <i class="fas fa-microphone section-icon"></i>
+            <h3 class="section-title">Professional Text-to-Speech</h3>
+          </div>
+
+          <div class="media-input-group">
+            <label for="tts-text">Text to Convert</label>
+            <textarea
+              id="tts-text"
+              class="media-textarea"
+              placeholder="Enter the text you want to convert to speech (e.g., professional announcements, presentations, etc.)"
+            ></textarea>
+          </div>
+
+          <div class="row-inputs">
+            <div class="media-input-group">
+              <label for="tts-voice">Voice</label>
+              <select id="tts-voice" class="media-select">
+                <option value="Rachel">Rachel (Professional Female)</option>
+                <option value="Drew">Drew (Professional Male)</option>
+                <option value="Clyde">Clyde (Warm Male)</option>
+                <option value="Bella">Bella (Friendly Female)</option>
+              </select>
+            </div>
+
+            <div class="media-input-group">
+              <label for="tts-model">Quality Model</label>
+              <select id="tts-model" class="media-select">
+                <option value="eleven_monolingual_v1">Standard Quality</option>
+                <option value="eleven_multilingual_v2">Premium Quality</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="generate-tts-btn" class="media-btn">
+            <i class="fas fa-volume-up"></i> Generate Professional Audio
+          </button>
+
+          <div id="tts-loading" class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i> Converting text to speech...
+          </div>
+
+          <div id="tts-preview" class="preview-container">
+            <h5>Generated Audio:</h5>
+            <audio id="tts-result" class="preview-media" controls></audio>
+            <h6>HTML Snippet:</h6>
+            <div id="tts-snippet" class="snippet-code"></div>
+          </div>
+
+          <div id="tts-error" class="error-message"></div>
+          <div id="tts-success" class="success-message"></div>
+        </div>
+
+        <!-- AI Chat Section -->
+        <div class="media-section" id="chat-section">
+          <div class="section-header">
+            <i class="fas fa-comments section-icon"></i>
+            <h3 class="section-title">Enterprise AI Assistant</h3>
+          </div>
+
+          <div class="media-input-group">
+            <label for="chat-message">Your Message</label>
+            <textarea
+              id="chat-message"
+              class="media-textarea"
+              placeholder="Ask questions about cybersecurity, real estate, compliance, or any enterprise topic..."
+            ></textarea>
+          </div>
+
+          <div class="row-inputs">
+            <div class="media-input-group">
+              <label for="chat-context">Context</label>
+              <select id="chat-context" class="media-select">
+                <option value="enterprise">Enterprise General</option>
+                <option value="cybersecurity">Cybersecurity Focus</option>
+                <option value="realestate">Real Estate Focus</option>
+                <option value="legal">Legal & Compliance</option>
+              </select>
+            </div>
+
+            <div class="media-input-group">
+              <label for="conversation-id">Conversation ID</label>
+              <input
+                type="text"
+                id="conversation-id"
+                class="media-input"
+                placeholder="Enter conversation ID or leave blank for new chat"
+                value=""
+              />
+            </div>
+          </div>
+
+          <button id="send-chat-btn" class="media-btn">
+            <i class="fas fa-paper-plane"></i> Send Message
+          </button>
+
+          <div id="chat-loading" class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i> Processing your message...
+          </div>
+
+          <div id="chat-preview" class="preview-container">
+            <h5>AI Response:</h5>
+            <div
+              id="chat-response"
+              style="
+                background: var(--bg-darker);
+                padding: 1rem;
+                border-radius: 6px;
+                color: var(--text-primary);
+              "
+            ></div>
+          </div>
+
+          <div id="chat-error" class="error-message"></div>
+          <div id="chat-success" class="success-message"></div>
+        </div>
+
+        <!-- Voice Call Section -->
+        <div class="media-section" id="call-section">
+          <div class="section-header">
+            <i class="fas fa-phone section-icon"></i>
+            <h3 class="section-title">Automated Voice Calls</h3>
+          </div>
+
+          <div class="media-input-group">
+            <label for="call-number">Phone Number</label>
+            <input
+              type="tel"
+              id="call-number"
+              class="media-input"
+              placeholder="+1234567890"
+              pattern="^\+[1-9]\d{1,14}$"
+            />
+            <small
+              style="
+                color: var(--text-muted);
+                display: block;
+                margin-top: 0.5rem;
+              "
+            >
+              Enter phone number in international format (e.g., +1234567890)
+            </small>
+          </div>
+
+          <div class="media-input-group">
+            <label for="call-message">Message to Deliver</label>
+            <textarea
+              id="call-message"
+              class="media-textarea"
+              placeholder="Enter the message to be delivered via voice call (professional announcements, notifications, etc.)"
+            ></textarea>
+          </div>
+
+          <div class="media-input-group">
+            <label for="call-voice">Voice Type</label>
+            <select id="call-voice" class="media-select">
+              <option value="alice">Alice (Professional Female)</option>
+              <option value="man">Male Voice</option>
+              <option value="woman">Female Voice</option>
+            </select>
+          </div>
+
+          <button id="place-call-btn" class="media-btn">
+            <i class="fas fa-phone-alt"></i> Place Professional Call
+          </button>
+
+          <div id="call-loading" class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i> Placing call...
+          </div>
+
+          <div id="call-preview" class="preview-container">
+            <h5>Call Status:</h5>
+            <div
+              id="call-status"
+              style="
+                background: var(--bg-darker);
+                padding: 1rem;
+                border-radius: 6px;
+                color: var(--text-primary);
+              "
+            ></div>
+          </div>
+
+          <div id="call-error" class="error-message"></div>
+          <div id="call-success" class="success-message"></div>
+        </div>
+
+        <!-- System Status -->
+        <div class="media-section" id="status-section">
+          <div class="section-header">
+            <i class="fas fa-heartbeat section-icon"></i>
+            <h3 class="section-title">System Status</h3>
+          </div>
+
+          <button id="check-status-btn" class="media-btn">
+            <i class="fas fa-check-circle"></i> Check Service Status
+          </button>
+
+          <div id="status-preview" class="preview-container">
+            <h5>Service Health:</h5>
+            <div
+              id="status-display"
+              style="
+                background: var(--bg-darker);
+                padding: 1rem;
+                border-radius: 6px;
+                color: var(--text-primary);
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Include the media generation JavaScript -->

@@ -11,6 +11,7 @@ Preferred communication style: Simple, everyday language.
 # System Architecture
 
 ## Frontend Architecture
+
 - **Template Engine**: Jinja2 templating with Flask, utilizing a base template inheritance pattern
 - **CSS Framework**: Bootstrap 5.3.0 for responsive design and component styling
 - **Icon System**: Font Awesome 6.4.0 for consistent iconography throughout the application
@@ -19,6 +20,7 @@ Preferred communication style: Simple, everyday language.
 - **Navigation**: Responsive navigation bar with dropdown menus for service categories
 
 ## Backend Architecture
+
 - **Web Framework**: Flask application with simple route-based architecture
 - **Session Management**: Flask session handling with configurable secret key from environment variables
 - **Logging**: Python logging configured for debug-level output to aid in development and troubleshooting
@@ -26,17 +28,20 @@ Preferred communication style: Simple, everyday language.
 - **Error Handling**: Basic Flask error handling with flash messaging capability
 
 ## Static Asset Management
+
 - **CSS Organization**: Single main stylesheet (`style.css`) with CSS custom properties for theme management
 - **JavaScript**: Centralized main JavaScript file (`main.js`) handling navigation, forms, animations, and theme initialization
 - **Asset Serving**: Flask's built-in static file serving for CSS, JavaScript, and other static assets
 
 ## Page Architecture
+
 - **Service Pages**: Dedicated pages for each business vertical (cybersecurity, real estate, legal services)
 - **Authentication Pages**: Client portal and admin panel with login interfaces
 - **Information Pages**: About, contact, news, and testimonial pages
 - **Dashboard Elements**: Performance metrics and status indicators for monitoring services
 
 ## Design Patterns
+
 - **Template Inheritance**: Base template pattern for consistent layout and navigation
 - **Component-Based UI**: Reusable card components, metric displays, and service sections
 - **Responsive Design**: Mobile-first approach with Bootstrap grid system
@@ -45,21 +50,25 @@ Preferred communication style: Simple, everyday language.
 # External Dependencies
 
 ## Frontend Dependencies
+
 - **Bootstrap 5.3.0**: CSS framework for responsive design and UI components
 - **Font Awesome 6.4.0**: Icon library for user interface elements
 - **CDN Delivery**: External CDN hosting for frontend libraries to ensure fast loading
 
 ## Backend Dependencies
+
 - **Flask**: Python web framework for application structure and routing
 - **Python Standard Library**: Logging, OS environment variable handling
 - **Jinja2**: Template engine (included with Flask) for dynamic HTML generation
 
 ## Development Dependencies
+
 - **Python Environment**: Requires Python runtime environment
 - **Development Server**: Flask's built-in development server for local testing
 - **Environment Variables**: SESSION_SECRET for secure session management
 
 ## Service Integrations
+
 - **Notion CMS**: Comprehensive content management system for managing services, news, testimonials, and featured content
 - **GEM Telegram Workflow System**: 5 specialized bots (@GEMAssist_bot, @GemCyberAssist_bot, @CyberGEMSecure_bot, @realestatechannel_bot) with complete command implementations
   - Make.com integration for workflow automation
@@ -72,6 +81,7 @@ Preferred communication style: Simple, everyday language.
 - **Legal Documentation Systems**: Framework for power of attorney and trust services
 
 ## Deployment Requirements
+
 - **Web Server**: Compatible with WSGI-compliant web servers
 - **Static File Serving**: Requires capability to serve CSS, JavaScript, and image assets
 - **Environment Configuration**: Support for environment variable configuration

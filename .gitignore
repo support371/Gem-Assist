@@ -58,6 +58,8 @@ node_modules/
 
 # Output of 'npm pack'
 *.tgz
+/dist
+*.tsbuildinfo
 
 # Yarn Integrity file
 .yarn-integrity

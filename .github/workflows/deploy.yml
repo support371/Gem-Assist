@@ -6,32 +6,32 @@ name: Deploy GEM Enterprise AI-Powered Website
 
 on:
   push:
-    branches: [ main, production ]
+    branches: [main, production]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: "Deployment environment"
         required: true
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
-        - staging
-        - production
+          - staging
+          - production
       deploy_target:
-        description: 'Deployment target'
+        description: "Deployment target"
         required: true
-        default: 'aws'
+        default: "aws"
         type: choice
         options:
-        - aws
-        - gcp
-        - both
+          - aws
+          - gcp
+          - both
 
 env:
-  NODE_VERSION: '20'
-  PYTHON_VERSION: '3.11'
+  NODE_VERSION: "20"
+  PYTHON_VERSION: "3.11"
   DOCKER_BUILDKIT: 1
 
 jobs:
@@ -42,62 +42,62 @@ jobs:
     name: Security & Compliance Scan
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-    - name: Install security tools
-      run: |
-        pip install bandit safety semgrep
-        npm install -g npm-audit @cyclonedx/cyclonedx-npm audit-ci
+      - name: Install security tools
+        run: |
+          pip install bandit safety semgrep
+          npm install -g npm-audit @cyclonedx/cyclonedx-npm audit-ci
 
-    - name: Python security scan (Bandit)
-      run: |
-        bandit -r . -f json -o bandit-report.json || true
-        bandit -r . --severity-level medium
+      - name: Python security scan (Bandit)
+        run: |
+          bandit -r . -f json -o bandit-report.json || true
+          bandit -r . --severity-level medium
 
-    - name: Python dependency vulnerability check
-      run: |
-        safety check --json --output safety-report.json || true
-        safety check
+      - name: Python dependency vulnerability check
+        run: |
+          safety check --json --output safety-report.json || true
+          safety check
 
-    - name: Node.js security audit
-      run: |
-        npm audit --audit-level high --json > npm-audit.json || true
-        npm audit --audit-level high
+      - name: Node.js security audit
+        run: |
+          npm audit --audit-level high --json > npm-audit.json || true
+          npm audit --audit-level high
 
-    - name: Static code analysis (Semgrep)
-      run: |
-        semgrep --config=auto --json --output=semgrep-report.json . || true
-        semgrep --config=auto .
+      - name: Static code analysis (Semgrep)
+        run: |
+          semgrep --config=auto --json --output=semgrep-report.json . || true
+          semgrep --config=auto .
 
-    - name: Generate SBOM (Software Bill of Materials)
-      run: |
-        cyclonedx-py -o sbom-python.json
-        cyclonedx-npm --output-format json --output-file sbom-node.json
+      - name: Generate SBOM (Software Bill of Materials)
+        run: |
+          cyclonedx-py -o sbom-python.json
+          cyclonedx-npm --output-format json --output-file sbom-node.json
 
-    - name: Upload security reports
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: security-reports
-        path: |
-          bandit-report.json
-          safety-report.json
-          npm-audit.json
-          semgrep-report.json
-          sbom-*.json
+      - name: Upload security reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+            safety-report.json
+            npm-audit.json
+            semgrep-report.json
+            sbom-*.json
 
   # ================================
   # LINT AND CODE QUALITY
@@ -106,7 +106,7 @@ jobs:
     name: Lint, Test & Quality Check
     runs-on: ubuntu-latest
     needs: security-scan
-    
+
     services:
       postgres:
         image: postgres:15
@@ -120,62 +120,62 @@ jobs:
           --health-retries 5
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        cache: 'pip'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
 
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest pytest-cov black flake8 mypy
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov black flake8 mypy
 
-    - name: Install Node.js dependencies
-      run: |
-        npm ci
-        npm install --save-dev eslint prettier jest
+      - name: Install Node.js dependencies
+        run: |
+          npm ci
+          npm install --save-dev eslint prettier jest
 
-    - name: Python code formatting (Black)
-      run: black --check --diff .
+      - name: Python code formatting (Black)
+        run: black --check --diff .
 
-    - name: Python linting (Flake8)
-      run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+      - name: Python linting (Flake8)
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
-    - name: Python type checking (MyPy)
-      run: mypy . --ignore-missing-imports || true
+      - name: Python type checking (MyPy)
+        run: mypy . --ignore-missing-imports || true
 
-    - name: JavaScript/TypeScript linting (ESLint)
-      run: npx eslint . --ext .js,.ts,.jsx,.tsx --max-warnings 0
+      - name: JavaScript/TypeScript linting (ESLint)
+        run: npx eslint . --ext .js,.ts,.jsx,.tsx --max-warnings 0
 
-    - name: Code formatting check (Prettier)
-      run: npx prettier --check "**/*.{js,ts,jsx,tsx,json,css,md}"
+      - name: Code formatting check (Prettier)
+        run: npx prettier --check "**/*.{js,ts,jsx,tsx,json,css,md}"
 
-    - name: Run Python tests
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/gem_enterprise_test
-        FLASK_ENV: testing
-      run: |
-        pytest --cov=. --cov-report=xml --cov-report=html -v
+      - name: Run Python tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/gem_enterprise_test
+          FLASK_ENV: testing
+        run: |
+          pytest --cov=. --cov-report=xml --cov-report=html -v
 
-    - name: Run Node.js tests
-      run: npm test -- --coverage --watchAll=false
+      - name: Run Node.js tests
+        run: npm test -- --coverage --watchAll=false
 
-    - name: Upload test coverage
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./coverage.xml,./coverage/lcov.info
-        fail_ci_if_error: false
+      - name: Upload test coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml,./coverage/lcov.info
+          fail_ci_if_error: false
 
   # ================================
   # BUILD AND PREPARE ASSETS
@@ -187,68 +187,68 @@ jobs:
     strategy:
       matrix:
         target: [aws, gcp]
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-    - name: Create optimized build
-      run: |
-        # Install dependencies
-        pip install -r requirements.txt
-        npm ci
+      - name: Create optimized build
+        run: |
+          # Install dependencies
+          pip install -r requirements.txt
+          npm ci
 
-        # Build frontend assets
-        npm run build || true
-        
-        # Optimize Python bytecode
-        python -m compileall -b .
+          # Build frontend assets
+          npm run build || true
 
-        # Create static asset manifest
-        python -c "
-        import json, os, hashlib
-        manifest = {}
-        for root, dirs, files in os.walk('static'):
-            for file in files:
-                if file.endswith(('.css', '.js', '.png', '.jpg', '.svg')):
-                    path = os.path.join(root, file)
-                    with open(path, 'rb') as f:
-                        hash_md5 = hashlib.md5(f.read()).hexdigest()[:8]
-                    manifest[path] = f'{path}?v={hash_md5}'
-        with open('static/manifest.json', 'w') as f:
-            json.dump(manifest, f, indent=2)
-        "
+          # Optimize Python bytecode
+          python -m compileall -b .
 
-    - name: Create deployment package
-      run: |
-        mkdir -p dist/${{ matrix.target }}
-        
-        # Copy application files
-        cp -r *.py requirements.txt templates static dist/${{ matrix.target }}/
-        
-        # Copy environment-specific configurations
-        if [ "${{ matrix.target }}" = "aws" ]; then
-          cp deployment/aws/* dist/${{ matrix.target }}/ 2>/dev/null || true
-        elif [ "${{ matrix.target }}" = "gcp" ]; then
-          cp deployment/gcp/* dist/${{ matrix.target }}/ 2>/dev/null || true
-        fi
+          # Create static asset manifest
+          python -c "
+          import json, os, hashlib
+          manifest = {}
+          for root, dirs, files in os.walk('static'):
+              for file in files:
+                  if file.endswith(('.css', '.js', '.png', '.jpg', '.svg')):
+                      path = os.path.join(root, file)
+                      with open(path, 'rb') as f:
+                          hash_md5 = hashlib.md5(f.read()).hexdigest()[:8]
+                      manifest[path] = f'{path}?v={hash_md5}'
+          with open('static/manifest.json', 'w') as f:
+              json.dump(manifest, f, indent=2)
+          "
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-${{ matrix.target }}
-        path: dist/${{ matrix.target }}
-        retention-days: 30
+      - name: Create deployment package
+        run: |
+          mkdir -p dist/${{ matrix.target }}
+
+          # Copy application files
+          cp -r *.py requirements.txt templates static dist/${{ matrix.target }}/
+
+          # Copy environment-specific configurations
+          if [ "${{ matrix.target }}" = "aws" ]; then
+            cp deployment/aws/* dist/${{ matrix.target }}/ 2>/dev/null || true
+          elif [ "${{ matrix.target }}" = "gcp" ]; then
+            cp deployment/gcp/* dist/${{ matrix.target }}/ 2>/dev/null || true
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.target }}
+          path: dist/${{ matrix.target }}
+          retention-days: 30
 
   # ================================
   # DEPLOY TO AWS
@@ -258,126 +258,126 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production') && (github.event.inputs.deploy_target == 'aws' || github.event.inputs.deploy_target == 'both' || github.event.inputs.deploy_target == '') }}
-    environment: 
+    environment:
       name: ${{ github.event.inputs.environment || 'staging' }}
       url: ${{ steps.deploy.outputs.url }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: build-aws
-        path: ./build
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-aws
+          path: ./build
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
-    - name: Deploy static assets to S3
-      id: s3-deploy
-      run: |
-        # Sync static files to S3
-        aws s3 sync ./build/static s3://${{ secrets.AWS_S3_BUCKET }}/static \
-          --delete \
-          --cache-control max-age=31536000 \
-          --metadata-directive REPLACE
-        
-        # Sync HTML templates with shorter cache
-        aws s3 sync ./build/templates s3://${{ secrets.AWS_S3_BUCKET }}/templates \
-          --cache-control max-age=3600 \
-          --content-type text/html
-        
-        echo "s3-url=https://${{ secrets.AWS_S3_BUCKET }}.s3.amazonaws.com" >> $GITHUB_OUTPUT
+      - name: Deploy static assets to S3
+        id: s3-deploy
+        run: |
+          # Sync static files to S3
+          aws s3 sync ./build/static s3://${{ secrets.AWS_S3_BUCKET }}/static \
+            --delete \
+            --cache-control max-age=31536000 \
+            --metadata-directive REPLACE
 
-    - name: Invalidate CloudFront cache
-      run: |
-        if [ -n "${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/*"
-        fi
+          # Sync HTML templates with shorter cache
+          aws s3 sync ./build/templates s3://${{ secrets.AWS_S3_BUCKET }}/templates \
+            --cache-control max-age=3600 \
+            --content-type text/html
 
-    - name: Deploy application to Lambda/EC2
-      id: app-deploy
-      run: |
-        # Package application for Lambda
-        cd build
-        zip -r ../app-package.zip . -x "*.pyc" "__pycache__/*"
-        
-        # Deploy via AWS CLI or SAM
-        if [ -n "${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}" ]; then
-          aws lambda update-function-code \
-            --function-name ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }} \
-            --zip-file fileb://../app-package.zip
-          
-          echo "app-url=https://${{ secrets.AWS_API_GATEWAY_URL }}" >> $GITHUB_OUTPUT
-        else
-          echo "Lambda deployment not configured, skipping application deployment"
-          echo "app-url=${{ steps.s3-deploy.outputs.s3-url }}" >> $GITHUB_OUTPUT
-        fi
+          echo "s3-url=https://${{ secrets.AWS_S3_BUCKET }}.s3.amazonaws.com" >> $GITHUB_OUTPUT
 
-    - name: Update Route 53 DNS (if configured)
-      run: |
-        if [ -n "${{ secrets.AWS_ROUTE53_HOSTED_ZONE_ID }}" ] && [ -n "${{ secrets.DOMAIN_NAME }}" ]; then
-          # Update DNS record to point to CloudFront or ALB
-          echo "Updating DNS for ${{ secrets.DOMAIN_NAME }}"
-        fi
+      - name: Invalidate CloudFront cache
+        run: |
+          if [ -n "${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
+            aws cloudfront create-invalidation \
+              --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} \
+              --paths "/*"
+          fi
 
-    - name: Configure security groups and WAF
-      run: |
-        # Apply security group rules
-        if [ -n "${{ secrets.AWS_SECURITY_GROUP_ID }}" ]; then
-          aws ec2 authorize-security-group-ingress \
-            --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
-            --protocol tcp \
-            --port 443 \
-            --cidr 0.0.0.0/0 || true
-          
-          aws ec2 authorize-security-group-ingress \
-            --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
-            --protocol tcp \
-            --port 80 \
-            --cidr 0.0.0.0/0 || true
-        fi
+      - name: Deploy application to Lambda/EC2
+        id: app-deploy
+        run: |
+          # Package application for Lambda
+          cd build
+          zip -r ../app-package.zip . -x "*.pyc" "__pycache__/*"
 
-    - name: Set up monitoring and logging
-      run: |
-        # Create CloudWatch log groups
-        aws logs create-log-group --log-group-name /aws/lambda/${{ secrets.AWS_LAMBDA_FUNCTION_NAME }} || true
-        
-        # Set up CloudWatch alarms
-        aws cloudwatch put-metric-alarm \
-          --alarm-name "HighErrorRate-${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}" \
-          --alarm-description "High error rate for Lambda function" \
-          --metric-name Errors \
-          --namespace AWS/Lambda \
-          --statistic Sum \
-          --period 300 \
-          --threshold 10 \
-          --comparison-operator GreaterThanThreshold \
-          --dimensions Name=FunctionName,Value=${{ secrets.AWS_LAMBDA_FUNCTION_NAME }} \
-          --evaluation-periods 2 || true
+          # Deploy via AWS CLI or SAM
+          if [ -n "${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}" ]; then
+            aws lambda update-function-code \
+              --function-name ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }} \
+              --zip-file fileb://../app-package.zip
 
-    - name: Run post-deployment tests
-      run: |
-        # Health check
-        if [ -n "${{ steps.app-deploy.outputs.app-url }}" ]; then
-          curl -f "${{ steps.app-deploy.outputs.app-url }}/health" || exit 1
-        fi
+            echo "app-url=https://${{ secrets.AWS_API_GATEWAY_URL }}" >> $GITHUB_OUTPUT
+          else
+            echo "Lambda deployment not configured, skipping application deployment"
+            echo "app-url=${{ steps.s3-deploy.outputs.s3-url }}" >> $GITHUB_OUTPUT
+          fi
 
-    - name: Deploy summary
-      id: deploy
-      run: |
-        echo "AWS deployment completed successfully"
-        echo "Static assets: ${{ steps.s3-deploy.outputs.s3-url }}"
-        echo "Application: ${{ steps.app-deploy.outputs.app-url }}"
-        echo "url=${{ steps.app-deploy.outputs.app-url }}" >> $GITHUB_OUTPUT
+      - name: Update Route 53 DNS (if configured)
+        run: |
+          if [ -n "${{ secrets.AWS_ROUTE53_HOSTED_ZONE_ID }}" ] && [ -n "${{ secrets.DOMAIN_NAME }}" ]; then
+            # Update DNS record to point to CloudFront or ALB
+            echo "Updating DNS for ${{ secrets.DOMAIN_NAME }}"
+          fi
+
+      - name: Configure security groups and WAF
+        run: |
+          # Apply security group rules
+          if [ -n "${{ secrets.AWS_SECURITY_GROUP_ID }}" ]; then
+            aws ec2 authorize-security-group-ingress \
+              --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
+              --protocol tcp \
+              --port 443 \
+              --cidr 0.0.0.0/0 || true
+
+            aws ec2 authorize-security-group-ingress \
+              --group-id ${{ secrets.AWS_SECURITY_GROUP_ID }} \
+              --protocol tcp \
+              --port 80 \
+              --cidr 0.0.0.0/0 || true
+          fi
+
+      - name: Set up monitoring and logging
+        run: |
+          # Create CloudWatch log groups
+          aws logs create-log-group --log-group-name /aws/lambda/${{ secrets.AWS_LAMBDA_FUNCTION_NAME }} || true
+
+          # Set up CloudWatch alarms
+          aws cloudwatch put-metric-alarm \
+            --alarm-name "HighErrorRate-${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}" \
+            --alarm-description "High error rate for Lambda function" \
+            --metric-name Errors \
+            --namespace AWS/Lambda \
+            --statistic Sum \
+            --period 300 \
+            --threshold 10 \
+            --comparison-operator GreaterThanThreshold \
+            --dimensions Name=FunctionName,Value=${{ secrets.AWS_LAMBDA_FUNCTION_NAME }} \
+            --evaluation-periods 2 || true
+
+      - name: Run post-deployment tests
+        run: |
+          # Health check
+          if [ -n "${{ steps.app-deploy.outputs.app-url }}" ]; then
+            curl -f "${{ steps.app-deploy.outputs.app-url }}/health" || exit 1
+          fi
+
+      - name: Deploy summary
+        id: deploy
+        run: |
+          echo "AWS deployment completed successfully"
+          echo "Static assets: ${{ steps.s3-deploy.outputs.s3-url }}"
+          echo "Application: ${{ steps.app-deploy.outputs.app-url }}"
+          echo "url=${{ steps.app-deploy.outputs.app-url }}" >> $GITHUB_OUTPUT
 
   # ================================
   # DEPLOY TO GOOGLE CLOUD
@@ -387,126 +387,126 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production') && (github.event.inputs.deploy_target == 'gcp' || github.event.inputs.deploy_target == 'both') }}
-    environment: 
+    environment:
       name: ${{ github.event.inputs.environment || 'staging' }}
       url: ${{ steps.deploy.outputs.url }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: build-gcp
-        path: ./build
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-gcp
+          path: ./build
 
-    - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-      with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-    - name: Create app.yaml for App Engine
-      run: |
-        cat > build/app.yaml << EOF
-        runtime: python311
-        
-        env_variables:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ELEVENLABS_KEY: ${{ secrets.ELEVENLABS_KEY }}
-          TWILIO_SID: ${{ secrets.TWILIO_SID }}
-          TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
-        
-        automatic_scaling:
-          min_instances: 1
-          max_instances: 10
-          target_cpu_utilization: 0.6
-        
-        resources:
-          cpu: 1
-          memory_gb: 1
-          disk_size_gb: 10
-        
-        handlers:
-        - url: /static
-          static_dir: static
-          secure: always
-        
-        - url: /.*
-          script: auto
-          secure: always
-        
-        network:
-          session_affinity: true
-        EOF
+      - name: Create app.yaml for App Engine
+        run: |
+          cat > build/app.yaml << EOF
+          runtime: python311
 
-    - name: Deploy static assets to Cloud Storage
-      id: storage-deploy
-      run: |
-        # Create bucket if it doesn't exist
-        gsutil mb gs://${{ secrets.GCP_BUCKET_NAME }} || true
-        
-        # Sync static files
-        gsutil -m rsync -r -d ./build/static gs://${{ secrets.GCP_BUCKET_NAME }}/static
-        
-        # Set public read permissions
-        gsutil -m acl ch -r -u AllUsers:R gs://${{ secrets.GCP_BUCKET_NAME }}/static
-        
-        echo "storage-url=https://storage.googleapis.com/${{ secrets.GCP_BUCKET_NAME }}" >> $GITHUB_OUTPUT
+          env_variables:
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+            ELEVENLABS_KEY: ${{ secrets.ELEVENLABS_KEY }}
+            TWILIO_SID: ${{ secrets.TWILIO_SID }}
+            TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+            SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
-    - name: Deploy to App Engine
-      id: app-deploy
-      run: |
-        cd build
-        gcloud app deploy app.yaml --quiet --promote
-        
-        # Get the deployed URL
-        APP_URL=$(gcloud app browse --no-launch-browser 2>&1 | grep -o 'https://[^"]*')
-        echo "app-url=$APP_URL" >> $GITHUB_OUTPUT
+          automatic_scaling:
+            min_instances: 1
+            max_instances: 10
+            target_cpu_utilization: 0.6
 
-    - name: Set up Cloud CDN
-      run: |
-        # Configure Cloud CDN for static assets
-        if [ -n "${{ secrets.GCP_CDN_BACKEND_BUCKET }}" ]; then
-          gcloud compute backend-buckets create ${{ secrets.GCP_CDN_BACKEND_BUCKET }} \
-            --gcs-bucket-name=${{ secrets.GCP_BUCKET_NAME }} || true
-        fi
+          resources:
+            cpu: 1
+            memory_gb: 1
+            disk_size_gb: 10
 
-    - name: Configure security policies
-      run: |
-        # Apply Cloud Armor security policies
-        gcloud compute security-policies create gem-enterprise-policy \
-          --description "Security policy for GEM Enterprise" || true
-        
-        # Add rules for DDoS protection and WAF
-        gcloud compute security-policies rules create 1000 \
-          --security-policy gem-enterprise-policy \
-          --expression "true" \
-          --action "allow" || true
+          handlers:
+          - url: /static
+            static_dir: static
+            secure: always
 
-    - name: Set up monitoring
-      run: |
-        # Create custom metrics and alerts
-        gcloud logging sinks create gem-enterprise-errors \
-          bigquery.googleapis.com/projects/${{ secrets.GCP_PROJECT_ID }}/datasets/logs || true
+          - url: /.*
+            script: auto
+            secure: always
 
-    - name: Run post-deployment tests
-      run: |
-        # Health check
-        if [ -n "${{ steps.app-deploy.outputs.app-url }}" ]; then
-          curl -f "${{ steps.app-deploy.outputs.app-url }}/health" || exit 1
-        fi
+          network:
+            session_affinity: true
+          EOF
 
-    - name: Deploy summary
-      id: deploy
-      run: |
-        echo "GCP deployment completed successfully"
-        echo "Static assets: ${{ steps.storage-deploy.outputs.storage-url }}"
-        echo "Application: ${{ steps.app-deploy.outputs.app-url }}"
-        echo "url=${{ steps.app-deploy.outputs.app-url }}" >> $GITHUB_OUTPUT
+      - name: Deploy static assets to Cloud Storage
+        id: storage-deploy
+        run: |
+          # Create bucket if it doesn't exist
+          gsutil mb gs://${{ secrets.GCP_BUCKET_NAME }} || true
+
+          # Sync static files
+          gsutil -m rsync -r -d ./build/static gs://${{ secrets.GCP_BUCKET_NAME }}/static
+
+          # Set public read permissions
+          gsutil -m acl ch -r -u AllUsers:R gs://${{ secrets.GCP_BUCKET_NAME }}/static
+
+          echo "storage-url=https://storage.googleapis.com/${{ secrets.GCP_BUCKET_NAME }}" >> $GITHUB_OUTPUT
+
+      - name: Deploy to App Engine
+        id: app-deploy
+        run: |
+          cd build
+          gcloud app deploy app.yaml --quiet --promote
+
+          # Get the deployed URL
+          APP_URL=$(gcloud app browse --no-launch-browser 2>&1 | grep -o 'https://[^"]*')
+          echo "app-url=$APP_URL" >> $GITHUB_OUTPUT
+
+      - name: Set up Cloud CDN
+        run: |
+          # Configure Cloud CDN for static assets
+          if [ -n "${{ secrets.GCP_CDN_BACKEND_BUCKET }}" ]; then
+            gcloud compute backend-buckets create ${{ secrets.GCP_CDN_BACKEND_BUCKET }} \
+              --gcs-bucket-name=${{ secrets.GCP_BUCKET_NAME }} || true
+          fi
+
+      - name: Configure security policies
+        run: |
+          # Apply Cloud Armor security policies
+          gcloud compute security-policies create gem-enterprise-policy \
+            --description "Security policy for GEM Enterprise" || true
+
+          # Add rules for DDoS protection and WAF
+          gcloud compute security-policies rules create 1000 \
+            --security-policy gem-enterprise-policy \
+            --expression "true" \
+            --action "allow" || true
+
+      - name: Set up monitoring
+        run: |
+          # Create custom metrics and alerts
+          gcloud logging sinks create gem-enterprise-errors \
+            bigquery.googleapis.com/projects/${{ secrets.GCP_PROJECT_ID }}/datasets/logs || true
+
+      - name: Run post-deployment tests
+        run: |
+          # Health check
+          if [ -n "${{ steps.app-deploy.outputs.app-url }}" ]; then
+            curl -f "${{ steps.app-deploy.outputs.app-url }}/health" || exit 1
+          fi
+
+      - name: Deploy summary
+        id: deploy
+        run: |
+          echo "GCP deployment completed successfully"
+          echo "Static assets: ${{ steps.storage-deploy.outputs.storage-url }}"
+          echo "Application: ${{ steps.app-deploy.outputs.app-url }}"
+          echo "url=${{ steps.app-deploy.outputs.app-url }}" >> $GITHUB_OUTPUT
 
   # ================================
   # POST-DEPLOYMENT VERIFICATION
@@ -518,104 +518,104 @@ jobs:
     if: always() && (needs.deploy-aws.result == 'success' || needs.deploy-gcp.result == 'success')
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Install testing dependencies
-      run: |
-        pip install requests pytest playwright
-        playwright install chromium
+      - name: Install testing dependencies
+        run: |
+          pip install requests pytest playwright
+          playwright install chromium
 
-    - name: Run end-to-end tests
-      env:
-        AWS_URL: ${{ needs.deploy-aws.outputs.url }}
-        GCP_URL: ${{ needs.deploy-gcp.outputs.url }}
-      run: |
-        # Create simple E2E test script
-        cat > test_deployment.py << 'EOF'
-        import requests
-        import os
-        import sys
-        
-        def test_deployment(url):
-            if not url:
-                return True
-                
-            print(f"Testing deployment at: {url}")
-            
-            # Test health endpoint
-            try:
-                response = requests.get(f"{url}/health", timeout=30)
-                assert response.status_code == 200, f"Health check failed: {response.status_code}"
-                print("✅ Health check passed")
-            except Exception as e:
-                print(f"❌ Health check failed: {e}")
-                return False
-            
-            # Test main page
-            try:
-                response = requests.get(url, timeout=30)
-                assert response.status_code == 200, f"Main page failed: {response.status_code}"
-                assert "GEM Enterprise" in response.text, "Missing GEM Enterprise branding"
-                print("✅ Main page test passed")
-            except Exception as e:
-                print(f"❌ Main page test failed: {e}")
-                return False
-            
-            # Test media generator page
-            try:
-                response = requests.get(f"{url}/media-generator", timeout=30)
-                assert response.status_code == 200, f"Media generator failed: {response.status_code}"
-                print("✅ Media generator page test passed")
-            except Exception as e:
-                print(f"❌ Media generator page test failed: {e}")
-                return False
-            
-            return True
-        
-        aws_url = os.environ.get('AWS_URL')
-        gcp_url = os.environ.get('GCP_URL')
-        
-        results = []
-        if aws_url:
-            results.append(test_deployment(aws_url))
-        if gcp_url:
-            results.append(test_deployment(gcp_url))
-        
-        if not any(results):
-            print("❌ All deployment tests failed")
-            sys.exit(1)
-        else:
-            print("✅ Deployment verification completed successfully")
-        EOF
-        
-        python test_deployment.py
+      - name: Run end-to-end tests
+        env:
+          AWS_URL: ${{ needs.deploy-aws.outputs.url }}
+          GCP_URL: ${{ needs.deploy-gcp.outputs.url }}
+        run: |
+          # Create simple E2E test script
+          cat > test_deployment.py << 'EOF'
+          import requests
+          import os
+          import sys
 
-    - name: Performance testing
-      run: |
-        # Basic load testing with curl
-        if [ -n "${{ needs.deploy-aws.outputs.url }}" ]; then
-          echo "Running performance test on AWS deployment"
-          for i in {1..10}; do
-            curl -w "@-" -o /dev/null -s "${{ needs.deploy-aws.outputs.url }}" << 'EOF'
-        time_total: %{time_total}s
-        EOF
-          done
-        fi
+          def test_deployment(url):
+              if not url:
+                  return True
 
-    - name: Security verification
-      run: |
-        # Check HTTPS enforcement
-        if [ -n "${{ needs.deploy-aws.outputs.url }}" ]; then
-          echo "Verifying HTTPS enforcement"
-          HTTP_URL=$(echo "${{ needs.deploy-aws.outputs.url }}" | sed 's/https:/http:/')
-          curl -I "$HTTP_URL" | grep -q "301\|302" || echo "Warning: HTTPS redirection not configured"
-        fi
+              print(f"Testing deployment at: {url}")
+
+              # Test health endpoint
+              try:
+                  response = requests.get(f"{url}/health", timeout=30)
+                  assert response.status_code == 200, f"Health check failed: {response.status_code}"
+                  print("✅ Health check passed")
+              except Exception as e:
+                  print(f"❌ Health check failed: {e}")
+                  return False
+
+              # Test main page
+              try:
+                  response = requests.get(url, timeout=30)
+                  assert response.status_code == 200, f"Main page failed: {response.status_code}"
+                  assert "GEM Enterprise" in response.text, "Missing GEM Enterprise branding"
+                  print("✅ Main page test passed")
+              except Exception as e:
+                  print(f"❌ Main page test failed: {e}")
+                  return False
+
+              # Test media generator page
+              try:
+                  response = requests.get(f"{url}/media-generator", timeout=30)
+                  assert response.status_code == 200, f"Media generator failed: {response.status_code}"
+                  print("✅ Media generator page test passed")
+              except Exception as e:
+                  print(f"❌ Media generator page test failed: {e}")
+                  return False
+
+              return True
+
+          aws_url = os.environ.get('AWS_URL')
+          gcp_url = os.environ.get('GCP_URL')
+
+          results = []
+          if aws_url:
+              results.append(test_deployment(aws_url))
+          if gcp_url:
+              results.append(test_deployment(gcp_url))
+
+          if not any(results):
+              print("❌ All deployment tests failed")
+              sys.exit(1)
+          else:
+              print("✅ Deployment verification completed successfully")
+          EOF
+
+          python test_deployment.py
+
+      - name: Performance testing
+        run: |
+          # Basic load testing with curl
+          if [ -n "${{ needs.deploy-aws.outputs.url }}" ]; then
+            echo "Running performance test on AWS deployment"
+            for i in {1..10}; do
+              curl -w "@-" -o /dev/null -s "${{ needs.deploy-aws.outputs.url }}" << 'EOF'
+          time_total: %{time_total}s
+          EOF
+            done
+          fi
+
+      - name: Security verification
+        run: |
+          # Check HTTPS enforcement
+          if [ -n "${{ needs.deploy-aws.outputs.url }}" ]; then
+            echo "Verifying HTTPS enforcement"
+            HTTP_URL=$(echo "${{ needs.deploy-aws.outputs.url }}" | sed 's/https:/http:/')
+            curl -I "$HTTP_URL" | grep -q "301\|302" || echo "Warning: HTTPS redirection not configured"
+          fi
 
   # ================================
   # NOTIFICATION AND CLEANUP
@@ -627,18 +627,18 @@ jobs:
     if: always()
 
     steps:
-    - name: Deployment notification
-      run: |
-        if [ "${{ needs.verify-deployment.result }}" == "success" ]; then
-          echo "🚀 GEM Enterprise deployment completed successfully!"
-          echo "AWS: ${{ needs.deploy-aws.outputs.url }}"
-          echo "GCP: ${{ needs.deploy-gcp.outputs.url }}"
-        else
-          echo "❌ Deployment verification failed"
-          exit 1
-        fi
+      - name: Deployment notification
+        run: |
+          if [ "${{ needs.verify-deployment.result }}" == "success" ]; then
+            echo "🚀 GEM Enterprise deployment completed successfully!"
+            echo "AWS: ${{ needs.deploy-aws.outputs.url }}"
+            echo "GCP: ${{ needs.deploy-gcp.outputs.url }}"
+          else
+            echo "❌ Deployment verification failed"
+            exit 1
+          fi
 
-    - name: Clean up artifacts
-      run: |
-        echo "Cleaning up temporary deployment artifacts"
-        # Cleanup would go here
+      - name: Clean up artifacts
+        run: |
+          echo "Cleaning up temporary deployment artifacts"
+          # Cleanup would go here

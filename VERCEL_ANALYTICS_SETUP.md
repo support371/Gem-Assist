@@ -56,50 +56,53 @@ The analytics are integrated on the client side through a dedicated JavaScript m
 ```javascript
 /**
  * Vercel Web Analytics Integration
- * 
+ *
  * This module initializes Vercel Web Analytics on the client side.
  * It must run on the client side and does not include route support.
- * 
+ *
  * Reference: https://vercel.com/docs/analytics
  */
 
-(function() {
-    'use strict';
+(function () {
+  "use strict";
 
-    /**
-     * Initialize Vercel Web Analytics
-     * This function dynamically imports and injects the analytics
-     */
-    function initVercelAnalytics() {
-        // Import the inject function from @vercel/analytics
-        import('@vercel/analytics').then(function(module) {
-            // Call the inject function to initialize analytics
-            if (module.inject && typeof module.inject === 'function') {
-                module.inject();
-                console.log('Vercel Web Analytics initialized successfully');
-            } else {
-                console.warn('Vercel Analytics inject function not found');
-            }
-        }).catch(function(error) {
-            console.warn('Failed to load Vercel Analytics:', error);
-            // Analytics failure should not break the application
-        });
-    }
+  /**
+   * Initialize Vercel Web Analytics
+   * This function dynamically imports and injects the analytics
+   */
+  function initVercelAnalytics() {
+    // Import the inject function from @vercel/analytics
+    import("@vercel/analytics")
+      .then(function (module) {
+        // Call the inject function to initialize analytics
+        if (module.inject && typeof module.inject === "function") {
+          module.inject();
+          console.log("Vercel Web Analytics initialized successfully");
+        } else {
+          console.warn("Vercel Analytics inject function not found");
+        }
+      })
+      .catch(function (error) {
+        console.warn("Failed to load Vercel Analytics:", error);
+        // Analytics failure should not break the application
+      });
+  }
 
-    /**
-     * Initialize when DOM is ready or immediately if already loaded
-     */
-    if (document.readyState === 'loading') {
-        // DOM is still loading
-        document.addEventListener('DOMContentLoaded', initVercelAnalytics);
-    } else {
-        // DOM is already loaded
-        initVercelAnalytics();
-    }
+  /**
+   * Initialize when DOM is ready or immediately if already loaded
+   */
+  if (document.readyState === "loading") {
+    // DOM is still loading
+    document.addEventListener("DOMContentLoaded", initVercelAnalytics);
+  } else {
+    // DOM is already loaded
+    initVercelAnalytics();
+  }
 })();
 ```
 
 **Key Features:**
+
 - ✅ Uses dynamic imports for better performance
 - ✅ Handles both DOM loading states (early and late initialization)
 - ✅ Includes error handling to prevent analytics failures from breaking the app
@@ -160,6 +163,7 @@ Once your app is deployed and users have visited your site:
 ### Filtering Data
 
 You can filter analytics by:
+
 - Date range
 - Device type (mobile, desktop, tablet)
 - Browser
@@ -169,6 +173,7 @@ You can filter analytics by:
 ## For Pro and Enterprise Plans
 
 Users on Pro and Enterprise plans can add custom events to track:
+
 - Button clicks
 - Form submissions
 - Purchases

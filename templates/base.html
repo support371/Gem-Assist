@@ -1,456 +1,673 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Gem Assist Enterprise - Professional Security & Trust Services{% endblock %}</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}Gem Assist Enterprise - Professional Security & Trust
+      Services{% endblock %}
+    </title>
 
     <!-- Modern Fintech Typography - Professional Grade Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Neue+Haas+Grotesk+Display+Pro:wght@300;400;500;600;700;800;900&family=GT+America:wght@300;400;500;600;700;800;900&family=Aeonik+Pro:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Calibre:wght@300;400;500;600;700;800&family=Aktiv+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Neue+Haas+Grotesk+Display+Pro:wght@300;400;500;600;700;800;900&family=GT+America:wght@300;400;500;600;700;800;900&family=Aeonik+Pro:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Calibre:wght@300;400;500;600;700;800&family=Aktiv+Grotesk:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <!-- Fallback to system fonts -->
     <style>
-    @font-face {
-        font-family: 'Financial Pro';
-        src: local('Aeonik Pro'), local('Neue Haas Grotesk Display Pro'), local('GT America'), local('Calibre'), local('Aktiv Grotesk'), local('Inter'), local('Helvetica Neue'), local('Helvetica'), local('Arial');
+      @font-face {
+        font-family: "Financial Pro";
+        src:
+          local("Aeonik Pro"), local("Neue Haas Grotesk Display Pro"),
+          local("GT America"), local("Calibre"), local("Aktiv Grotesk"),
+          local("Inter"), local("Helvetica Neue"), local("Helvetica"),
+          local("Arial");
         font-weight: 300 900;
         font-display: swap;
-    }
+      }
     </style>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <!-- Custom CSS -->
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/ai-support.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/modern-enterprise.css') }}" rel="stylesheet">
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/ai-support.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/modern-enterprise.css') }}"
+      rel="stylesheet"
+    />
     <!-- Animation CSS -->
-    <link href="{{ url_for('static', filename='css/animations.css') }}" rel="stylesheet">
+    <link
+      href="{{ url_for('static', filename='css/animations.css') }}"
+      rel="stylesheet"
+    />
     <!-- Performance CSS -->
-    <link href="{{ url_for('static', filename='css/performance.css') }}" rel="stylesheet">
+    <link
+      href="{{ url_for('static', filename='css/performance.css') }}"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            background-color: #fff;
-        }
+      body {
+        background-color: #fff;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-                <i class="fas fa-shield-alt me-2"></i>
-                <strong>GEM ENTERPRISE</strong>
-            </a>
+      <div class="container">
+        <a
+          class="navbar-brand d-flex align-items-center"
+          href="{{ url_for('index') }}"
+        >
+          <i class="fas fa-shield-alt me-2"></i>
+          <strong>GEM ENTERPRISE</strong>
+        </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto d-flex align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">
-                            <i class="fas fa-home me-1"></i>Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about') }}">
-                            <i class="fas fa-info-circle me-1"></i>About
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('leadership_vision') }}">
-                            <i class="fas fa-users-cog me-1"></i>Leadership
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-cogs me-1"></i>Services
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="{{ url_for('index') }}">
-                                <i class="fas fa-home me-2"></i>Home
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('services') }}">
-                                <i class="fas fa-list me-2"></i>All Services
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('business_analysis') }}">
-                                <i class="fas fa-chart-network me-2"></i>Business Analysis & Integration
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('telegram_bot') }}">
-                                <i class="fab fa-telegram me-2"></i>Telegram Bot Automation
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('recovery_service') }}">
-                                <i class="fas fa-book me-2"></i>Recovery Service Handbook
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('power_of_attorney') }}">
-                                <i class="fas fa-gavel me-2"></i>Power of Attorney
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('monitoring') }}">
-                                <i class="fas fa-eye me-2"></i>Threat Monitoring
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('investment_portfolio') }}">
-                                <i class="fas fa-chart-line me-2"></i>Investment Portfolio
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('market_insights') }}">
-                                <i class="fas fa-chart-bar me-2"></i>Market Insights
-                            </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-users me-1"></i>Community
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="{{ url_for('testimonials') }}">
-                                <i class="fas fa-star me-2"></i>Testimonials
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('partners') }}">
-                                <i class="fas fa-handshake me-2"></i>Partners & Trustees
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('teams') }}">
-                                <i class="fas fa-user-friends me-2"></i>Our Teams
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('vip_board') }}">
-                                <i class="fas fa-crown me-2"></i>Executive Board (VIP)
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('leadership') }}">
-                                <i class="fas fa-user-tie me-2"></i>Leadership & Board
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('news') }}">
-                                <i class="fas fa-newspaper me-2"></i>News & Newsletter
-                            </a></li>
-                             <li><a class="dropdown-item" href="{{ url_for('all_pages') }}">
-                                <i class="fas fa-sitemap me-2"></i>Sitemap
-                            </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('news') }}">News & Newsletter</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('contact') }}">
-                            <i class="fas fa-envelope me-1"></i>Contact
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle me-1"></i>Access
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-item" href="{{ url_for('client_access') }}">
-                                <i class="fas fa-user me-2"></i>Client Portal
-                            </a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('admin_panel') }}">
-                                <i class="fas fa-cog me-2"></i>Admin Panel
-                            </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item ms-2">
-                        {% include 'auth-buttons.html' %}
-                    </li>
-                </ul>
-            </div>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto d-flex align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('index') }}">
+                <i class="fas fa-home me-1"></i>Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">
+                <i class="fas fa-info-circle me-1"></i>About
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('leadership_vision') }}">
+                <i class="fas fa-users-cog me-1"></i>Leadership
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-cogs me-1"></i>Services
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark">
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('index') }}">
+                    <i class="fas fa-home me-2"></i>Home
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('services') }}">
+                    <i class="fas fa-list me-2"></i>All Services
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('business_analysis') }}"
+                  >
+                    <i class="fas fa-chart-network me-2"></i>Business Analysis &
+                    Integration
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('telegram_bot') }}">
+                    <i class="fab fa-telegram me-2"></i>Telegram Bot Automation
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('recovery_service') }}"
+                  >
+                    <i class="fas fa-book me-2"></i>Recovery Service Handbook
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('power_of_attorney') }}"
+                  >
+                    <i class="fas fa-gavel me-2"></i>Power of Attorney
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('monitoring') }}">
+                    <i class="fas fa-eye me-2"></i>Threat Monitoring
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('investment_portfolio') }}"
+                  >
+                    <i class="fas fa-chart-line me-2"></i>Investment Portfolio
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('market_insights') }}"
+                  >
+                    <i class="fas fa-chart-bar me-2"></i>Market Insights
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-users me-1"></i>Community
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark">
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('testimonials') }}">
+                    <i class="fas fa-star me-2"></i>Testimonials
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('partners') }}">
+                    <i class="fas fa-handshake me-2"></i>Partners & Trustees
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('teams') }}">
+                    <i class="fas fa-user-friends me-2"></i>Our Teams
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('vip_board') }}">
+                    <i class="fas fa-crown me-2"></i>Executive Board (VIP)
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('leadership') }}">
+                    <i class="fas fa-user-tie me-2"></i>Leadership & Board
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('news') }}">
+                    <i class="fas fa-newspaper me-2"></i>News & Newsletter
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('all_pages') }}">
+                    <i class="fas fa-sitemap me-2"></i>Sitemap
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('news') }}"
+                >News & Newsletter</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('contact') }}">
+                <i class="fas fa-envelope me-1"></i>Contact
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="fas fa-user-circle me-1"></i>Access
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('client_access') }}"
+                  >
+                    <i class="fas fa-user me-2"></i>Client Portal
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('admin_panel') }}">
+                    <i class="fas fa-cog me-2"></i>Admin Panel
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item ms-2">{% include 'auth-buttons.html' %}</li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="main-content">
-        {% block content %}{% endblock %}
-    </main>
+    <main class="main-content">{% block content %}{% endblock %}</main>
 
     <!-- Footer -->
     <footer class="footer mt-5">
-        <div class="container">
-            <!-- Trusted Partners & Business Allies Slider -->
-            <div class="partners-trustees-section mb-5">
-                <div class="text-center mb-4">
-                    <h5 class="text-white mb-2">
-                        <i class="fas fa-handshake me-2"></i>
-                        Our Trusted Partners & Business Allies
-                    </h5>
-                    <p class="text-muted small">Working with world-class organizations to deliver excellence</p>
-                </div>
-                
-                <div class="partners-slider-container">
-                    <div class="partners-slider" id="partnersSlider">
-                        <!-- Partners will be dynamically loaded here -->
-                    </div>
-                </div>
+      <div class="container">
+        <!-- Trusted Partners & Business Allies Slider -->
+        <div class="partners-trustees-section mb-5">
+          <div class="text-center mb-4">
+            <h5 class="text-white mb-2">
+              <i class="fas fa-handshake me-2"></i>
+              Our Trusted Partners & Business Allies
+            </h5>
+            <p class="text-muted small">
+              Working with world-class organizations to deliver excellence
+            </p>
+          </div>
+
+          <div class="partners-slider-container">
+            <div class="partners-slider" id="partnersSlider">
+              <!-- Partners will be dynamically loaded here -->
             </div>
-
-            <hr class="my-4 border-secondary">
-
-            <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <h5><i class="fas fa-shield-alt me-2"></i>GEM Enterprise</h5>
-                    <p class="text-muted">Professional Security & Trust Services providing comprehensive digital threat monitoring, asset recovery, real estate services, and cybersecurity solutions.</p>
-                    <div class="verification-badges">
-                        <span class="badge bg-success me-2">
-                            <i class="fas fa-check-circle me-1"></i>Verified Secure
-                        </span>
-                        <span class="badge bg-primary">
-                            <i class="fas fa-star me-1"></i>Trusted Partner
-                        </span>
-                    </div>
-                </div>
-
-                <div class="col-lg-2 mb-4">
-                    <h6>Services</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url_for('services') }}" class="text-muted">All Services</a></li>
-                        <li><a href="{{ url_for('telegram_bot') }}" class="text-muted">Telegram Bot</a></li>
-                        <li><a href="{{ url_for('monitoring') }}" class="text-muted">Threat Monitoring</a></li>
-                        <li><a href="{{ url_for('investment_portfolio') }}" class="text-muted">Investments</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 mb-4">
-                    <h6>Company</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url_for('about') }}" class="text-muted">About Us</a></li>
-                        <li><a href="{{ url_for('teams') }}" class="text-muted">Our Team</a></li>
-                        <li><a href="{{ url_for('leadership') }}" class="text-muted">Leadership</a></li>
-                        <li><a href="{{ url_for('partners') }}" class="text-muted">Partners</a></li>
-                        <li><a href="{{ url_for('news') }}" class="text-muted">News</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 mb-4">
-                    <h6>Support</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url_for('contact') }}" class="text-muted">Contact</a></li>
-                        <li><a href="{{ url_for('client_access') }}" class="text-muted">Client Portal</a></li>
-                        <li><a href="{{ url_for('testimonials') }}" class="text-muted">Testimonials</a></li>
-                        <li><a href="{{ url_for('power_of_attorney') }}" class="text-muted">Legal Services</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-2 mb-4">
-                    <h6>Connect</h6>
-                    <div class="contact-info mb-3">
-                        <p class="text-muted mb-1">
-                            <i class="fas fa-phone me-2"></i>
-                            <a href="tel:+18603054376" class="text-muted">+1 (860) 305-4376</a>
-                        </p>
-                        <p class="text-muted mb-1">
-                            <i class="fas fa-envelope me-2"></i>
-                            <a href="mailto:Admin@gemcybersecurityassist.com" class="text-muted">Admin@gemcybersecurityassist.com</a>
-                        </p>
-                    </div>
-                    <div class="social-links">
-                        <a href="#" class="text-muted me-3"><i class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="#" class="text-muted me-3"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="text-muted me-3"><i class="fab fa-telegram fa-lg"></i></a>
-                        <a href="mailto:support@gemcybersecurityassist.com" class="text-muted"><i class="fas fa-envelope fa-lg"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <hr class="my-4">
-
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <p class="text-muted mb-0">&copy; 2025 GEM Cybersecurity & Monitoring Assist + Alliance Trust Realty LLC. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <small class="text-muted">
-                        <i class="fas fa-lock me-1"></i>Secure • 
-                        <i class="fas fa-certificate me-1"></i>Certified • 
-                        <i class="fas fa-shield-check me-1"></i>Protected
-                    </small>
-                </div>
-            </div>
+          </div>
         </div>
+
+        <hr class="my-4 border-secondary" />
+
+        <div class="row">
+          <div class="col-lg-4 mb-4">
+            <h5><i class="fas fa-shield-alt me-2"></i>GEM Enterprise</h5>
+            <p class="text-muted">
+              Professional Security & Trust Services providing comprehensive
+              digital threat monitoring, asset recovery, real estate services,
+              and cybersecurity solutions.
+            </p>
+            <div class="verification-badges">
+              <span class="badge bg-success me-2">
+                <i class="fas fa-check-circle me-1"></i>Verified Secure
+              </span>
+              <span class="badge bg-primary">
+                <i class="fas fa-star me-1"></i>Trusted Partner
+              </span>
+            </div>
+          </div>
+
+          <div class="col-lg-2 mb-4">
+            <h6>Services</h6>
+            <ul class="list-unstyled">
+              <li>
+                <a href="{{ url_for('services') }}" class="text-muted"
+                  >All Services</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('telegram_bot') }}" class="text-muted"
+                  >Telegram Bot</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('monitoring') }}" class="text-muted"
+                  >Threat Monitoring</a
+                >
+              </li>
+              <li>
+                <a
+                  href="{{ url_for('investment_portfolio') }}"
+                  class="text-muted"
+                  >Investments</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-2 mb-4">
+            <h6>Company</h6>
+            <ul class="list-unstyled">
+              <li>
+                <a href="{{ url_for('about') }}" class="text-muted">About Us</a>
+              </li>
+              <li>
+                <a href="{{ url_for('teams') }}" class="text-muted">Our Team</a>
+              </li>
+              <li>
+                <a href="{{ url_for('leadership') }}" class="text-muted"
+                  >Leadership</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('partners') }}" class="text-muted"
+                  >Partners</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('news') }}" class="text-muted">News</a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-2 mb-4">
+            <h6>Support</h6>
+            <ul class="list-unstyled">
+              <li>
+                <a href="{{ url_for('contact') }}" class="text-muted"
+                  >Contact</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('client_access') }}" class="text-muted"
+                  >Client Portal</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('testimonials') }}" class="text-muted"
+                  >Testimonials</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('power_of_attorney') }}" class="text-muted"
+                  >Legal Services</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-2 mb-4">
+            <h6>Connect</h6>
+            <div class="contact-info mb-3">
+              <p class="text-muted mb-1">
+                <i class="fas fa-phone me-2"></i>
+                <a href="tel:+18603054376" class="text-muted"
+                  >+1 (860) 305-4376</a
+                >
+              </p>
+              <p class="text-muted mb-1">
+                <i class="fas fa-envelope me-2"></i>
+                <a
+                  href="mailto:Admin@gemcybersecurityassist.com"
+                  class="text-muted"
+                  >Admin@gemcybersecurityassist.com</a
+                >
+              </p>
+            </div>
+            <div class="social-links">
+              <a href="#" class="text-muted me-3"
+                ><i class="fab fa-linkedin fa-lg"></i
+              ></a>
+              <a href="#" class="text-muted me-3"
+                ><i class="fab fa-twitter fa-lg"></i
+              ></a>
+              <a href="#" class="text-muted me-3"
+                ><i class="fab fa-telegram fa-lg"></i
+              ></a>
+              <a
+                href="mailto:support@gemcybersecurityassist.com"
+                class="text-muted"
+                ><i class="fas fa-envelope fa-lg"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <p class="text-muted mb-0">
+              &copy; 2025 GEM Cybersecurity & Monitoring Assist + Alliance Trust
+              Realty LLC. All rights reserved.
+            </p>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <small class="text-muted">
+              <i class="fas fa-lock me-1"></i>Secure •
+              <i class="fas fa-certificate me-1"></i>Certified •
+              <i class="fas fa-shield-check me-1"></i>Protected
+            </small>
+          </div>
+        </div>
+      </div>
     </footer>
 
     <!-- Professional Live Chat Support -->
     <div id="liveChatButton" class="live-chat-button">
-        <div class="chat-button-content">
-            <i class="fas fa-comments"></i>
-            <span class="chat-text">Live Support</span>
-            <div class="status-indicator online"></div>
+      <div class="chat-button-content">
+        <i class="fas fa-comments"></i>
+        <span class="chat-text">Live Support</span>
+        <div class="status-indicator online"></div>
+      </div>
+      <div class="chat-tooltip">
+        <div class="chat-agents">
+          <div class="agent-status">
+            <i class="fas fa-user-shield text-primary"></i>
+            <span
+              >Security Team: <strong class="text-success">Online</strong></span
+            >
+          </div>
+          <div class="agent-status">
+            <i class="fas fa-user-tie text-info"></i>
+            <span
+              >Real Estate: <strong class="text-success">Online</strong></span
+            >
+          </div>
+          <div class="agent-status">
+            <i class="fas fa-user-cog text-warning"></i>
+            <span
+              >Technical Support:
+              <strong class="text-success">Online</strong></span
+            >
+          </div>
         </div>
-        <div class="chat-tooltip">
-            <div class="chat-agents">
-                <div class="agent-status">
-                    <i class="fas fa-user-shield text-primary"></i>
-                    <span>Security Team: <strong class="text-success">Online</strong></span>
-                </div>
-                <div class="agent-status">
-                    <i class="fas fa-user-tie text-info"></i>
-                    <span>Real Estate: <strong class="text-success">Online</strong></span>
-                </div>
-                <div class="agent-status">
-                    <i class="fas fa-user-cog text-warning"></i>
-                    <span>Technical Support: <strong class="text-success">Online</strong></span>
-                </div>
-            </div>
-            <small class="text-muted">Average response time: <strong>2 minutes</strong></small>
-        </div>
+        <small class="text-muted"
+          >Average response time: <strong>2 minutes</strong></small
+        >
+      </div>
     </div>
 
     <!-- Live Chat Modal -->
     <div class="modal fade" id="liveChatModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content bg-dark">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title">
-                        <i class="fas fa-shield-alt text-primary me-2"></i>
-                        GEM Enterprise Live Support
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+          <div class="modal-header border-secondary">
+            <h5 class="modal-title">
+              <i class="fas fa-shield-alt text-primary me-2"></i>
+              GEM Enterprise Live Support
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="chat-options">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="support-department">
+                    <i class="fas fa-shield-alt fa-2x text-primary mb-2"></i>
+                    <h6>Cybersecurity</h6>
+                    <p class="small text-muted">
+                      Threat monitoring, incident response, security audits
+                    </p>
+                    <a
+                      href="mailto:Analyzer@gemcybersecurityassist.com"
+                      class="btn btn-primary btn-sm"
+                    >
+                      <i class="fas fa-envelope me-1"></i>Connect Now
+                    </a>
+                  </div>
                 </div>
-                <div class="modal-body">
-                    <div class="chat-options">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <div class="support-department">
-                                    <i class="fas fa-shield-alt fa-2x text-primary mb-2"></i>
-                                    <h6>Cybersecurity</h6>
-                                    <p class="small text-muted">Threat monitoring, incident response, security audits</p>
-                                    <a href="mailto:Analyzer@gemcybersecurityassist.com" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-envelope me-1"></i>Connect Now
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="support-department">
-                                    <i class="fas fa-home fa-2x text-success mb-2"></i>
-                                    <h6>Real Estate</h6>
-                                    <p class="small text-muted">Property investment, portfolio management, asset recovery</p>
-                                    <a href="mailto:support@alliancetrustrealty.com" class="btn btn-success btn-sm">
-                                        <i class="fas fa-envelope me-1"></i>Connect Now
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="support-department">
-                                    <i class="fas fa-headset fa-2x text-info mb-2"></i>
-                                    <h6>General Support</h6>
-                                    <p class="small text-muted">Account access, billing, general inquiries</p>
-                                    <a href="mailto:support@gemcybersecurityassist.com" class="btn btn-info btn-sm">
-                                        <i class="fas fa-envelope me-1"></i>Connect Now
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="emergency-contact mt-4 p-3 bg-danger bg-opacity-10 border border-danger rounded">
-                        <h6 class="text-danger">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Emergency Security Incident?
-                        </h6>
-                        <p class="mb-2">For immediate security threats or active incidents:</p>
-                        <div class="d-flex gap-2">
-                            <a href="tel:+18603054376" class="btn btn-danger btn-sm">
-                                <i class="fas fa-phone me-1"></i>Call: +1 (860) 305-4376
-                            </a>
-                            <a href="mailto:Admin@gemcybersecurityassist.com" class="btn btn-outline-danger btn-sm">
-                                <i class="fas fa-envelope me-1"></i>Emergency Email
-                            </a>
-                        </div>
-                    </div>
+                <div class="col-md-4">
+                  <div class="support-department">
+                    <i class="fas fa-home fa-2x text-success mb-2"></i>
+                    <h6>Real Estate</h6>
+                    <p class="small text-muted">
+                      Property investment, portfolio management, asset recovery
+                    </p>
+                    <a
+                      href="mailto:support@alliancetrustrealty.com"
+                      class="btn btn-success btn-sm"
+                    >
+                      <i class="fas fa-envelope me-1"></i>Connect Now
+                    </a>
+                  </div>
                 </div>
+                <div class="col-md-4">
+                  <div class="support-department">
+                    <i class="fas fa-headset fa-2x text-info mb-2"></i>
+                    <h6>General Support</h6>
+                    <p class="small text-muted">
+                      Account access, billing, general inquiries
+                    </p>
+                    <a
+                      href="mailto:support@gemcybersecurityassist.com"
+                      class="btn btn-info btn-sm"
+                    >
+                      <i class="fas fa-envelope me-1"></i>Connect Now
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
+            <div
+              class="emergency-contact mt-4 p-3 bg-danger bg-opacity-10 border border-danger rounded"
+            >
+              <h6 class="text-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Emergency Security Incident?
+              </h6>
+              <p class="mb-2">
+                For immediate security threats or active incidents:
+              </p>
+              <div class="d-flex gap-2">
+                <a href="tel:+18603054376" class="btn btn-danger btn-sm">
+                  <i class="fas fa-phone me-1"></i>Call: +1 (860) 305-4376
+                </a>
+                <a
+                  href="mailto:Admin@gemcybersecurityassist.com"
+                  class="btn btn-outline-danger btn-sm"
+                >
+                  <i class="fas fa-envelope me-1"></i>Emergency Email
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Partners Slider Script -->
     <script>
-    // Trusted Partners and Business Allies Data
-    const trustedPartners = [
+      // Trusted Partners and Business Allies Data
+      const trustedPartners = [
         {
-            name: "Amazon Web Services (AWS)",
-            logo: "https://logos-world.net/wp-content/uploads/2021/04/Amazon-AWS-Logo.png",
-            category: "Cloud Infrastructure Partner",
-            description: "Enterprise cloud computing & security solutions"
+          name: "Amazon Web Services (AWS)",
+          logo: "https://logos-world.net/wp-content/uploads/2021/04/Amazon-AWS-Logo.png",
+          category: "Cloud Infrastructure Partner",
+          description: "Enterprise cloud computing & security solutions",
         },
         {
-            name: "Microsoft Azure",
-            logo: "https://logos-world.net/wp-content/uploads/2020/04/Microsoft-Azure-Logo.png",
-            category: "Technology Partner",
-            description: "Cloud services & enterprise solutions"
+          name: "Microsoft Azure",
+          logo: "https://logos-world.net/wp-content/uploads/2020/04/Microsoft-Azure-Logo.png",
+          category: "Technology Partner",
+          description: "Cloud services & enterprise solutions",
         },
         {
-            name: "Google Cloud",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Cloud_logo.svg",
-            category: "Data & Analytics Partner",
-            description: "AI/ML and data analytics services"
+          name: "Google Cloud",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Cloud_logo.svg",
+          category: "Data & Analytics Partner",
+          description: "AI/ML and data analytics services",
         },
         {
-            name: "Deloitte",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Deloitte.svg",
-            category: "Strategic Trustee",
-            description: "Advisory & risk management services"
+          name: "Deloitte",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Deloitte.svg",
+          category: "Strategic Trustee",
+          description: "Advisory & risk management services",
         },
         {
-            name: "PwC (PricewaterhouseCoopers)",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/5/5e/PwC_logo.svg",
-            category: "Compliance Trustee",
-            description: "Audit, compliance & assurance services"
+          name: "PwC (PricewaterhouseCoopers)",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/5/5e/PwC_logo.svg",
+          category: "Compliance Trustee",
+          description: "Audit, compliance & assurance services",
         },
         {
-            name: "IBM Security",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
-            category: "Cybersecurity Partner",
-            description: "Enterprise security & threat intelligence"
+          name: "IBM Security",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg",
+          category: "Cybersecurity Partner",
+          description: "Enterprise security & threat intelligence",
         },
         {
-            name: "Cisco Systems",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Cisco_logo_blue_2016.svg",
-            category: "Network Security Partner",
-            description: "Network infrastructure & security solutions"
+          name: "Cisco Systems",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Cisco_logo_blue_2016.svg",
+          category: "Network Security Partner",
+          description: "Network infrastructure & security solutions",
         },
         {
-            name: "Oracle",
-            logo: "https://logos-world.net/wp-content/uploads/2020/09/Oracle-Logo.png",
-            category: "Database Partner",
-            description: "Enterprise database & cloud solutions"
+          name: "Oracle",
+          logo: "https://logos-world.net/wp-content/uploads/2020/09/Oracle-Logo.png",
+          category: "Database Partner",
+          description: "Enterprise database & cloud solutions",
         },
         {
-            name: "Salesforce",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg",
-            category: "CRM Partner",
-            description: "Customer relationship management solutions"
+          name: "Salesforce",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg",
+          category: "CRM Partner",
+          description: "Customer relationship management solutions",
         },
         {
-            name: "KPMG",
-            logo: "https://logos-world.net/wp-content/uploads/2020/04/KPMG-Logo.png",
-            category: "Financial Trustee",
-            description: "Financial audit & advisory services"
+          name: "KPMG",
+          logo: "https://logos-world.net/wp-content/uploads/2020/04/KPMG-Logo.png",
+          category: "Financial Trustee",
+          description: "Financial audit & advisory services",
         },
         {
-            name: "Accenture",
-            logo: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Accenture.svg",
-            category: "Consulting Partner",
-            description: "Digital transformation & consulting"
+          name: "Accenture",
+          logo: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Accenture.svg",
+          category: "Consulting Partner",
+          description: "Digital transformation & consulting",
         },
         {
-            name: "VMware",
-            logo: "https://logos-world.net/wp-content/uploads/2021/02/VMware-Logo.png",
-            category: "Virtualization Partner",
-            description: "Cloud infrastructure & virtualization"
-        }
-    ];
+          name: "VMware",
+          logo: "https://logos-world.net/wp-content/uploads/2021/02/VMware-Logo.png",
+          category: "Virtualization Partner",
+          description: "Cloud infrastructure & virtualization",
+        },
+      ];
 
-    // Initialize Partners Slider
-    document.addEventListener('DOMContentLoaded', function() {
-        const sliderContainer = document.getElementById('partnersSlider');
-        
+      // Initialize Partners Slider
+      document.addEventListener("DOMContentLoaded", function () {
+        const sliderContainer = document.getElementById("partnersSlider");
+
         if (sliderContainer) {
-            // Create two sets for seamless infinite loop
-            const createPartnerCards = () => {
-                return trustedPartners.map(partner => `
+          // Create two sets for seamless infinite loop
+          const createPartnerCards = () => {
+            return trustedPartners
+              .map(
+                (partner) => `
                     <div class="partner-card">
                         <div class="partner-logo-container">
                             <img src="${partner.logo}" alt="${partner.name}" class="partner-logo" 
@@ -462,44 +679,47 @@
                             <div class="partner-description">${partner.description}</div>
                         </div>
                     </div>
-                `).join('');
-            };
-            
-            // Add two sets for seamless loop
-            sliderContainer.innerHTML = createPartnerCards() + createPartnerCards();
-            
-            // Start auto-sliding animation
-            let scrollPosition = 0;
-            const scrollSpeed = 0.5; // pixels per frame
-            
-            function autoSlide() {
-                scrollPosition += scrollSpeed;
-                sliderContainer.style.transform = `translateX(-${scrollPosition}px)`;
-                
-                // Reset when first set is completely scrolled
-                const cardWidth = 320; // width + margin
-                const resetPoint = trustedPartners.length * cardWidth;
-                
-                if (scrollPosition >= resetPoint) {
-                    scrollPosition = 0;
-                }
-                
-                requestAnimationFrame(autoSlide);
+                `,
+              )
+              .join("");
+          };
+
+          // Add two sets for seamless loop
+          sliderContainer.innerHTML =
+            createPartnerCards() + createPartnerCards();
+
+          // Start auto-sliding animation
+          let scrollPosition = 0;
+          const scrollSpeed = 0.5; // pixels per frame
+
+          function autoSlide() {
+            scrollPosition += scrollSpeed;
+            sliderContainer.style.transform = `translateX(-${scrollPosition}px)`;
+
+            // Reset when first set is completely scrolled
+            const cardWidth = 320; // width + margin
+            const resetPoint = trustedPartners.length * cardWidth;
+
+            if (scrollPosition >= resetPoint) {
+              scrollPosition = 0;
             }
-            
-            // Pause on hover
-            sliderContainer.addEventListener('mouseenter', function() {
-                sliderContainer.style.animationPlayState = 'paused';
-            });
-            
-            sliderContainer.addEventListener('mouseleave', function() {
-                sliderContainer.style.animationPlayState = 'running';
-            });
-            
-            // Start animation
-            autoSlide();
+
+            requestAnimationFrame(autoSlide);
+          }
+
+          // Pause on hover
+          sliderContainer.addEventListener("mouseenter", function () {
+            sliderContainer.style.animationPlayState = "paused";
+          });
+
+          sliderContainer.addEventListener("mouseleave", function () {
+            sliderContainer.style.animationPlayState = "running";
+          });
+
+          // Start animation
+          autoSlide();
         }
-    });
+      });
     </script>
 
     <!-- Custom JS -->
@@ -518,5 +738,5 @@
     <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
     <!-- Vercel Web Analytics -->
     <script src="{{ url_for('static', filename='js/vercel-analytics.js') }}"></script>
-</body>
+  </body>
 </html>
