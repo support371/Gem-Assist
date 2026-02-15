@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "server-media.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server-media.js",
+    "build": "cd gem-control-center && npm install && npm run build",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "keywords": [],
   "author": "",

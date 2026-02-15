@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { ThemeProvider, IconButton } from "@itwin/itwinui-react";
+import { ThemeProvider, Button } from "@itwin/itwinui-react";
 import "@itwin/itwinui-react/styles.css";
 
 import { signIn, signOut } from "../auth/oidc";
@@ -41,8 +41,8 @@ export const AppShell: React.FC = () => {
           </nav>
 
           <div style={{ marginTop: 18, display: "flex", gap: 8 }}>
-            <IconButton styleType="borderless" onClick={() => void signIn()} label="Sign in" />
-            <IconButton styleType="borderless" onClick={() => void signOut()} label="Sign out" />
+            <Button styleType="borderless" onClick={() => void signIn()}>Sign in</Button>
+            <Button styleType="borderless" onClick={() => void signOut()}>Sign out</Button>
           </div>
 
           <div style={{ marginTop: 16, opacity: 0.7, fontSize: 12 }}>

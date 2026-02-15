@@ -7,11 +7,11 @@ This project was scaffolded with [degit](https://github.com/Rich-Harris/degit).
 Prior to running the app, you will need to add OIDC client configuration to the variables in the .env file:
 
 ```
-# ---- Authorization Client Settings ----
-IMJS_AUTH_CLIENT_CLIENT_ID=""
-IMJS_AUTH_CLIENT_REDIRECT_URI=""
-IMJS_AUTH_CLIENT_LOGOUT_URI=""
-IMJS_AUTH_CLIENT_SCOPES=""
+VITE_ITWIN_CLIENT_ID="YOUR_CLIENT_ID"
+VITE_ITWIN_REDIRECT_URI="http://localhost:3000/signin-callback"
+VITE_ITWIN_POST_SIGNOUT_REDIRECT_URI="http://localhost:3000"
+VITE_ITWIN_SCOPE="itwin-platform"
+VITE_MARKETING_BASE_URL="/"
 ```
 
 - You can generate a [test client](https://developer.bentley.com/tutorials/web-application-quick-start/#3-register-an-application) to get started.
@@ -25,9 +25,8 @@ IMJS_AUTH_CLIENT_SCOPES=""
 You should also add a valid iTwinId and iModelId for your user in the this file:
 
 ```
-# ---- Test ids ----
-IMJS_ITWIN_ID = ""
-IMJS_IMODEL_ID = ""
+VITE_DEMO_ITWIN_ID = ""
+VITE_DEMO_IMODEL_ID = ""
 ```
 
 - For the IMJS_ITWIN_ID variable, you can use the id of one of your existing iTwins. You can obtain their ids via the [iTwin REST APIs](https://developer.bentley.com/apis/itwins/operations/get-itwin/).
