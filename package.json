@@ -2,9 +2,12 @@
   "name": "workspace",
   "version": "1.0.0",
   "main": "server-media.js",
+  "workspaces": [
+    "gem-control-center"
+  ],
   "scripts": {
     "start": "node server-media.js",
-    "build": "cd gem-control-center && npm install && npm run build",
+    "build": "npm run build --workspace=gem-control-center",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "keywords": [],
