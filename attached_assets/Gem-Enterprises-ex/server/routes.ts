@@ -2,8 +2,11 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getLeadershipData, getCompanyHistory } from "./notion";
+import { registerOpsCleanupRoutes } from "./opsCleanup";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  registerOpsCleanupRoutes(app);
+
   // Leadership data from Notion
   app.get("/api/leadership", async (req, res) => {
     try {
