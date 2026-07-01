@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.display_name }} - Approved Company Representative{% endblock %}
+{% block content %}
+<section class="rep-detail">
+  <a href="{{ url_for('video_representatives.representatives') }}">← Back to approved representatives</a>
+  <p class="department">{{ profile.department }} · {{ profile.profile_kind|title }}</p>
+  <h1>{{ profile.display_name }}</h1>
+  <h2>{{ profile.role_title }}</h2>
+  <p class="bio">{{ profile.bio }}</p>
+
+  {% if profile.requires_disclosure %}
+    <div class="disclosure">
+      <strong>Transparency notice:</strong> {{ profile.disclosure_text }}
+    </div>
+  {% endif %}
+
+  <div class="detail-grid">
+    <section>
+      <h3>Expertise</h3>
+      <ul>{% for item in profile.expertise %}<li>{{ item }}</li>{% else %}<li>General approved company support</li>{% endfor %}</ul>
+    </section>
+    <section>
+      <h3>Languages</h3>
+      <ul>{% for item in profile.languages %}<li>{{ item }}</li>{% endfor %}</ul>
+    </section>
+    <section>
+      <h3>Authorized actions</h3>
+      <ul>{% for item in profile.permitted_actions %}<li>{{ item }}</li>{% else %}<li>Explain approved company services</li>{% endfor %}</ul>
+    </section>
+  </div>
+
+  <a class="request-button" href="{{ url_for('video_representatives.request_video_call', representative=profile.slug) }}">Request a consultation</a>
+</section>
+<style>
+.rep-detail{max-width:900px;margin:auto;padding:4rem 1.25rem;color:#e7eef5}.rep-detail>a{color:#7dd3fc}.department{text-transform:uppercase;letter-spacing:.12em;color:#7dd3fc;margin-top:2rem}.rep-detail h1{font-size:3rem;margin:.3rem 0}.rep-detail h2{color:#94a3b8}.bio{line-height:1.7}.disclosure{margin:1.5rem 0;padding:1rem;background:#241f11;border-left:4px solid #fbbf24}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0}.detail-grid section{background:#101b28;padding:1.2rem;border-radius:12px}.request-button{display:inline-block;background:#38bdf8;color:#06131d!important;padding:.8rem 1rem;border-radius:8px;text-decoration:none;font-weight:800}@media(max-width:720px){.detail-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
