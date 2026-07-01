@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Request a Video Consultation{% endblock %}
+{% block content %}
+<section class="vcr-wrap">
+  <div class="vcr-copy">
+    <p class="vcr-kicker">Company consultation</p>
+    <h1>Request a secure video discussion</h1>
+    <p>Select an approved representative or allow the company to assign the most suitable available specialist.</p>
+  </div>
+  <form class="vcr-form" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="vcr-grid">
+      <div><label>Your name *</label><input name="requester_name" required value="{{ request.form.get('requester_name','') }}"></div>
+      <div><label>Email *</label><input type="email" name="requester_email" required value="{{ request.form.get('requester_email','') }}"></div>
+      <div><label>Company</label><input name="requester_company" value="{{ request.form.get('requester_company','') }}"></div>
+      <div><label>Language</label><input name="language" value="{{ request.form.get('language','English') }}"></div>
+      <div><label>Preferred date and time</label><input type="datetime-local" name="scheduled_for" value="{{ request.form.get('scheduled_for','') }}"></div>
+      <div><label>Duration</label><select name="duration_minutes">{% for duration in [15,30,45,60,90] %}<option value="{{ duration }}" {{ 'selected' if request.form.get('duration_minutes','30')|int == duration else '' }}>{{ duration }} minutes</option>{% endfor %}</select></div>
+    </div>
+    <label>Meeting topic *</label><input name="topic" required value="{{ request.form.get('topic','') }}">
+    <label>Discussion details</label><textarea name="details" rows="5">{{ request.form.get('details','') }}</textarea>
+    <label>Preferred representative</label>
+    <select name="requested_profile_id" id="representativeSelect">
+      <option value="">Assign the best available representative</option>
+      {% for profile in profiles %}
+        <option value="{{ profile.id }}" data-disclosure="{{ profile.disclosure_text|e if profile.requires_disclosure else '' }}" {{ 'selected' if (selected_profile and selected_profile.id == profile.id) or request.form.get('requested_profile_id')|int == profile.id else '' }}>{{ profile.display_name }} — {{ profile.role_title }} ({{ profile.department }})</option>
+      {% endfor %}
+    </select>
+    <div class="vcr-notice" id="representativeDisclosure">The assigned participant may be a clearly identified virtual or human-supervised company representative.</div>
+    <div class="vcr-checks">
+      <label><input type="checkbox" name="representative_disclosure_acknowledged" required> I acknowledge the representative notice and understand that I may request a human team member.</label>
+      <label><input type="checkbox" name="human_handoff_requested"> I want a human team member available for handoff.</label>
+      <label><input type="checkbox" name="recording_consent"> I consent to recording only if the company separately confirms that this meeting will be recorded.</label>
+    </div>
+    <button type="submit">Submit consultation request</button>
+  </form>
+</section>
+<script>
+(() => { const select=document.getElementById('representativeSelect'); const notice=document.getElementById('representativeDisclosure'); const fallback='The assigned participant may be a clearly identified virtual or human-supervised company representative.'; function refresh(){ const option=select.options[select.selectedIndex]; notice.textContent=option.dataset.disclosure||fallback; } select.addEventListener('change',refresh); refresh(); })();
+</script>
+<style>
+.vcr-wrap{max-width:920px;margin:auto;padding:4rem 1.25rem;color:#e7eef5}.vcr-copy{text-align:center;margin-bottom:2rem}.vcr-kicker{text-transform:uppercase;letter-spacing:.14em;color:#7dd3fc}.vcr-copy h1{font-size:clamp(2rem,5vw,3.5rem)}.vcr-form{background:#101b28;border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:2rem}.vcr-form label{display:block;margin:.9rem 0 .4rem;font-weight:650}.vcr-form input,.vcr-form select,.vcr-form textarea{width:100%;padding:.78rem;border-radius:8px;border:1px solid #355067;background:#091521;color:#fff}.vcr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem}.vcr-notice{margin:1rem 0;padding:1rem;background:#241f11;border-left:4px solid #fbbf24}.vcr-checks label{font-weight:400}.vcr-checks input{width:auto;margin-right:.45rem}.vcr-form button{margin-top:1.25rem;padding:.85rem 1.1rem;border:0;border-radius:9px;background:#38bdf8;color:#06131d;font-weight:800;cursor:pointer}@media(max-width:680px){.vcr-grid{grid-template-columns:1fr}.vcr-form{padding:1.2rem}}
+</style>
+{% endblock %}
