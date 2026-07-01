@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Representative Registry Admin{% endblock %}
+{% block content %}
+<section class="avr-wrap">
+  <div class="avr-head">
+    <div>
+      <p>Administration</p>
+      <h1>Video representative registry</h1>
+      <span>Manage approved company profiles, private external profiles, voices, avatars, permissions and authorization records.</span>
+    </div>
+    <a href="{{ url_for('video_representatives.admin_video_call_requests') }}">View call requests</a>
+  </div>
+  <details class="avr-panel" open>
+    <summary>Create representative</summary>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% set profile = none %}
+      {% include "_video_representative_form.html" %}
+      <button class="avr-primary" type="submit">Create representative</button>
+    </form>
+  </details>
+  <div class="avr-list">
+    {% for profile in profiles %}
+      <article>
+        <div>
+          <span class="avr-status {{ profile.authorization_status }}">{{ profile.authorization_status }}</span>
+          <h2>{{ profile.display_name }}</h2>
+          <p>{{ profile.role_title }} · {{ profile.department }}</p>
+          <small>{{ profile.source_type|title }} / {{ profile.profile_kind|title }} · {{ 'Public' if profile.is_public else 'Private' }} · {{ 'Active' if profile.is_active else 'Inactive' }}</small>
+        </div>
+        <a href="{{ url_for('video_representatives.edit_representative', profile_id=profile.id) }}">Edit</a>
+      </article>
+    {% else %}
+      <div class="avr-empty">No representative profiles exist yet.</div>
+    {% endfor %}
+  </div>
+</section>
+<style>
+.avr-wrap{max-width:1180px;margin:auto;padding:3rem 1.25rem;color:#e7eef5}.avr-head{display:flex;justify-content:space-between;gap:2rem;align-items:end;margin-bottom:2rem}.avr-head p{text-transform:uppercase;letter-spacing:.13em;color:#7dd3fc}.avr-head h1{font-size:2.6rem;margin:.25rem 0}.avr-head span{color:#94a3b8}.avr-head>a{padding:.65rem .8rem;border:1px solid #355067;border-radius:8px;background:#132435;color:#dcecf7;text-decoration:none}.avr-panel{background:#101b28;border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:1.4rem;margin-bottom:2rem}.avr-panel summary{cursor:pointer;font-size:1.2rem;font-weight:800;margin-bottom:1rem}.rep-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 1rem}.avr-panel label{display:block;margin:.8rem 0 .35rem;font-weight:650}.avr-panel input,.avr-panel select,.avr-panel textarea{width:100%;padding:.7rem;border:1px solid #355067;border-radius:8px;background:#091521;color:#fff}.avr-panel h3{margin:1.8rem 0 .2rem}.rep-checkboxes{display:grid;gap:.4rem;margin:1rem 0}.rep-checkboxes input{width:auto}.avr-primary{margin-top:1rem;padding:.8rem 1rem;border:0;border-radius:8px;background:#38bdf8;color:#06131d;font-weight:800}.avr-list{display:grid;gap:.8rem}.avr-list article{display:flex;justify-content:space-between;gap:1rem;padding:1.2rem;background:#101b28;border-radius:12px}.avr-list article>a{color:#7dd3fc}.avr-list h2{margin:.25rem 0}.avr-list p{margin:.2rem 0;color:#a8bac8}.avr-status{display:inline-block;padding:.2rem .5rem;border-radius:999px;font-size:.72rem;text-transform:uppercase;background:#334155}.avr-status.approved{background:#14532d}.avr-status.pending{background:#713f12}.avr-status.revoked,.avr-status.suspended{background:#7f1d1d}@media(max-width:760px){.avr-head,.avr-list article{display:block}.avr-head>a{display:inline-block;margin-top:1rem}.rep-form-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
