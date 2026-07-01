@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ profile.display_name }}{% endblock %}
+{% block content %}
+<section class="avre-wrap">
+  <a href="{{ url_for('video_representatives.admin_representatives') }}">← Back to registry</a>
+  <h1>Edit {{ profile.display_name }}</h1>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% include "_video_representative_form.html" %}
+    <button type="submit">Save changes</button>
+  </form>
+</section>
+<style>
+.avre-wrap{max-width:1050px;margin:auto;padding:3rem 1.25rem;color:#e7eef5}.avre-wrap>a{color:#7dd3fc}.avre-wrap form{margin-top:1.5rem;padding:1.5rem;background:#101b28;border-radius:16px}.rep-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0 1rem}.avre-wrap label{display:block;margin:.8rem 0 .35rem;font-weight:650}.avre-wrap input,.avre-wrap select,.avre-wrap textarea{width:100%;padding:.7rem;border:1px solid #355067;border-radius:8px;background:#091521;color:#fff}.avre-wrap h3{margin:1.8rem 0 .2rem}.rep-checkboxes{display:grid;gap:.4rem;margin:1rem 0}.rep-checkboxes input{width:auto}.avre-wrap button{margin-top:1rem;padding:.8rem 1rem;border:0;border-radius:8px;background:#38bdf8;color:#06131d;font-weight:800}@media(max-width:760px){.rep-form-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
