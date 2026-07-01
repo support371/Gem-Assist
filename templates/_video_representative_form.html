@@ -1,0 +1,142 @@
+<div class="rep-form-grid">
+  <div>
+    <label>Display name *</label>
+    <input name="display_name" required value="{{ profile.display_name if profile else '' }}">
+  </div>
+  <div>
+    <label>Role title *</label>
+    <input name="role_title" required value="{{ profile.role_title if profile else '' }}">
+  </div>
+  <div>
+    <label>Department *</label>
+    <input name="department" required value="{{ profile.department if profile else '' }}">
+  </div>
+  <div>
+    <label>Profile source</label>
+    {% set source = profile.source_type if profile else 'company' %}
+    <select name="source_type">
+      <option value="company" {{ 'selected' if source == 'company' else '' }}>Company team profile</option>
+      <option value="external" {{ 'selected' if source == 'external' else '' }}>Approved external profile</option>
+      <option value="private" {{ 'selected' if source == 'private' else '' }}>Private admin-only profile</option>
+    </select>
+  </div>
+  <div>
+    <label>Representative kind</label>
+    {% set kind = profile.profile_kind if profile else 'virtual' %}
+    <select name="profile_kind">
+      <option value="human" {{ 'selected' if kind == 'human' else '' }}>Human</option>
+      <option value="virtual" {{ 'selected' if kind == 'virtual' else '' }}>Virtual</option>
+      <option value="hybrid" {{ 'selected' if kind == 'hybrid' else '' }}>Hybrid / human-supervised</option>
+    </select>
+  </div>
+  <div>
+    <label>Authorization status</label>
+    {% set auth = profile.authorization_status if profile else 'pending' %}
+    <select name="authorization_status">
+      <option value="pending" {{ 'selected' if auth == 'pending' else '' }}>Pending</option>
+      <option value="approved" {{ 'selected' if auth == 'approved' else '' }}>Approved</option>
+      <option value="suspended" {{ 'selected' if auth == 'suspended' else '' }}>Suspended</option>
+      <option value="revoked" {{ 'selected' if auth == 'revoked' else '' }}>Revoked</option>
+    </select>
+  </div>
+</div>
+
+<label>Biography / service description</label>
+<textarea name="bio" rows="4">{{ profile.bio if profile else '' }}</textarea>
+
+<div class="rep-form-grid">
+  <div>
+    <label>Expertise (comma or line separated)</label>
+    <textarea name="expertise" rows="3">{{ profile.expertise | join(', ') if profile else '' }}</textarea>
+  </div>
+  <div>
+    <label>Languages</label>
+    <textarea name="languages" rows="3">{{ profile.languages | join(', ') if profile else 'English' }}</textarea>
+  </div>
+</div>
+
+<h3>Face / avatar configuration</h3>
+<div class="rep-form-grid">
+  <div>
+    <label>Public profile image URL</label>
+    <input type="url" name="profile_image_url" value="{{ profile.profile_image_url if profile else '' }}">
+  </div>
+  <div>
+    <label>Avatar provider</label>
+    <input name="avatar_provider" placeholder="Tavus, HeyGen, custom..." value="{{ profile.avatar_provider if profile else '' }}">
+  </div>
+  <div>
+    <label>Avatar/provider ID</label>
+    <input name="avatar_id" value="{{ profile.avatar_id if profile else '' }}">
+  </div>
+  <div>
+    <label>External avatar source URL</label>
+    <input type="url" name="avatar_source_url" value="{{ profile.avatar_source_url if profile else '' }}">
+  </div>
+</div>
+
+<h3>Voice configuration</h3>
+<div class="rep-form-grid">
+  <div>
+    <label>Voice provider</label>
+    <input name="voice_provider" placeholder="Approved voice provider" value="{{ profile.voice_provider if profile else '' }}">
+  </div>
+  <div>
+    <label>Voice/provider ID</label>
+    <input name="voice_id" value="{{ profile.voice_id if profile else '' }}">
+  </div>
+  <div>
+    <label>Voice label</label>
+    <input name="voice_label" placeholder="Professional US English" value="{{ profile.voice_label if profile else '' }}">
+  </div>
+  <div>
+    <label>Voice style</label>
+    <input name="voice_style" placeholder="Professional, calm, technical" value="{{ profile.voice_style if profile else 'Professional' }}">
+  </div>
+</div>
+
+<h3>Knowledge, permissions and supervision</h3>
+<div class="rep-form-grid">
+  <div>
+    <label>Approved knowledge sources</label>
+    <textarea name="knowledge_sources" rows="4" placeholder="Notion page IDs, policy documents, approved URLs">{{ profile.knowledge_sources_json if profile else '' }}</textarea>
+  </div>
+  <div>
+    <label>Permitted actions</label>
+    <textarea name="permitted_actions" rows="4" placeholder="Schedule follow-up, explain services, present documents">{{ profile.permitted_actions | join('\n') if profile else '' }}</textarea>
+  </div>
+  <div>
+    <label>Human supervisor</label>
+    <input name="supervisor_name" value="{{ profile.supervisor_name if profile else '' }}">
+  </div>
+  <div>
+    <label>Supervisor email</label>
+    <input type="email" name="supervisor_email" value="{{ profile.supervisor_email if profile else '' }}">
+  </div>
+</div>
+
+<h3>Authorization records</h3>
+<div class="rep-form-grid">
+  <div>
+    <label>Likeness authorization reference</label>
+    <input name="likeness_authorization_reference" placeholder="Consent record, license or internal approval ID" value="{{ profile.likeness_authorization_reference if profile else '' }}">
+  </div>
+  <div>
+    <label>Voice authorization reference</label>
+    <input name="voice_authorization_reference" placeholder="Consent record, license or provider approval ID" value="{{ profile.voice_authorization_reference if profile else '' }}">
+  </div>
+  <div>
+    <label>Authorization expires</label>
+    <input type="datetime-local" name="authorization_expires_at" value="{{ profile.authorization_expires_at.strftime('%Y-%m-%dT%H:%M') if profile and profile.authorization_expires_at else '' }}">
+  </div>
+</div>
+
+<h3>Visibility and disclosure</h3>
+<div class="rep-checkboxes">
+  <label><input type="checkbox" name="is_public" {{ 'checked' if not profile or profile.is_public else '' }}> Show on public representative directory</label>
+  <label><input type="checkbox" name="is_call_selectable" {{ 'checked' if not profile or profile.is_call_selectable else '' }}> Available in call selector</label>
+  <label><input type="checkbox" name="is_active" {{ 'checked' if not profile or profile.is_active else '' }}> Active</label>
+  <label><input type="checkbox" name="requires_disclosure" {{ 'checked' if not profile or profile.requires_disclosure else '' }}> Require virtual-representative disclosure</label>
+</div>
+<label>Disclosure shown to the client</label>
+<textarea name="disclosure_text" rows="3">{{ profile.disclosure_text if profile else 'You are meeting with a virtual company representative. A human team member can be requested at any time.' }}</textarea>
