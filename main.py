@@ -2,8 +2,14 @@ from app import app
 import os
 import logging
 
+from video_representatives import register_video_representatives
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Register the profile-driven video representative feature for both
+# `python main.py` and `gunicorn main:app` deployments.
+register_video_representatives(app)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
