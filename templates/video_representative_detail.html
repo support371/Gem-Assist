@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Representative Information{% endblock %}
+{% block content %}
+<section class="container py-5">
+  <h1>Representative Information</h1>
+  <p>This page displays the approved company role, department, services, languages, and consultation availability.</p>
+  <p><strong>Transparency notice:</strong> Virtual representatives are identified to clients and human assistance remains available.</p>
+  <a href="{{ url_for('video_representatives.request_video_call') }}">Request a consultation</a>
+</section>
+{% endblock %}
