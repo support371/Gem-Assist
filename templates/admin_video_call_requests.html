@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Video Call Requests Admin{% endblock %}
+{% block content %}
+<section class="avc-wrap">
+  <div class="avc-head">
+    <div><p>Administration</p><h1>Video-call requests</h1></div>
+    <a href="{{ url_for('video_representatives.admin_representatives') }}">Representative registry</a>
+  </div>
+  <div class="avc-list">
+    {% for call in calls %}
+      <article>
+        <div class="avc-summary">
+          <span>{{ call.status|title }}</span>
+          <h2>{{ call.topic }}</h2>
+          <p>{{ call.requester_name }}{% if call.requester_company %} · {{ call.requester_company }}{% endif %}</p>
+          <small>{{ call.requester_email }} · {{ call.duration_minutes }} min · {{ call.language }}</small>
+          <dl>
+            <dt>Requested profile</dt><dd>{{ call.requested_profile.display_name if call.requested_profile else 'Best available' }}</dd>
+            <dt>Preferred time</dt><dd>{{ call.scheduled_for.strftime('%Y-%m-%d %H:%M') if call.scheduled_for else 'Not specified' }}</dd>
+            <dt>Human handoff</dt><dd>{{ 'Requested' if call.human_handoff_requested else 'Available on request' }}</dd>
+            <dt>Notice acknowledged</dt><dd>{{ 'Yes' if call.representative_disclosure_acknowledged else 'No' }}</dd>
+          </dl>
+          {% if call.room_url %}<a href="{{ call.room_url }}" target="_blank" rel="noopener noreferrer">Open meeting room</a>{% endif %}
+        </div>
+        <form method="post" action="{{ url_for('video_representatives.assign_video_call', call_id=call.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <label>Assign representative</label>
+          <select name="assigned_profile_id" required>
+            <option value="">Select...</option>
+            {% for profile in profiles %}<option value="{{ profile.id }}" {{ 'selected' if call.assigned_profile_id == profile.id else '' }}>{{ profile.display_name }} — {{ profile.department }}{% if not profile.is_public %} (private){% endif %}</option>{% endfor %}
+          </select>
+          <label>Room provider</label>
+          <select name="room_provider">
+            {% for provider in ['LiveKit','Daily','Zoom','Google Meet','Custom'] %}<option value="{{ provider|lower|replace(' ','_') }}" {{ 'selected' if call.room_provider == provider|lower|replace(' ','_') else '' }}>{{ provider }}</option>{% endfor %}
+          </select>
+          <label>Room name</label><input name="room_name" value="{{ call.room_name or '' }}">
+          <label>Secure room URL</label><input type="url" name="room_url" value="{{ call.room_url or '' }}" placeholder="https://...">
+          <label>Internal notes</label><textarea name="internal_notes" rows="3">{{ call.internal_notes or '' }}</textarea>
+          <button type="submit">Save assignment</button>
+        </form>
+      </article>
+    {% else %}
+      <div class="avc-empty">No video-call requests have been submitted.</div>
+    {% endfor %}
+  </div>
+</section>
+<style>
+.avc-wrap{max-width:1180px;margin:auto;padding:3rem 1.25rem;color:#e7eef5}.avc-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:2rem}.avc-head p{text-transform:uppercase;letter-spacing:.13em;color:#7dd3fc}.avc-head a{color:#7dd3fc}.avc-list{display:grid;gap:1rem}.avc-list article{display:grid;grid-template-columns:1.2fr 1fr;gap:1.5rem;padding:1.3rem;background:#101b28;border-radius:14px}.avc-summary>span{display:inline-block;padding:.25rem .5rem;background:#1e3a5f;border-radius:999px;font-size:.75rem}.avc-summary h2{margin:.5rem 0}.avc-summary p{color:#a8bac8}.avc-summary dl{display:grid;grid-template-columns:170px 1fr;gap:.4rem;margin-top:1rem}.avc-summary dt{color:#94a3b8}.avc-summary dd{margin:0}.avc-list form label{display:block;margin:.6rem 0 .25rem}.avc-list input,.avc-list select,.avc-list textarea{width:100%;padding:.65rem;background:#091521;color:#fff;border:1px solid #355067;border-radius:8px}.avc-list button{margin-top:.8rem;padding:.75rem .9rem;border:0;border-radius:8px;background:#38bdf8;color:#06131d;font-weight:800}@media(max-width:760px){.avc-head{display:block}.avc-list article{grid-template-columns:1fr}.avc-summary dl{grid-template-columns:1fr}}
+</style>
+{% endblock %}
