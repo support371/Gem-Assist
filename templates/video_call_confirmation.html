@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Consultation Request Received{% endblock %}
+{% block content %}
+<section class="vcc-wrap">
+  <div class="vcc-card">
+    <div class="vcc-check">✓</div>
+    <h1>Request received</h1>
+    <p>Your request reference is <strong>{{ call_request.public_id }}</strong>.</p>
+    <dl>
+      <dt>Topic</dt><dd>{{ call_request.topic }}</dd>
+      <dt>Status</dt><dd>{{ call_request.status|title }}</dd>
+      <dt>Preferred representative</dt><dd>{{ call_request.requested_profile.display_name if call_request.requested_profile else 'Best available representative' }}</dd>
+      <dt>Preferred time</dt><dd>{{ call_request.scheduled_for.strftime('%B %d, %Y at %I:%M %p') if call_request.scheduled_for else 'To be confirmed' }}</dd>
+      <dt>Duration</dt><dd>{{ call_request.duration_minutes }} minutes</dd>
+    </dl>
+    {% if call_request.room_url %}<a class="vcc-button" href="{{ call_request.room_url }}" target="_blank" rel="noopener noreferrer">Join scheduled meeting</a>{% else %}<p class="vcc-muted">An administrator will confirm the representative and secure meeting link.</p>{% endif %}
+  </div>
+</section>
+<style>
+.vcc-wrap{min-height:65vh;display:grid;place-items:center;padding:3rem 1.25rem}.vcc-card{max-width:680px;width:100%;padding:2.5rem;background:#101b28;border-radius:18px;color:#e7eef5}.vcc-check{width:64px;height:64px;border-radius:50%;background:#34d399;color:#06131d;display:grid;place-items:center;font-size:2rem;font-weight:900}.vcc-card dl{display:grid;grid-template-columns:180px 1fr;gap:.75rem;margin:2rem 0}.vcc-card dt{color:#94a3b8}.vcc-card dd{margin:0}.vcc-button{display:inline-block;background:#38bdf8;color:#06131d;padding:.8rem 1rem;border-radius:9px;text-decoration:none;font-weight:800}.vcc-muted{color:#94a3b8}@media(max-width:600px){.vcc-card dl{grid-template-columns:1fr}.vcc-card dd{margin-bottom:.7rem}}
+</style>
+{% endblock %}
